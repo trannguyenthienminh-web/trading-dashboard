@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading AI — Đăng nhập</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0a0b0e;
+    --surface:  #111318;
+    --border:   #1e2028;
+    --gold:     #f5c842;
+    --gold-dim: #c9a32e;
+    --text:     #e8eaf0;
+    --muted:    #6b7080;
+    --green:    #2ecc71;
+    --red:      #e74c3c;
+    --radius:   12px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ambient background glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .login-wrap {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Logo */
+  .logo {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border-radius: 14px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 20px;
+    color: #0a0b0e;
+    letter-spacing: -1px;
+  }
+  .logo h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .logo p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  /* Ticker tape */
+  .ticker {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 32px;
+    animation: ticker 20s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+  }
+  .ticker-item .sym { color: var(--text); font-weight: 500; }
+  .ticker-item .up  { color: var(--green); }
+  .ticker-item .dn  { color: var(--red); }
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+  }
+  .card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .card .sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  /* Form */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--gold); }
+  .field input::placeholder { color: var(--muted); }
+
+  .btn-login {
+    width: 100%;
+    background: var(--gold);
+    color: #0a0b0e;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .btn-login:hover  { background: #f0c030; }
+  .btn-login:active { transform: scale(0.98); }
+
+  .error-msg {
+    background: rgba(231,76,60,0.1);
+    border: 1px solid rgba(231,76,60,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 14px;
+    display: none;
+  }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="logo">
+    <div class="logo-mark">AI</div>
+    <h1>Trading AI Dashboard</h1>
+    <p>Hệ thống tín hiệu & phân tích thị trường</p>
+  </div>
+
+  <!-- Live ticker -->
+  <div class="ticker">
+    <div class="ticker-inner" id="tickerInner">
+      <span class="ticker-item"><span class="sym">XAUUSD</span><span class="up">▲ 4,081.05</span><span class="up">+1.27%</span></span>
+      <span class="ticker-item"><span class="sym">EURUSD</span><span class="up">▲ 1.1381</span><span class="up">+0.10%</span></span>
+      <span class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 60,434</span><span class="up">+1.18%</span></span>
+      <span class="ticker-item"><span class="sym">GBPUSD</span><span class="dn">▼ 1.2654</span><span class="dn">-0.08%</span></span>
+      <span class="ticker-item"><span class="sym">USDJPY</span><span class="dn">▼ 161.74</span><span class="dn">-0.01%</span></span>
+      <!-- Duplicate for seamless loop -->
+      <span class="ticker-item"><span class="sym">XAUUSD</span><span class="up">▲ 4,081.05</span><span class="up">+1.27%</span></span>
+      <span class="ticker-item"><span class="sym">EURUSD</span><span class="up">▲ 1.1381</span><span class="up">+0.10%</span></span>
+      <span class="ticker-item"><span class="sym">BTCUSD</span><span class="up">▲ 60,434</span><span class="up">+1.18%</span></span>
+      <span class="ticker-item"><span class="sym">GBPUSD</span><span class="dn">▼ 1.2654</span><span class="dn">-0.08%</span></span>
+      <span class="ticker-item"><span class="sym">USDJPY</span><span class="dn">▼ 161.74</span><span class="dn">-0.01%</span></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Đăng nhập</h2>
+    <p class="sub">Nhập thông tin tài khoản được cấp để tiếp tục.</p>
+
+    <div class="field">
+      <label>Tên đăng nhập</label>
+      <input type="text" id="username" placeholder="username" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Mật khẩu</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">Đăng nhập</button>
+    <div class="error-msg" id="errMsg">Tên đăng nhập hoặc mật khẩu không đúng.</div>
+  </div>
+
+  <p class="footer-note">Hệ thống dành riêng cho thành viên. © 2026 Trading AI</p>
+</div>
+
+<script>
+  // Danh sách tài khoản — thêm member vào đây
+  const USERS = {
+    "admin":   { pass: "admin123",  role: "admin" },
+    "member1": { pass: "pass1234",  role: "member" },
+    "member2": { pass: "pass5678",  role: "member" },
+  };
+
+  function doLogin() {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value.trim();
+    const err = document.getElementById('errMsg');
+
+    if (USERS[u] && USERS[u].pass === p) {
+      // Lưu session
+      sessionStorage.setItem('user', u);
+      sessionStorage.setItem('role', USERS[u].role);
+      window.location.href = 'dashboard.html';
+    } else {
+      err.style.display = 'block';
+      setTimeout(() => err.style.display = 'none', 3000);
+    }
+  }
+
+  // Enter để đăng nhập
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  // Kiểm tra đã đăng nhập chưa
+  if (sessionStorage.getItem('user')) {
+    window.location.href = 'dashboard.html';
+  }
+</script>
+</body>
+</html>

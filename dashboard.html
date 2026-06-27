@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading AI — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #0a0b0e;
+    --surface: #111318;
+    --surface2:#161820;
+    --border:  #1e2028;
+    --gold:    #f5c842;
+    --text:    #e8eaf0;
+    --muted:   #6b7080;
+    --green:   #2ecc71;
+    --red:     #e74c3c;
+    --blue:    #3498db;
+    --r:       10px;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 15px;
+  }
+  .nav-logo-mark {
+    width: 32px; height: 32px;
+    background: var(--gold);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 500; color: #0a0b0e;
+  }
+  .nav-tabs {
+    display: flex; gap: 4px;
+  }
+  .nav-tab {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none; background: none;
+  }
+  .nav-tab:hover  { color: var(--text); background: var(--border); }
+  .nav-tab.active { color: var(--gold); background: rgba(245,200,66,0.08); }
+  .nav-right {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .nav-user {
+    font-size: 13px; color: var(--muted);
+  }
+  .btn-logout {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px; color: var(--muted);
+    cursor: pointer; background: none;
+    transition: all 0.15s;
+  }
+  .btn-logout:hover { color: var(--red); border-color: var(--red); }
+
+  /* ── SYMBOL BAR ── */
+  .sym-bar {
+    display: flex; gap: 8px;
+    padding: 12px 24px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .sym-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: none; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .sym-btn:hover  { color: var(--text); border-color: #333; }
+  .sym-btn.active { color: var(--gold); border-color: var(--gold); background: rgba(245,200,66,0.06); }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: flex; flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── TABS CONTENT ── */
+  .tab-content { display: none; width: 100%; }
+  .tab-content.active { display: flex; flex-direction: column; }
+
+  /* ── CHART TAB ── */
+  #tab-chart {
+    flex-direction: row;
+  }
+  .chart-area {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .chart-wrap {
+    flex: 1;
+    min-height: 0;
+  }
+  .chart-wrap iframe {
+    width: 100%; height: 100%; border: none;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 300px;
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+    background: var(--surface);
+  }
+  .sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-section h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* Signal card in sidebar */
+  .sig-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px;
+    margin-bottom: 8px;
+  }
+  .sig-card:last-child { margin-bottom: 0; }
+  .sig-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .sig-dir {
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sig-dir.buy  { color: var(--green); }
+  .sig-dir.sell { color: var(--red); }
+  .sig-type {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .sig-type.trend    { background: rgba(52,152,219,0.15); color: var(--blue); }
+  .sig-type.reversal { background: rgba(245,200,66,0.12); color: var(--gold); }
+  .sig-levels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .sig-level { display: flex; flex-direction: column; gap: 2px; }
+  .sig-level .lbl { color: var(--muted); font-size: 10px; }
+  .sig-level .val { color: var(--text); }
+  .sig-level .val.entry { color: var(--blue); }
+  .sig-level .val.sl    { color: var(--red); }
+  .sig-level .val.tp    { color: var(--green); }
+  .sig-status {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted);
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  .dot.closed { background: var(--muted); animation: none; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .stat-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .stat-box .s-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stat-box .s-val {
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-box .s-val.green { color: var(--green); }
+  .stat-box .s-val.gold  { color: var(--gold); }
+  .stat-box .s-val.red   { color: var(--red); }
+
+  /* ── SIGNALS TAB ── */
+  #tab-signals {
+    padding: 20px 24px;
+    overflow-y: auto;
+  }
+  .page-title {
+    font-size: 18px; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .signals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .signal-full-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px;
+  }
+  .sfc-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .sfc-sym {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 500;
+  }
+  .sfc-dir {
+    font-size: 12px; font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 5px;
+  }
+  .sfc-dir.buy  { background: rgba(46,204,113,0.12); color: var(--green); }
+  .sfc-dir.sell { background: rgba(231,76,60,0.12);  color: var(--red); }
+  .sfc-levels {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 12px;
+  }
+  .sfc-lv { background: var(--bg); border-radius: 6px; padding: 8px; }
+  .sfc-lv .l { font-size: 10px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; }
+  .sfc-lv .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 500;
+  }
+  .sfc-analysis {
+    font-size: 12px; color: var(--muted);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    max-height: 80px;
+    overflow: hidden;
+    position: relative;
+  }
+  .sfc-analysis.expanded { max-height: none; }
+  .sfc-footer {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  .sfc-time { font-size: 11px; color: var(--muted); }
+  .sfc-status-badge {
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 4px; font-weight: 500;
+  }
+  .badge-open   { background: rgba(46,204,113,0.12); color: var(--green); }
+  .badge-tp     { background: rgba(52,152,219,0.12);  color: var(--blue); }
+  .badge-sl     { background: rgba(231,76,60,0.12);   color: var(--red); }
+  .btn-expand {
+    background: none; border: none; color: var(--muted);
+    font-size: 11px; cursor: pointer; padding: 0;
+  }
+  .btn-expand:hover { color: var(--gold); }
+
+  /* ── HISTORY TAB ── */
+  #tab-history {
+    padding: 20px 24px;
+    overflow-y: auto;
+  }
+  .history-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .winrate-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .winrate-row {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .winrate-num {
+    font-size: 48px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .winrate-meta { flex: 1; }
+  .winrate-meta p { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .bar-track {
+    height: 6px; background: var(--border);
+    border-radius: 3px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    transition: width 1s ease;
+  }
+  .history-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td { padding: 10px 12px; }
+  .td-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .td-buy  { color: var(--green); font-weight: 600; }
+  .td-sell { color: var(--red);   font-weight: 600; }
+
+  /* ── LOADING ── */
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px; color: var(--muted); font-size: 13px; gap: 8px;
+  }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty {
+    text-align: center; padding: 40px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    #tab-chart { flex-direction: column; }
+    .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); max-height: 300px; }
+    .history-stats { grid-template-columns: repeat(2, 1fr); }
+    .nav-tabs { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">AI</div>
+    Trading AI
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('chart')">📈 Biểu đồ</button>
+    <button class="nav-tab" onclick="switchTab('signals')">🔔 Tín hiệu</button>
+    <button class="nav-tab" onclick="switchTab('history')">📋 Lịch sử</button>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser"></span>
+    <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+  </div>
+</nav>
+
+<!-- SYMBOL BAR -->
+<div class="sym-bar">
+  <button class="sym-btn active" onclick="changeSymbol(this,'XAUUSD','XAUUSDs')">XAUUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'EURUSD','EURUSDs')">EURUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'GBPUSD','GBPUSDs')">GBPUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'BTCUSD','BTCUSDs')">BTCUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'USDJPY','USDJPYs')">USDJPY</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TAB: CHART -->
+  <div class="tab-content active" id="tab-chart">
+    <div class="chart-area">
+      <div class="chart-wrap">
+        <iframe id="tvChart"
+          src="https://www.tradingview.com/widgetembed/?frameElementId=tvChart&symbol=XAUUSD&interval=5&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=0a0b0e&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&showpopupbutton=1&studies=RSI%402"
+          allowtransparency="true" allowfullscreen="true">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <!-- Stats -->
+      <div class="sidebar-section">
+        <h3>Tổng quan</h3>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="s-label">Tín hiệu hôm nay</div>
+            <div class="s-val gold" id="statToday">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="s-label">Win rate</div>
+            <div class="s-val green" id="statWin">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="s-label">Đang mở</div>
+            <div class="s-val" id="statOpen">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="s-label">Tổng tín hiệu</div>
+            <div class="s-val" id="statTotal">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Latest signals -->
+      <div class="sidebar-section" style="flex:1">
+        <h3>Tín hiệu mới nhất</h3>
+        <div id="latestSignals">
+          <div class="loading"><div class="spinner"></div> Đang tải...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SIGNALS -->
+  <div class="tab-content" id="tab-signals">
+    <p class="page-title">Tín hiệu đang mở</p>
+    <div class="signals-grid" id="openSignalsGrid">
+      <div class="loading"><div class="spinner"></div> Đang tải...</div>
+    </div>
+  </div>
+
+  <!-- TAB: HISTORY -->
+  <div class="tab-content" id="tab-history">
+    <div class="history-header">
+      <p class="page-title">Lịch sử tín hiệu</p>
+      <select id="filterSym" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;outline:none;">
+        <option value="">Tất cả symbol</option>
+        <option value="XAUUSDs">XAUUSD</option>
+        <option value="EURUSDs">EURUSD</option>
+        <option value="BTCUSDs">BTCUSD</option>
+      </select>
+    </div>
+
+    <!-- Win rate -->
+    <div class="winrate-bar-wrap">
+      <div class="winrate-row">
+        <div class="winrate-num" id="wrNum">—%</div>
+        <div class="winrate-meta">
+          <p>Win rate tổng thể (<span id="wrClosed">0</span> lệnh đã đóng)</p>
+          <div class="bar-track"><div class="bar-fill" id="wrBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-stats" id="historyStats">
+      <div class="stat-box"><div class="s-label">Tổng lệnh</div><div class="s-val" id="hTotal">—</div></div>
+      <div class="stat-box"><div class="s-label">Thắng</div><div class="s-val green" id="hWin">—</div></div>
+      <div class="stat-box"><div class="s-label">Thua</div><div class="s-val red" id="hLoss">—</div></div>
+      <div class="stat-box"><div class="s-label">Đang mở</div><div class="s-val gold" id="hOpen">—</div></div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Symbol</th>
+            <th>Chiều</th>
+            <th>Entry</th>
+            <th>SL</th>
+            <th>TP1</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="7"><div class="loading"><div class="spinner"></div> Đang tải...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+// Thay URL này sau khi chạy ngrok
+const API_BASE = localStorage.getItem('apiBase') || 'http://localhost:8000';
+
+// ── AUTH ────────────────────────────────────────────────
+const user = sessionStorage.getItem('user');
+if (!user) window.location.href = 'index.html';
+document.getElementById('navUser').textContent = user;
+
+function logout() {
+  sessionStorage.clear();
+  window.location.href = 'index.html';
+}
+
+// ── TAB SWITCHING ───────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+
+  if (name === 'signals') loadOpenSignals();
+  if (name === 'history') loadHistory();
+}
+
+// ── SYMBOL CHANGE ───────────────────────────────────────
+let currentSymbol = 'XAUUSD';
+function changeSymbol(btn, tvSym, apiSym) {
+  document.querySelectorAll('.sym-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSymbol = apiSym;
+
+  // Update TradingView
+  const tf = '5';
+  document.getElementById('tvChart').src =
+    `https://www.tradingview.com/widgetembed/?frameElementId=tvChart&symbol=${tvSym}&interval=${tf}&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=0a0b0e&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&showpopupbutton=1&studies=RSI%402`;
+}
+
+// ── API CALLS ───────────────────────────────────────────
+async function fetchAPI(endpoint) {
+  try {
+    const r = await fetch(API_BASE + endpoint);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch(e) {
+    console.warn('API error:', e.message);
+    return null;
+  }
+}
+
+// ── LOAD SIDEBAR ────────────────────────────────────────
+async function loadSidebar() {
+  const data = await fetchAPI('/api/summary');
+  if (!data) {
+    document.getElementById('latestSignals').innerHTML =
+      '<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo api_server.py đang chạy.</div>';
+    return;
+  }
+
+  // Stats
+  document.getElementById('statToday').textContent = data.today ?? '0';
+  document.getElementById('statWin').textContent   = (data.winrate ?? 0) + '%';
+  document.getElementById('statOpen').textContent  = data.open ?? '0';
+  document.getElementById('statTotal').textContent = data.total ?? '0';
+
+  // Latest signals
+  const wrap = document.getElementById('latestSignals');
+  if (!data.latest || data.latest.length === 0) {
+    wrap.innerHTML = '<div class="empty">😴 Chưa có tín hiệu nào.</div>';
+    return;
+  }
+  wrap.innerHTML = data.latest.map(s => sigCardHTML(s)).join('');
+}
+
+function sigCardHTML(s) {
+  const isBuy  = s.direction === 'BUY';
+  const isOpen = s.status === 'OPEN';
+  const typeClass = s.signal_type === 'Trend' ? 'trend' : 'reversal';
+  return `
+  <div class="sig-card">
+    <div class="sig-header">
+      <div class="sig-dir ${isBuy?'buy':'sell'}">
+        ${isBuy ? '▲' : '▼'} ${s.direction}
+        <span style="color:var(--muted);font-weight:400;font-size:11px">${s.symbol} · ${s.timeframe}</span>
+      </div>
+      <span class="sig-type ${typeClass}">${s.signal_type}</span>
+    </div>
+    <div class="sig-levels">
+      <div class="sig-level"><span class="lbl">Entry</span><span class="val entry">${s.entry}</span></div>
+      <div class="sig-level"><span class="lbl">Stop Loss</span><span class="val sl">${s.stop_loss}</span></div>
+      <div class="sig-level"><span class="lbl">TP1</span><span class="val tp">${s.tp1}</span></div>
+      <div class="sig-level"><span class="lbl">TP3</span><span class="val tp">${s.tp3}</span></div>
+    </div>
+    <div class="sig-status">
+      <div class="dot ${isOpen?'':'closed'}"></div>
+      ${isOpen ? 'Đang theo dõi' : s.status.replace('_',' ')}
+      <span style="margin-left:auto;font-size:10px">${s.created_at?.slice(0,16) ?? ''}</span>
+    </div>
+  </div>`;
+}
+
+// ── LOAD OPEN SIGNALS ────────────────────────────────────
+async function loadOpenSignals() {
+  const grid = document.getElementById('openSignalsGrid');
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div> Đang tải...</div>';
+  const data = await fetchAPI('/api/signals?status=OPEN');
+  if (!data || data.length === 0) {
+    grid.innerHTML = '<div class="empty">😴 Hiện không có lệnh nào đang mở.</div>';
+    return;
+  }
+  grid.innerHTML = data.map(s => fullSigCard(s)).join('');
+}
+
+function fullSigCard(s) {
+  const isBuy = s.direction === 'BUY';
+  const badgeCls = s.status === 'OPEN' ? 'badge-open' : s.status.includes('TP') ? 'badge-tp' : 'badge-sl';
+  return `
+  <div class="signal-full-card">
+    <div class="sfc-header">
+      <span class="sfc-sym">${s.symbol} · ${s.timeframe}</span>
+      <span class="sfc-dir ${isBuy?'buy':'sell'}">${s.direction}</span>
+    </div>
+    <div class="sfc-levels">
+      <div class="sfc-lv"><div class="l">Entry</div><div class="v" style="color:var(--blue)">${s.entry}</div></div>
+      <div class="sfc-lv"><div class="l">Stop Loss</div><div class="v" style="color:var(--red)">${s.stop_loss}</div></div>
+      <div class="sfc-lv"><div class="l">TP1</div><div class="v" style="color:var(--green)">${s.tp1}</div></div>
+      <div class="sfc-lv"><div class="l">TP2</div><div class="v" style="color:var(--green)">${s.tp2}</div></div>
+      <div class="sfc-lv"><div class="l">TP3</div><div class="v" style="color:var(--green)">${s.tp3}</div></div>
+      <div class="sfc-lv"><div class="l">R:R</div><div class="v">${s.rr_ratio ?? '—'}</div></div>
+    </div>
+    <div class="sfc-analysis" id="ana_${s.id}">${s.analysis_text ?? ''}</div>
+    <div class="sfc-footer">
+      <span class="sfc-time">${s.created_at?.slice(0,16) ?? ''}</span>
+      <span class="sfc-status-badge ${badgeCls}">${s.status}</span>
+    </div>
+  </div>`;
+}
+
+// ── LOAD HISTORY ─────────────────────────────────────────
+async function loadHistory() {
+  const sym = document.getElementById('filterSym').value;
+  const url = '/api/signals' + (sym ? '?symbol=' + sym : '');
+  const body = document.getElementById('historyBody');
+  body.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div> Đang tải...</div></td></tr>';
+
+  const data = await fetchAPI(url);
+  if (!data) {
+    body.innerHTML = '<tr><td colspan="7"><div class="empty">⚠️ Không kết nối được API.</div></td></tr>';
+    return;
+  }
+
+  // Stats
+  const closed = data.filter(s => s.status !== 'OPEN');
+  const wins   = closed.filter(s => s.status.includes('TP'));
+  const losses = closed.filter(s => s.status === 'SL_HIT');
+  const opens  = data.filter(s => s.status === 'OPEN');
+  const wr     = closed.length > 0 ? Math.round(wins.length / closed.length * 100) : 0;
+
+  document.getElementById('wrNum').textContent   = wr + '%';
+  document.getElementById('wrClosed').textContent = closed.length;
+  document.getElementById('wrBar').style.width   = wr + '%';
+  document.getElementById('hTotal').textContent  = data.length;
+  document.getElementById('hWin').textContent    = wins.length;
+  document.getElementById('hLoss').textContent   = losses.length;
+  document.getElementById('hOpen').textContent   = opens.length;
+
+  if (data.length === 0) {
+    body.innerHTML = '<tr><td colspan="7"><div class="empty">Chưa có dữ liệu.</div></td></tr>';
+    return;
+  }
+
+  const badgeMap = {
+    'OPEN':    '<span class="sfc-status-badge badge-open">OPEN</span>',
+    'TP1_HIT': '<span class="sfc-status-badge badge-tp">TP1 ✓</span>',
+    'TP2_HIT': '<span class="sfc-status-badge badge-tp">TP2 ✓</span>',
+    'TP3_HIT': '<span class="sfc-status-badge badge-tp">TP3 ✓</span>',
+    'SL_HIT':  '<span class="sfc-status-badge badge-sl">SL ✗</span>',
+  };
+
+  body.innerHTML = data.slice().reverse().map(s => `
+    <tr>
+      <td class="td-mono" style="font-size:11px">${s.created_at?.slice(0,16) ?? ''}</td>
+      <td class="td-mono">${s.symbol}</td>
+      <td class="${s.direction==='BUY'?'td-buy':'td-sell'}">${s.direction}</td>
+      <td class="td-mono">${s.entry}</td>
+      <td class="td-mono" style="color:var(--red)">${s.stop_loss}</td>
+      <td class="td-mono" style="color:var(--green)">${s.tp1}</td>
+      <td>${badgeMap[s.status] ?? s.status}</td>
+    </tr>`).join('');
+}
+
+// ── INIT ─────────────────────────────────────────────────
+loadSidebar();
+setInterval(loadSidebar, 30000); // Refresh mỗi 30 giây
+
+// Prompt nhập API URL nếu chưa có
+function setApiUrl() {
+  const url = prompt('Nhập URL API server (ngrok URL):', API_BASE);
+  if (url) {
+    localStorage.setItem('apiBase', url.replace(/\/$/, ''));
+    location.reload();
+  }
+}
+</script>
+
+<!-- Nút cài API URL (chỉ admin thấy) -->
+<script>
+if (sessionStorage.getItem('role') === 'admin') {
+  const btn = document.createElement('button');
+  btn.textContent = '⚙ API URL';
+  btn.style.cssText = 'position:fixed;bottom:16px;right:16px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;z-index:999;';
+  btn.onclick = setApiUrl;
+  document.body.appendChild(btn);
+}
+</script>
+
+</body>
+</html>

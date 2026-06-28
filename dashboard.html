@@ -438,7 +438,7 @@
     <button class="nav-tab" onclick="switchTab('market')">🏛 Thị trường</button>
     <button class="nav-tab" onclick="switchTab('history')">📋 Lịch sử</button>
     <a class="nav-tab" href="ai-chat.html">🤖 AI Chat</a>
-    <a class="nav-tab" href="news.html">📰 Tin tức</a>
+    <button class="nav-tab" onclick="switchTab('news')">📰 Market Intel</button>
   <div class="nav-right">
     <a href="register.html" target="_blank" class="btn-ea">🤖 Đăng ký EA</a>
     <span class="nav-user" id="navUser"></span>
@@ -595,6 +595,11 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- TAB: MARKET INTEL (News) -->
+  <div class="tab-content" id="tab-news" style="padding:20px;max-width:1200px;">
+    <iframe src="news.html" style="width:100%;height:calc(100vh - 120px);border:none;border-radius:10px;background:var(--bg);" title="Market Intelligence"></iframe>
   </div>
 
 </div><!-- /main -->

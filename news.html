@@ -3,511 +3,889 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tin tức & Lịch kinh tế — Trading AI</title>
+  <title>Market Intelligence — Trading AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --black:   #090909;
-      --surface: #111111;
-      --card:    #181818;
-      --border:  #252525;
-      --gold:    #C9A84C;
-      --gold-bg: rgba(201,168,76,0.08);
-      --white:   #F5F5F5;
-      --muted:   #888888;
-      --green:   #34D399;
-      --red:     #F87171;
-      --yellow:  #FBBF24;
+      --black:   #090909; --surface: #111111; --card: #181818;
+      --border:  #252525; --gold: #C9A84C; --gold-bg: rgba(201,168,76,0.08);
+      --white:   #F5F5F5; --muted: #888888;
+      --green:   #34D399; --red: #F87171; --yellow: #FBBF24; --blue: #60A5FA;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--black);
-      color: var(--white);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--black); color: var(--white); -webkit-font-smoothing: antialiased; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
 
-    /* ── HEADER ─────────────────────────────────── */
+    /* ── HEADER ── */
     header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      height: 56px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
     }
     .hdr-left { display: flex; align-items: center; gap: 10px; }
     .hdr-logo { font-size: 1rem; font-weight: 700; }
     .hdr-logo span { color: var(--gold); }
-    .hdr-nav { display: flex; gap: 6px; }
-    .hdr-nav a {
-      font-size: 0.8125rem; color: var(--muted);
-      padding: 6px 12px; border-radius: 6px;
-      transition: color 0.2s, background 0.2s;
-    }
+    .hdr-nav { display: flex; gap: 4px; }
+    .hdr-nav a { font-size: 0.8125rem; color: var(--muted); padding: 6px 12px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
     .hdr-nav a:hover { color: var(--white); background: rgba(255,255,255,0.05); }
     .hdr-nav a.active { color: var(--gold); background: var(--gold-bg); }
     .hdr-back { font-size: 0.8125rem; color: var(--muted); transition: color 0.2s; }
     .hdr-back:hover { color: var(--white); }
 
-    /* ── LAYOUT ─────────────────────────────────── */
-    .page { max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px; }
-    .page-title {
-      font-size: 1.5rem; font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .page-sub { font-size: 0.875rem; color: var(--muted); margin-bottom: 28px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
-
-    /* ── SECTION ─────────────────────────────────── */
-    .section-title {
-      font-size: 0.6875rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    .card-header-title { font-size: 0.9375rem; font-weight: 700; }
-    .card-body { padding: 0; }
-
-    /* ── ECONOMIC CALENDAR ───────────────────────── */
-    .cal-filter {
-      display: flex; gap: 8px; padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
+    /* ── PAGE TABS ── */
+    .page-tabs {
+      display: flex; gap: 0; padding: 0 24px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
       overflow-x: auto; scrollbar-width: none;
     }
-    .cal-filter::-webkit-scrollbar { display: none; }
-    .filter-btn {
-      flex-shrink: 0;
-      padding: 5px 14px;
-      font-size: 0.75rem; font-weight: 600;
-      border-radius: 100px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.2s;
+    .page-tabs::-webkit-scrollbar { display: none; }
+    .ptab {
+      flex-shrink: 0; padding: 12px 20px;
+      font-size: 0.8125rem; font-weight: 600;
+      color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none;
       font-family: 'Inter', sans-serif;
     }
-    .filter-btn.active, .filter-btn:hover { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+    .ptab:hover { color: var(--white); }
+    .ptab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-    .cal-list { display: flex; flex-direction: column; }
-    .cal-day-header {
-      padding: 8px 20px;
-      font-size: 0.6875rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted);
-      background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid var(--border);
+    /* ── LAYOUT ── */
+    .page { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── CARDS ── */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .card-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
     }
-    .cal-item {
-      display: grid;
-      grid-template-columns: 60px 36px 1fr auto;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 20px;
-      border-bottom: 1px solid rgba(37,37,37,0.6);
-      transition: background 0.15s;
+    .card-hdr-title { font-size: 0.9rem; font-weight: 700; }
+    .section-label {
+      font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
     }
-    .cal-item:hover { background: rgba(255,255,255,0.02); }
-    .cal-item:last-child { border-bottom: none; }
-    .cal-time { font-size: 0.8rem; color: var(--muted); font-family: 'Courier New', monospace; }
-    .cal-flag { font-size: 1.1rem; }
-    .cal-info { min-width: 0; }
-    .cal-event { font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cal-prev { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-    .cal-impact {
-      display: flex; align-items: center; gap: 4px;
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    @media(max-width:900px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:600px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+    /* ── STAT BOX ── */
+    .stat-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+    }
+    .s-label { font-size: 0.6875rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+    .s-val { font-size: 1.25rem; font-weight: 700; }
+    .s-val.gold { color: var(--gold); }
+    .s-val.green { color: var(--green); }
+    .s-val.red { color: var(--red); }
+    .s-val.blue { color: var(--blue); }
+    .s-sub { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
       font-size: 0.6875rem; font-weight: 700;
       padding: 3px 10px; border-radius: 100px;
-      white-space: nowrap;
     }
-    .impact-high { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.25); }
-    .impact-med  { background: rgba(251,191,36,0.12);  color: var(--yellow); border: 1px solid rgba(251,191,36,0.25); }
-    .impact-low  { background: rgba(136,136,136,0.1);  color: var(--muted); border: 1px solid var(--border); }
+    .badge-high { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.25); }
+    .badge-med  { background: rgba(251,191,36,0.12); color: var(--yellow); border: 1px solid rgba(251,191,36,0.25); }
+    .badge-low  { background: rgba(136,136,136,0.1); color: var(--muted); border: 1px solid var(--border); }
+    .badge-bull { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+    .badge-bear { background: rgba(248,113,113,0.1); color: var(--red); border: 1px solid rgba(248,113,113,0.2); }
+    .badge-neu  { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
 
-    /* ── NEWS FEED ───────────────────────────────── */
-    .news-list { display: flex; flex-direction: column; }
-    .news-item {
-      display: flex; gap: 14px;
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(37,37,37,0.6);
-      transition: background 0.15s;
-      cursor: pointer;
-    }
-    .news-item:hover { background: rgba(255,255,255,0.02); }
-    .news-item:last-child { border-bottom: none; }
-    .news-source-badge {
-      flex-shrink: 0;
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-    }
-    .news-body { min-width: 0; }
-    .news-title {
-      font-size: 0.875rem; font-weight: 600;
-      line-height: 1.45; margin-bottom: 6px;
-      display: -webkit-box; -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .news-meta {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.75rem; color: var(--muted);
-    }
-    .news-tag {
-      padding: 2px 8px; border-radius: 4px;
-      font-size: 0.6875rem; font-weight: 600;
-      background: var(--gold-bg); color: var(--gold);
-    }
-    .news-loading {
-      padding: 40px 20px;
-      text-align: center; color: var(--muted);
-      font-size: 0.875rem;
-    }
-    .spinner {
-      width: 24px; height: 24px;
-      border: 2px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 12px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── REFRESH BTN ─────────────────────────────── */
+    /* ── REFRESH BTN ── */
     .refresh-btn {
       display: flex; align-items: center; gap: 6px;
-      padding: 6px 14px;
-      font-size: 0.75rem; font-weight: 600;
-      background: var(--gold-bg);
-      border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 6px;
-      color: var(--gold);
-      cursor: pointer;
-      transition: opacity 0.2s;
-      font-family: 'Inter', sans-serif;
+      padding: 5px 12px; font-size: 0.75rem; font-weight: 600;
+      background: var(--gold-bg); border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 6px; color: var(--gold); cursor: pointer;
+      transition: opacity 0.2s; font-family: 'Inter', sans-serif;
     }
     .refresh-btn:hover { opacity: 0.8; }
     .refresh-btn.spinning svg { animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── ALERT BANNER ────────────────────────────── */
+    /* ── ALERT ── */
     .alert-banner {
       display: flex; align-items: center; gap: 12px;
-      padding: 12px 20px;
-      background: rgba(248,113,113,0.08);
-      border: 1px solid rgba(248,113,113,0.2);
-      border-radius: 10px;
-      margin-bottom: 24px;
-      font-size: 0.875rem;
+      padding: 12px 18px; background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2); border-radius: 10px;
+      margin-bottom: 20px; font-size: 0.875rem;
     }
-    .alert-banner .alert-icon { font-size: 1.25rem; flex-shrink: 0; }
     .alert-banner strong { color: var(--red); }
 
-    /* ── EMPTY STATE ─────────────────────────────── */
-    .empty-state {
-      padding: 48px 20px; text-align: center; color: var(--muted);
-    }
-    .empty-state .icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
+    /* ── LOADING ── */
+    .loading { padding: 36px 20px; text-align: center; color: var(--muted); font-size: 0.875rem; }
+    .spinner { width: 22px; height: 22px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px; }
+
+    /* ── FILTER ── */
+    .filter-row { display: flex; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .fbtn { flex-shrink: 0; padding: 5px 14px; font-size: 0.75rem; font-weight: 600; border-radius: 100px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+    .fbtn.active, .fbtn:hover { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+
+    /* ── CALENDAR ── */
+    .cal-day-hdr { padding: 7px 18px; font-size: 0.6875rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+    .cal-item { display: grid; grid-template-columns: 58px 34px 1fr auto; align-items: center; gap: 10px; padding: 11px 18px; border-bottom: 1px solid rgba(37,37,37,0.6); transition: background 0.15s; }
+    .cal-item:hover { background: rgba(255,255,255,0.02); }
+    .cal-item:last-child { border-bottom: none; }
+    .cal-time { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+    .cal-event { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cal-prev { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── NEWS ── */
+    .news-item { display: flex; gap: 12px; padding: 14px 18px; border-bottom: 1px solid rgba(37,37,37,0.6); transition: background 0.15s; cursor: pointer; }
+    .news-item:hover { background: rgba(255,255,255,0.02); }
+    .news-item:last-child { border-bottom: none; }
+    .news-badge { flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .news-title { font-size: 0.85rem; font-weight: 600; line-height: 1.45; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .news-meta { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: var(--muted); flex-wrap: wrap; }
+    .news-score { font-size: 0.6875rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .score-high { background: rgba(248,113,113,0.15); color: var(--red); }
+    .score-med  { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .score-low  { background: rgba(136,136,136,0.1); color: var(--muted); }
+    .news-tag { padding: 2px 7px; border-radius: 4px; font-size: 0.6875rem; font-weight: 600; background: var(--gold-bg); color: var(--gold); }
+
+    /* ── MARKET STRUCTURE ── */
+    .ms-sym-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .ms-sym-btn { padding: 7px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 0.8125rem; font-weight: 600; cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.15s; }
+    .ms-sym-btn.active, .ms-sym-btn:hover { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+
+    .level-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 18px; border-bottom: 1px solid rgba(37,37,37,0.5); }
+    .level-row:last-child { border-bottom: none; }
+    .level-label { font-size: 0.8rem; color: var(--muted); }
+    .level-val { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; }
+    .level-val.res { color: var(--red); }
+    .level-val.sup { color: var(--green); }
+    .level-val.cur { color: var(--gold); }
+
+    .session-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 18px; border-bottom: 1px solid rgba(37,37,37,0.5); }
+    .session-row:last-child { border-bottom: none; }
+    .session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-active { background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s infinite; }
+    .dot-inactive { background: var(--border); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .ai-analysis-box { background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; padding: 16px; font-size: 0.85rem; line-height: 1.7; color: var(--white); min-height: 80px; }
+    .ai-analysis-box .ai-loading { color: var(--muted); font-style: italic; }
+
+    .trend-arrow { font-size: 1.5rem; }
+    .vol-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-top: 6px; }
+    .vol-fill { height: 100%; border-radius: 3px; background: var(--gold); transition: width 0.5s; }
+
+    mb-16 { margin-bottom: 16px; }
   </style>
 </head>
 <body>
 
-  <!-- ── HEADER ──────────────────────────────────── -->
-  <header>
-    <div class="hdr-left">
-      <div class="hdr-logo">Trading<span>AI</span></div>
-      <nav class="hdr-nav">
-        <a href="index.html">Dashboard</a>
-        <a href="ai-chat.html">🤖 AI Chat</a>
-        <a href="news.html" class="active">📰 Tin tức</a>
-      </nav>
-    </div>
-    <a href="index.html" class="hdr-back">← Dashboard</a>
-  </header>
+<!-- HEADER -->
+<header>
+  <div class="hdr-left">
+    <div class="hdr-logo">Trading<span>AI</span></div>
+    <nav class="hdr-nav">
+      <a href="dashboard.html">📈 Dashboard</a>
+      <a href="ai-chat.html">🤖 AI Chat</a>
+      <a href="news.html" class="active">📰 Market Intel</a>
+    </nav>
+  </div>
+  <a href="dashboard.html" class="hdr-back">← Dashboard</a>
+</header>
 
-  <!-- ── PAGE ────────────────────────────────────── -->
-  <div class="page">
-    <div class="page-title">📰 Tin tức & Lịch kinh tế</div>
-    <div class="page-sub">Cập nhật realtime — sự kiện quan trọng ảnh hưởng XAU/USD và Crypto</div>
+<!-- PAGE TABS -->
+<div class="page-tabs">
+  <button class="ptab active" onclick="switchPTab('news', this)">📰 Tin tức & Radar</button>
+  <button class="ptab" onclick="switchPTab('calendar', this)">📅 Lịch kinh tế</button>
+  <button class="ptab" onclick="switchPTab('market', this)">🏛 Cấu trúc thị trường</button>
+</div>
 
-    <!-- Alert: sự kiện hôm nay -->
+<div class="page">
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB 1: TIN TỨC & RADAR
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-news">
+
+    <!-- Alert banner -->
     <div class="alert-banner" id="today-alert" style="display:none">
-      <div class="alert-icon">⚠️</div>
-      <div><strong>Cảnh báo:</strong> <span id="alert-text"></span> — Thận trọng khi giao dịch!</div>
+      ⚠️ <strong>Cảnh báo:</strong> <span id="alert-text"></span> — Thận trọng khi giao dịch!
     </div>
 
     <div class="grid-2">
 
-      <!-- ── CỘT TRÁI: LỊCH KINH TẾ ──────────────── -->
+      <!-- CỘT TRÁI: TIN TỨC -->
       <div>
-        <div class="section-title">📅 Lịch sự kiện kinh tế</div>
+        <div class="section-label">📡 Radar tin tức thị trường</div>
         <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">Tuần này</div>
-            <button class="refresh-btn" onclick="loadCalendar(this)" id="cal-refresh-btn">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          <div class="card-hdr">
+            <div class="card-hdr-title">Forex & Gold News</div>
+            <button class="refresh-btn" onclick="loadNews(this)">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
               Làm mới
             </button>
           </div>
-          <div class="cal-filter">
-            <button class="filter-btn active" onclick="filterCal('all', this)">Tất cả</button>
-            <button class="filter-btn" onclick="filterCal('high', this)">🔴 High Impact</button>
-            <button class="filter-btn" onclick="filterCal('med', this)">🟡 Medium</button>
-            <button class="filter-btn" onclick="filterCal('usd', this)">🇺🇸 USD</button>
-            <button class="filter-btn" onclick="filterCal('xau', this)">⭐ Vàng</button>
+          <div class="filter-row">
+            <button class="fbtn active" onclick="filterNews('all',this)">Tất cả</button>
+            <button class="fbtn" onclick="filterNews('XAU/USD',this)">⭐ XAU/USD</button>
+            <button class="fbtn" onclick="filterNews('BTC',this)">₿ BTC</button>
+            <button class="fbtn" onclick="filterNews('USD',this)">🇺🇸 USD</button>
+            <button class="fbtn" onclick="filterNews('Fed',this)">🏦 Fed</button>
+            <button class="fbtn" onclick="filterNews('Macro',this)">🌐 Macro</button>
           </div>
-          <div class="cal-list" id="cal-list">
-            <div class="news-loading"><div class="spinner"></div>Đang tải lịch kinh tế...</div>
+          <div id="news-list">
+            <div class="loading"><div class="spinner"></div>Đang tải tin tức...</div>
           </div>
         </div>
       </div>
 
-      <!-- ── CỘT PHẢI: TIN TỨC ─────────────────── -->
-      <div>
-        <div class="section-title">📡 Tin tức thị trường</div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">Forex & Gold News</div>
-            <button class="refresh-btn" onclick="loadNews(this)" id="news-refresh-btn">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-              Làm mới
-            </button>
-          </div>
-          <div class="news-list" id="news-list">
-            <div class="news-loading"><div class="spinner"></div>Đang tải tin tức...</div>
+      <!-- CỘT PHẢI: SENTIMENT + TOP IMPACT -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Market Sentiment -->
+        <div>
+          <div class="section-label">🧭 Tâm lý thị trường</div>
+          <div class="grid-2" style="gap:10px;margin-bottom:0;">
+            <div class="stat-box">
+              <div class="s-label">XAU/USD</div>
+              <div class="s-val" id="sent-xau" style="color:var(--green)">Bullish</div>
+              <div class="s-sub" id="sent-xau-sub">Dựa trên tin tức 24h</div>
+            </div>
+            <div class="stat-box">
+              <div class="s-label">BTC/USD</div>
+              <div class="s-val" id="sent-btc" style="color:var(--yellow)">Neutral</div>
+              <div class="s-sub" id="sent-btc-sub">Cần thêm dữ liệu</div>
+            </div>
+            <div class="stat-box">
+              <div class="s-label">USD Index</div>
+              <div class="s-val" id="sent-usd" style="color:var(--red)">Bearish</div>
+              <div class="s-sub">DXY yếu theo tin Fed</div>
+            </div>
+            <div class="stat-box">
+              <div class="s-label">Risk Mood</div>
+              <div class="s-val" id="sent-risk" style="color:var(--green)">Risk-On</div>
+              <div class="s-sub">Thị trường ưa rủi ro</div>
+            </div>
           </div>
         </div>
-      </div>
 
+        <!-- Tin tác động cao -->
+        <div>
+          <div class="section-label">🔥 Tin tác động cao hôm nay</div>
+          <div class="card">
+            <div id="high-impact-news">
+              <div class="loading"><div class="spinner"></div>Đang phân tích...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sự kiện tiếp theo -->
+        <div>
+          <div class="section-label">⏰ Sự kiện quan trọng tiếp theo</div>
+          <div class="card">
+            <div id="next-event-box" style="padding:16px;">
+              <div class="loading" style="padding:20px 0;">Đang tải...</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
-  <script>
-    // ── DỮ LIỆU LỊCH KINH TẾ (TradingView widget + data tĩnh) ──
-    // Dùng Investing.com economic calendar embed + data thực từ ForexFactory
-    const CALENDAR_DATA = [
-      // Thứ Hai
-      { day: "Thứ Hai 30/06", time: "09:00", flag: "🇪🇺", event: "CPI Flash Estimate (EU) YoY", prev: "Prev: 2.0%", impact: "high" },
-      { day: "Thứ Hai 30/06", time: "15:45", flag: "🇺🇸", event: "Chicago PMI", prev: "Prev: 35.4", impact: "med" },
-      { day: "Thứ Hai 30/06", time: "16:00", flag: "🇺🇸", event: "CB Consumer Confidence", prev: "Prev: 98.0", impact: "high" },
-      // Thứ Ba
-      { day: "Thứ Ba 01/07", time: "15:30", flag: "🇺🇸", event: "ISM Manufacturing PMI", prev: "Prev: 48.5", impact: "high" },
-      { day: "Thứ Ba 01/07", time: "15:30", flag: "🇺🇸", event: "JOLTS Job Openings", prev: "Prev: 7.19M", impact: "high" },
-      { day: "Thứ Ba 01/07", time: "17:00", flag: "🇺🇸", event: "Crude Oil Inventories", prev: "Prev: -3.2M", impact: "med" },
-      // Thứ Tư
-      { day: "Thứ Tư 02/07", time: "15:15", flag: "🇺🇸", event: "ADP Non-Farm Employment", prev: "Prev: 152K", impact: "high" },
-      { day: "Thứ Tư 02/07", time: "21:00", flag: "🇺🇸", event: "FOMC Meeting Minutes", prev: "—", impact: "high" },
-      // Thứ Năm
-      { day: "Thứ Năm 03/07", time: "15:30", flag: "🇺🇸", event: "Initial Jobless Claims", prev: "Prev: 236K", impact: "med" },
-      { day: "Thứ Năm 03/07", time: "15:30", flag: "🇺🇸", event: "Trade Balance", prev: "Prev: -$74.6B", impact: "med" },
-      // Thứ Sáu
-      { day: "Thứ Sáu 04/07", time: "", flag: "🇺🇸", event: "Independence Day (US Market Closed)", prev: "", impact: "low" },
-    ];
+  <!-- ══════════════════════════════════════════════════════
+       TAB 2: LỊCH KINH TẾ
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-calendar">
 
-    const HIGH_IMPACT_EVENTS = CALENDAR_DATA.filter(e => e.impact === "high").map(e => e.event);
+    <div class="alert-banner" id="cal-alert" style="display:none">
+      ⚠️ <strong>Cảnh báo:</strong> <span id="cal-alert-text"></span> — Thận trọng khi giao dịch!
+    </div>
 
-    // ── LỊCH KINH TẾ ────────────────────────────────────────
-    let currentFilter = "all";
-    let calendarLoaded = false;
+    <div class="section-label">📅 Lịch sự kiện kinh tế tuần này</div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-hdr-title">Sự kiện tác động thị trường</div>
+        <button class="refresh-btn" onclick="renderCalendar(currentCalFilter)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          Làm mới
+        </button>
+      </div>
+      <div class="filter-row">
+        <button class="fbtn active" onclick="filterCal('all',this)">Tất cả</button>
+        <button class="fbtn" onclick="filterCal('high',this)">🔴 High Impact</button>
+        <button class="fbtn" onclick="filterCal('med',this)">🟡 Medium</button>
+        <button class="fbtn" onclick="filterCal('usd',this)">🇺🇸 USD</button>
+        <button class="fbtn" onclick="filterCal('xau',this)">⭐ XAU</button>
+      </div>
+      <div id="cal-list">
+        <div class="loading"><div class="spinner"></div>Đang tải lịch kinh tế...</div>
+      </div>
+    </div>
+  </div>
 
-    function loadCalendar(btn) {
-      if (btn) {
-        btn.classList.add('spinning');
-        setTimeout(() => btn.classList.remove('spinning'), 800);
-      }
-      renderCalendar(currentFilter);
-      calendarLoaded = true;
-    }
+  <!-- ══════════════════════════════════════════════════════
+       TAB 3: CẤU TRÚC THỊ TRƯỜNG
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-market">
 
-    function filterCal(type, btn) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = type;
-      renderCalendar(type);
-    }
+    <!-- Symbol selector -->
+    <div class="ms-sym-bar">
+      <button class="ms-sym-btn active" onclick="loadMarketStructure('xauusd','XAU/USD',this)">XAU/USD</button>
+      <button class="ms-sym-btn" onclick="loadMarketStructure('eurusd','EUR/USD',this)">EUR/USD</button>
+      <button class="ms-sym-btn" onclick="loadMarketStructure('btcusd','BTC/USD',this)">BTC/USD</button>
+      <button class="ms-sym-btn" onclick="loadMarketStructure('usoil','US OIL',this)">US OIL</button>
+    </div>
 
-    function renderCalendar(filter) {
-      const list = document.getElementById('cal-list');
-      let data = CALENDAR_DATA;
+    <!-- Stats row -->
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="stat-box">
+        <div class="s-label">Giá hiện tại</div>
+        <div class="s-val gold mono" id="ms-price">—</div>
+        <div class="s-sub" id="ms-spread">Spread: —</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-label">Xu hướng</div>
+        <div class="s-val" id="ms-trend">—</div>
+        <div class="s-sub" id="ms-trend-sub">Chưa phân tích</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-label">Biến động</div>
+        <div class="s-val" id="ms-vol">—</div>
+        <div class="vol-bar"><div class="vol-fill" id="ms-vol-bar" style="width:0%"></div></div>
+      </div>
+      <div class="stat-box">
+        <div class="s-label">Session</div>
+        <div class="s-val" id="ms-session">—</div>
+        <div class="s-sub" id="ms-session-sub">—</div>
+      </div>
+    </div>
 
-      if (filter === 'high') data = data.filter(e => e.impact === 'high');
-      else if (filter === 'med') data = data.filter(e => e.impact === 'med');
-      else if (filter === 'usd') data = data.filter(e => e.flag === '🇺🇸');
-      else if (filter === 'xau') data = data.filter(e =>
-        e.event.toLowerCase().includes('gold') ||
-        e.event.toLowerCase().includes('cpi') ||
-        e.event.toLowerCase().includes('fomc') ||
-        e.event.toLowerCase().includes('nfp') ||
-        e.impact === 'high'
-      );
+    <div class="grid-2" style="margin-bottom:20px;">
 
-      if (!data.length) {
-        list.innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>Không có sự kiện nào</p></div>';
-        return;
-      }
-
-      let html = '';
-      let lastDay = '';
-      data.forEach(item => {
-        if (item.day !== lastDay) {
-          html += `<div class="cal-day-header">${item.day}</div>`;
-          lastDay = item.day;
-        }
-        const impactClass = item.impact === 'high' ? 'impact-high' : item.impact === 'med' ? 'impact-med' : 'impact-low';
-        const impactText  = item.impact === 'high' ? '🔴 High' : item.impact === 'med' ? '🟡 Medium' : '⚪ Low';
-        html += `
-          <div class="cal-item">
-            <div class="cal-time">${item.time || '—'}</div>
-            <div class="cal-flag">${item.flag}</div>
-            <div class="cal-info">
-              <div class="cal-event">${item.event}</div>
-              ${item.prev ? `<div class="cal-prev">${item.prev}</div>` : ''}
-            </div>
-            <div class="cal-impact ${impactClass}">${impactText}</div>
-          </div>`;
-      });
-      list.innerHTML = html;
-
-      // Kiểm tra sự kiện high impact hôm nay
-      checkTodayAlert();
-    }
-
-    function checkTodayAlert() {
-      const today = new Date();
-      const days = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-      const todayStr = days[today.getDay()];
-      const highToday = CALENDAR_DATA.filter(e => e.day.startsWith(todayStr) && e.impact === 'high');
-      if (highToday.length > 0) {
-        document.getElementById('today-alert').style.display = 'flex';
-        document.getElementById('alert-text').textContent =
-          highToday.length + ' sự kiện High Impact hôm nay: ' +
-          highToday.map(e => e.event).join(', ');
-      }
-    }
-
-    // ── TIN TỨC (RSS qua proxy) ──────────────────────────────
-    const NEWS_FEEDS = [
-      // Dùng RSS2JSON để fetch RSS từ các nguồn uy tín
-      { url: "https://www.forexlive.com/feed/news", label: "ForexLive", icon: "📊" },
-      { url: "https://www.dailyfx.com/feeds/all", label: "DailyFX", icon: "📈" },
-    ];
-
-    // Tin tức mẫu (hiển thị khi API không load được)
-    const SAMPLE_NEWS = [
-      { title: "Vàng tăng mạnh vượt 4,080 USD/oz sau dữ liệu kinh tế Mỹ yếu hơn dự kiến", source: "ForexLive", time: "12:30", tag: "XAU/USD", icon: "📊", url: "#" },
-      { title: "Fed giữ lãi suất, USD suy yếu — Cơ hội cho Vàng và các tài sản rủi ro", source: "DailyFX", time: "11:15", tag: "USD", icon: "📈", url: "#" },
-      { title: "Bitcoin vượt 60,000 USD lần đầu tiên trong tuần, dòng tiền ETF tích cực", source: "CoinDesk", time: "10:45", tag: "BTC", icon: "₿", url: "#" },
-      { title: "ISM Manufacturing PMI thấp hơn dự báo, rủi ro suy thoái tăng — Vàng hưởng lợi", source: "Reuters", time: "09:30", tag: "Macro", icon: "🌐", url: "#" },
-      { title: "Căng thẳng địa chính trị Trung Đông leo thang — Vàng được mua vào như tài sản trú ẩn", source: "Bloomberg", time: "08:20", tag: "XAU/USD", icon: "📊", url: "#" },
-      { title: "EUR/USD phục hồi sau dữ liệu CPI Eurozone, thị trường kỳ vọng ECB giảm lãi suất", source: "FXStreet", time: "07:45", tag: "EUR/USD", icon: "💱", url: "#" },
-      { title: "DXY (Dollar Index) giảm 0.3%, tạo đà cho Vàng tiếp tục tăng tuần này", source: "ForexLive", time: "07:00", tag: "USD", icon: "📊", url: "#" },
-      { title: "FOMC Minutes tiết lộ Fed lo ngại lạm phát dai dẳng — ít khả năng cắt lãi suất Q3", source: "DailyFX", time: "Hôm qua", tag: "Fed", icon: "🏦", url: "#" },
-    ];
-
-    async function loadNews(btn) {
-      if (btn) {
-        btn.classList.add('spinning');
-        setTimeout(() => btn.classList.remove('spinning'), 1000);
-      }
-
-      const list = document.getElementById('news-list');
-      list.innerHTML = '<div class="news-loading"><div class="spinner"></div>Đang tải tin tức...</div>';
-
-      // Thử fetch từ RSS qua rss2json API (free tier)
-      try {
-        const API_KEY = ""; // Để trống dùng free tier (10 req/hour)
-        const rssUrl  = encodeURIComponent("https://www.forexlive.com/feed/news");
-        const apiUrl  = `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&count=8${API_KEY ? '&api_key=' + API_KEY : ''}`;
-
-        const res  = await fetch(apiUrl, { signal: AbortSignal.timeout(6000) });
-        const data = await res.json();
-
-        if (data.status === "ok" && data.items && data.items.length > 0) {
-          renderNews(data.items.map(item => ({
-            title:  item.title,
-            source: "ForexLive",
-            time:   timeAgo(new Date(item.pubDate)),
-            tag:    detectTag(item.title),
-            icon:   "📊",
-            url:    item.link,
-          })));
-          return;
-        }
-      } catch (e) {
-        // Timeout hoặc lỗi → dùng sample
-      }
-
-      // Fallback: dùng tin mẫu
-      renderNews(SAMPLE_NEWS);
-    }
-
-    function renderNews(items) {
-      const list = document.getElementById('news-list');
-      if (!items.length) {
-        list.innerHTML = '<div class="empty-state"><div class="icon">📰</div><p>Không có tin tức</p></div>';
-        return;
-      }
-      list.innerHTML = items.map(item => `
-        <a class="news-item" href="${item.url}" target="_blank" rel="noopener">
-          <div class="news-source-badge">${item.icon}</div>
-          <div class="news-body">
-            <div class="news-title">${item.title}</div>
-            <div class="news-meta">
-              <span>${item.source}</span>
-              <span>·</span>
-              <span>${item.time}</span>
-              <span class="news-tag">${item.tag}</span>
-            </div>
+      <!-- Key Levels -->
+      <div>
+        <div class="section-label">🎯 Key Levels (Price Action)</div>
+        <div class="card">
+          <div class="level-row" style="background:rgba(248,113,113,0.04);">
+            <span class="level-label">Kháng cự mạnh (R2)</span>
+            <span class="level-val res" id="ms-r2">—</span>
           </div>
-        </a>`).join('');
-    }
+          <div class="level-row">
+            <span class="level-label">Kháng cự (R1)</span>
+            <span class="level-val res" id="ms-r1">—</span>
+          </div>
+          <div class="level-row" style="background:rgba(201,168,76,0.04);">
+            <span class="level-label">Giá hiện tại</span>
+            <span class="level-val cur" id="ms-cur">—</span>
+          </div>
+          <div class="level-row">
+            <span class="level-label">Hỗ trợ (S1)</span>
+            <span class="level-val sup" id="ms-s1">—</span>
+          </div>
+          <div class="level-row" style="background:rgba(52,211,153,0.04);">
+            <span class="level-label">Hỗ trợ mạnh (S2)</span>
+            <span class="level-val sup" id="ms-s2">—</span>
+          </div>
+        </div>
+      </div>
 
-    function detectTag(title) {
-      const t = title.toLowerCase();
-      if (t.includes('gold') || t.includes('xau') || t.includes('vàng')) return 'XAU/USD';
-      if (t.includes('bitcoin') || t.includes('btc') || t.includes('crypto')) return 'BTC';
-      if (t.includes('eur')) return 'EUR/USD';
-      if (t.includes('fed') || t.includes('fomc')) return 'Fed';
-      if (t.includes('dollar') || t.includes('usd') || t.includes('dxy')) return 'USD';
-      return 'Macro';
-    }
+      <!-- Trading Sessions -->
+      <div>
+        <div class="section-label">🌏 Phiên giao dịch & Thanh khoản</div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="session-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="session-dot" id="dot-sydney"></div>
+              <span style="font-size:.85rem;font-weight:600;">Sydney</span>
+            </div>
+            <span style="font-size:.75rem;color:var(--muted);">22:00 – 07:00 ICT</span>
+            <span class="badge" id="badge-sydney">—</span>
+          </div>
+          <div class="session-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="session-dot" id="dot-tokyo"></div>
+              <span style="font-size:.85rem;font-weight:600;">Tokyo</span>
+            </div>
+            <span style="font-size:.75rem;color:var(--muted);">00:00 – 09:00 ICT</span>
+            <span class="badge" id="badge-tokyo">—</span>
+          </div>
+          <div class="session-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="session-dot" id="dot-london"></div>
+              <span style="font-size:.85rem;font-weight:600;">London</span>
+            </div>
+            <span style="font-size:.75rem;color:var(--muted);">14:00 – 23:00 ICT</span>
+            <span class="badge" id="badge-london">—</span>
+          </div>
+          <div class="session-row">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="session-dot" id="dot-ny"></div>
+              <span style="font-size:.85rem;font-weight:600;">New York</span>
+            </div>
+            <span style="font-size:.75rem;color:var(--muted);">19:30 – 04:30 ICT</span>
+            <span class="badge" id="badge-ny">—</span>
+          </div>
+        </div>
 
-    function timeAgo(date) {
-      const diff = Math.floor((Date.now() - date) / 60000);
-      if (diff < 1)   return 'Vừa xong';
-      if (diff < 60)  return `${diff} phút trước`;
-      if (diff < 1440) return `${Math.floor(diff/60)} giờ trước`;
-      return `${Math.floor(diff/1440)} ngày trước`;
-    }
+        <!-- SMC Bias -->
+        <div class="section-label">⚡ SMC Bias</div>
+        <div class="grid-3" style="gap:10px;">
+          <div class="stat-box" style="padding:12px;text-align:center;">
+            <div class="s-label">HTF Bias</div>
+            <div class="s-val" id="ms-htf" style="font-size:1rem;">—</div>
+          </div>
+          <div class="stat-box" style="padding:12px;text-align:center;">
+            <div class="s-label">Structure</div>
+            <div class="s-val" id="ms-struct" style="font-size:1rem;">—</div>
+          </div>
+          <div class="stat-box" style="padding:12px;text-align:center;">
+            <div class="s-label">Liquidity</div>
+            <div class="s-val" id="ms-liq" style="font-size:1rem;">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    // ── INIT ────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      loadCalendar(null);
-      loadNews(null);
-      // Tự cập nhật tin tức mỗi 5 phút
-      setInterval(() => loadNews(null), 5 * 60 * 1000);
+    <!-- AI Analysis -->
+    <div class="section-label">🤖 Phân tích AI — Cấu trúc thị trường</div>
+    <div class="ai-analysis-box" id="ms-ai-box">
+      <span class="ai-loading">Chọn symbol và nhấn "Phân tích" để nhận đánh giá từ AI...</span>
+    </div>
+    <button class="refresh-btn" onclick="analyzeMarketStructure()" style="margin-top:12px;padding:9px 18px;font-size:0.8125rem;">
+      🤖 Phân tích cấu trúc thị trường
+    </button>
+
+  </div>
+</div>
+
+<script>
+const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+let currentNewsFilter = 'all';
+let currentCalFilter  = 'all';
+let currentMsSymbol   = 'xauusd';
+let currentMsLabel    = 'XAU/USD';
+let allNewsItems      = [];
+
+// ── PAGE TABS ────────────────────────────────────────────
+function switchPTab(tab, el) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  if (tab === 'market' && document.getElementById('ms-price').textContent === '—') {
+    loadMarketStructure('xauusd', 'XAU/USD', document.querySelector('.ms-sym-btn'));
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 1: TIN TỨC
+// ══════════════════════════════════════════════════════════
+
+const SAMPLE_NEWS = [
+  { title: "Vàng tăng mạnh vượt 3,380 USD/oz sau dữ liệu kinh tế Mỹ yếu hơn dự kiến", source: "ForexLive", time: "12:30", tag: "XAU/USD", icon: "📊", url: "#", score: 88 },
+  { title: "Fed giữ lãi suất, USD suy yếu — Cơ hội cho Vàng và các tài sản rủi ro", source: "DailyFX", time: "11:15", tag: "Fed", icon: "🏦", url: "#", score: 82 },
+  { title: "Bitcoin vượt 61,000 USD, dòng tiền ETF tích cực trở lại", source: "CoinDesk", time: "10:45", tag: "BTC", icon: "₿", url: "#", score: 71 },
+  { title: "ISM Manufacturing PMI thấp hơn dự báo — rủi ro suy thoái tăng, Vàng hưởng lợi", source: "Reuters", time: "09:30", tag: "Macro", icon: "🌐", url: "#", score: 76 },
+  { title: "Căng thẳng địa chính trị Trung Đông leo thang — Vàng được mua vào như tài sản trú ẩn", source: "Bloomberg", time: "08:20", tag: "XAU/USD", icon: "📊", url: "#", score: 91 },
+  { title: "EUR/USD phục hồi sau dữ liệu CPI Eurozone, thị trường kỳ vọng ECB giảm lãi suất", source: "FXStreet", time: "07:45", tag: "USD", icon: "💱", url: "#", score: 54 },
+  { title: "DXY giảm 0.3%, tạo đà cho Vàng tiếp tục tăng tuần này", source: "ForexLive", time: "07:00", tag: "USD", icon: "📊", url: "#", score: 68 },
+  { title: "FOMC Minutes: Fed lo ngại lạm phát dai dẳng — ít khả năng cắt lãi suất Q3", source: "DailyFX", time: "Hôm qua", tag: "Fed", icon: "🏦", url: "#", score: 85 },
+];
+
+async function loadNews(btn) {
+  if (btn) { btn.classList.add('spinning'); setTimeout(() => btn.classList.remove('spinning'), 1000); }
+  document.getElementById('news-list').innerHTML = '<div class="loading"><div class="spinner"></div>Đang tải tin tức...</div>';
+  document.getElementById('high-impact-news').innerHTML = '<div class="loading"><div class="spinner"></div>Đang phân tích...</div>';
+
+  try {
+    const rssUrl = encodeURIComponent("https://www.forexlive.com/feed/news");
+    const res    = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&count=10`, { signal: AbortSignal.timeout(6000) });
+    const data   = await res.json();
+    if (data.status === "ok" && data.items?.length) {
+      allNewsItems = data.items.map(item => ({
+        title:  item.title, source: "ForexLive",
+        time:   timeAgo(new Date(item.pubDate)),
+        tag:    detectTag(item.title),
+        icon:   tagIcon(detectTag(item.title)),
+        url:    item.link,
+        score:  scoreNews(item.title),
+      }));
+      renderNews(allNewsItems);
+      renderHighImpact(allNewsItems);
+      updateSentiment(allNewsItems);
+      return;
+    }
+  } catch(e) {}
+
+  allNewsItems = SAMPLE_NEWS;
+  renderNews(allNewsItems);
+  renderHighImpact(allNewsItems);
+  updateSentiment(allNewsItems);
+}
+
+function filterNews(tag, el) {
+  document.querySelectorAll('#panel-news .fbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentNewsFilter = tag;
+  const filtered = tag === 'all' ? allNewsItems : allNewsItems.filter(n => n.tag === tag);
+  renderNews(filtered);
+}
+
+function renderNews(items) {
+  const el = document.getElementById('news-list');
+  if (!items.length) { el.innerHTML = '<div class="loading">Không có tin tức</div>'; return; }
+  el.innerHTML = items.map(item => {
+    const scoreClass = item.score >= 80 ? 'score-high' : item.score >= 60 ? 'score-med' : 'score-low';
+    const scoreLabel = item.score >= 80 ? '🔥 ' + item.score : item.score >= 60 ? '⚡ ' + item.score : '· ' + item.score;
+    return `<a class="news-item" href="${item.url}" target="_blank" rel="noopener">
+      <div class="news-badge">${item.icon}</div>
+      <div style="min-width:0;flex:1;">
+        <div class="news-title">${item.title}</div>
+        <div class="news-meta">
+          <span>${item.source}</span><span>·</span><span>${item.time}</span>
+          <span class="news-tag">${item.tag}</span>
+          <span class="news-score ${scoreClass}">${scoreLabel}</span>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+function renderHighImpact(items) {
+  const high = items.filter(n => n.score >= 80).slice(0, 4);
+  const el   = document.getElementById('high-impact-news');
+  if (!high.length) { el.innerHTML = '<div class="loading" style="padding:20px;">Không có tin tức tác động cao</div>'; return; }
+  el.innerHTML = high.map(item => `
+    <a class="news-item" href="${item.url}" target="_blank" rel="noopener" style="padding:12px 18px;">
+      <div class="news-badge" style="width:30px;height:30px;font-size:.85rem;">${item.icon}</div>
+      <div style="min-width:0;flex:1;">
+        <div class="news-title" style="font-size:.8rem;">${item.title}</div>
+        <div class="news-meta">
+          <span>${item.source}</span><span>·</span><span>${item.time}</span>
+          <span class="news-score score-high">🔥 ${item.score}</span>
+        </div>
+      </div>
+    </a>`).join('');
+}
+
+function updateSentiment(items) {
+  const xauItems = items.filter(n => n.tag === 'XAU/USD');
+  const avgScore = xauItems.length ? xauItems.reduce((s,n) => s+n.score, 0) / xauItems.length : 65;
+  const sentEl   = document.getElementById('sent-xau');
+  const subEl    = document.getElementById('sent-xau-sub');
+  if (avgScore >= 70) { sentEl.textContent = '📈 Bullish'; sentEl.style.color = 'var(--green)'; }
+  else if (avgScore <= 40) { sentEl.textContent = '📉 Bearish'; sentEl.style.color = 'var(--red)'; }
+  else { sentEl.textContent = '➡️ Neutral'; sentEl.style.color = 'var(--yellow)'; }
+  subEl.textContent = `${xauItems.length} tin XAU/USD hôm nay`;
+}
+
+function scoreNews(title) {
+  const t = title.toLowerCase();
+  let score = 50;
+  if (t.includes('gold') || t.includes('xau') || t.includes('vàng')) score += 15;
+  if (t.includes('fed') || t.includes('fomc')) score += 12;
+  if (t.includes('war') || t.includes('conflict') || t.includes('geopolit')) score += 18;
+  if (t.includes('inflation') || t.includes('cpi')) score += 10;
+  if (t.includes('nfp') || t.includes('payroll')) score += 12;
+  if (t.includes('surge') || t.includes('plunge') || t.includes('jump') || t.includes('crash')) score += 8;
+  return Math.min(score, 99);
+}
+
+function detectTag(title) {
+  const t = title.toLowerCase();
+  if (t.includes('gold') || t.includes('xau') || t.includes('vàng')) return 'XAU/USD';
+  if (t.includes('bitcoin') || t.includes('btc') || t.includes('crypto')) return 'BTC';
+  if (t.includes('fed') || t.includes('fomc') || t.includes('powell')) return 'Fed';
+  if (t.includes('dollar') || t.includes('usd') || t.includes('dxy') || t.includes('eur')) return 'USD';
+  return 'Macro';
+}
+
+function tagIcon(tag) {
+  const icons = { 'XAU/USD':'📊', 'BTC':'₿', 'Fed':'🏦', 'USD':'💵', 'Macro':'🌐' };
+  return icons[tag] || '📰';
+}
+
+function timeAgo(date) {
+  const diff = Math.floor((Date.now() - date) / 60000);
+  if (diff < 1)    return 'Vừa xong';
+  if (diff < 60)   return `${diff} phút trước`;
+  if (diff < 1440) return `${Math.floor(diff/60)} giờ trước`;
+  return `${Math.floor(diff/1440)} ngày trước`;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 2: LỊCH KINH TẾ
+// ══════════════════════════════════════════════════════════
+
+const CALENDAR_DATA = [
+  { day:"Thứ Hai 30/06", time:"09:00", flag:"🇪🇺", event:"CPI Flash Estimate (EU) YoY", prev:"Prev: 2.0%", impact:"high" },
+  { day:"Thứ Hai 30/06", time:"15:45", flag:"🇺🇸", event:"Chicago PMI", prev:"Prev: 35.4", impact:"med" },
+  { day:"Thứ Hai 30/06", time:"16:00", flag:"🇺🇸", event:"CB Consumer Confidence", prev:"Prev: 98.0", impact:"high" },
+  { day:"Thứ Ba 01/07", time:"15:30", flag:"🇺🇸", event:"ISM Manufacturing PMI", prev:"Prev: 48.5", impact:"high" },
+  { day:"Thứ Ba 01/07", time:"15:30", flag:"🇺🇸", event:"JOLTS Job Openings", prev:"Prev: 7.19M", impact:"high" },
+  { day:"Thứ Ba 01/07", time:"17:00", flag:"🇺🇸", event:"Crude Oil Inventories", prev:"Prev: -3.2M", impact:"med" },
+  { day:"Thứ Tư 02/07", time:"15:15", flag:"🇺🇸", event:"ADP Non-Farm Employment", prev:"Prev: 152K", impact:"high" },
+  { day:"Thứ Tư 02/07", time:"21:00", flag:"🇺🇸", event:"FOMC Meeting Minutes", prev:"—", impact:"high" },
+  { day:"Thứ Năm 03/07", time:"15:30", flag:"🇺🇸", event:"Initial Jobless Claims", prev:"Prev: 236K", impact:"med" },
+  { day:"Thứ Năm 03/07", time:"15:30", flag:"🇺🇸", event:"Trade Balance", prev:"Prev: -$74.6B", impact:"med" },
+  { day:"Thứ Sáu 04/07", time:"", flag:"🇺🇸", event:"Independence Day (US Market Closed)", prev:"", impact:"low" },
+];
+
+function filterCal(type, el) {
+  document.querySelectorAll('#panel-calendar .fbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentCalFilter = type;
+  renderCalendar(type);
+}
+
+function renderCalendar(filter) {
+  let data = CALENDAR_DATA;
+  if (filter === 'high') data = data.filter(e => e.impact === 'high');
+  else if (filter === 'med')  data = data.filter(e => e.impact === 'med');
+  else if (filter === 'usd')  data = data.filter(e => e.flag === '🇺🇸');
+  else if (filter === 'xau')  data = data.filter(e =>
+    e.event.toLowerCase().includes('gold') || e.event.toLowerCase().includes('cpi') ||
+    e.event.toLowerCase().includes('fomc') || e.event.toLowerCase().includes('nfp') ||
+    e.impact === 'high'
+  );
+
+  const el = document.getElementById('cal-list');
+  if (!data.length) { el.innerHTML = '<div class="loading">Không có sự kiện nào</div>'; return; }
+
+  let html = '', lastDay = '';
+  data.forEach(item => {
+    if (item.day !== lastDay) { html += `<div class="cal-day-hdr">${item.day}</div>`; lastDay = item.day; }
+    const ic = item.impact === 'high' ? 'badge-high' : item.impact === 'med' ? 'badge-med' : 'badge-low';
+    const it = item.impact === 'high' ? '🔴 High' : item.impact === 'med' ? '🟡 Med' : '⚪ Low';
+    html += `<div class="cal-item">
+      <div class="cal-time">${item.time || '—'}</div>
+      <div style="font-size:1.1rem">${item.flag}</div>
+      <div><div class="cal-event">${item.event}</div>${item.prev ? `<div class="cal-prev">${item.prev}</div>` : ''}</div>
+      <div class="badge ${ic}">${it}</div>
+    </div>`;
+  });
+  el.innerHTML = html;
+  checkTodayHighImpact();
+}
+
+function checkTodayHighImpact() {
+  const days = ['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  const todayStr = days[new Date().getDay()];
+  const high = CALENDAR_DATA.filter(e => e.day.startsWith(todayStr) && e.impact === 'high');
+  if (high.length) {
+    const el = document.getElementById('cal-alert');
+    el.style.display = 'flex';
+    document.getElementById('cal-alert-text').textContent = high.length + ' sự kiện High Impact: ' + high.map(e => e.event).join(', ');
+    // Also show on news tab
+    document.getElementById('today-alert').style.display = 'flex';
+    document.getElementById('alert-text').textContent = high.length + ' sự kiện High Impact: ' + high.map(e => e.event).join(', ');
+  }
+  // Next event
+  renderNextEvent();
+}
+
+function renderNextEvent() {
+  const now = new Date();
+  const upcoming = CALENDAR_DATA.filter(e => e.time && e.impact === 'high').find(e => {
+    const [h, m] = e.time.split(':').map(Number);
+    // Simple: treat as today
+    const d = new Date(); d.setHours(h, m, 0, 0);
+    return d > now;
+  });
+  const el = document.getElementById('next-event-box');
+  if (!upcoming) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:.85rem;padding:8px 0;">Không có sự kiện High Impact nào còn lại hôm nay</div>';
+    return;
+  }
+  const [h, m] = upcoming.time.split(':').map(Number);
+  const eventTime = new Date(); eventTime.setHours(h, m, 0, 0);
+  const diffMin = Math.max(0, Math.floor((eventTime - now) / 60000));
+  const hh = Math.floor(diffMin / 60), mm = diffMin % 60;
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <span style="font-size:1.5rem">${upcoming.flag}</span>
+      <div>
+        <div style="font-weight:700;font-size:.9rem;">${upcoming.event}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${upcoming.day} · ${upcoming.time} ICT</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="badge badge-high">🔴 High Impact</span>
+      <span style="font-size:.8rem;color:var(--yellow);">⏱ Còn ${hh > 0 ? hh + 'h ' : ''}${mm}p</span>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 3: CẤU TRÚC THỊ TRƯỜNG
+// ══════════════════════════════════════════════════════════
+
+function loadMarketStructure(sym, label, el) {
+  document.querySelectorAll('.ms-sym-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  currentMsSymbol = sym; currentMsLabel = label;
+
+  // Reset AI box
+  document.getElementById('ms-ai-box').innerHTML = '<span class="ai-loading">Nhấn "Phân tích" để nhận đánh giá AI...</span>';
+
+  // Load realtime prices
+  fetch(API + '/prices')
+    .then(r => r.json())
+    .then(data => {
+      const price = data[sym];
+      if (price) {
+        document.getElementById('ms-price').textContent = price.toFixed(sym === 'btcusd' ? 0 : 2);
+        document.getElementById('ms-cur').textContent   = price.toFixed(sym === 'btcusd' ? 0 : 2);
+        updateKeyLevels(sym, price);
+        updateVolatility(sym, price);
+      }
+    })
+    .catch(() => {
+      document.getElementById('ms-price').textContent = 'Offline';
     });
-  </script>
 
+  updateSessions();
+  updateSMCBias(sym);
+}
+
+function updateKeyLevels(sym, price) {
+  // Tính key levels động từ giá hiện tại (pivot points đơn giản)
+  const isGold = sym === 'xauusd';
+  const isBtc  = sym === 'btcusd';
+  const step   = isGold ? price * 0.003 : isBtc ? price * 0.015 : price * 0.004;
+
+  const r2 = (price + step * 2).toFixed(isGold ? 2 : isBtc ? 0 : 4);
+  const r1 = (price + step).toFixed(isGold ? 2 : isBtc ? 0 : 4);
+  const s1 = (price - step).toFixed(isGold ? 2 : isBtc ? 0 : 4);
+  const s2 = (price - step * 2).toFixed(isGold ? 2 : isBtc ? 0 : 4);
+
+  document.getElementById('ms-r2').textContent = r2;
+  document.getElementById('ms-r1').textContent = r1;
+  document.getElementById('ms-s1').textContent = s1;
+  document.getElementById('ms-s2').textContent = s2;
+}
+
+function updateVolatility(sym, price) {
+  // Fake volatility dựa theo session
+  const hour = new Date().getHours();
+  let vol = 'Thấp', pct = 25;
+  if (hour >= 14 && hour <= 16) { vol = 'Rất cao'; pct = 90; } // London open
+  else if (hour >= 19 && hour <= 22) { vol = 'Cao'; pct = 75; } // NY open
+  else if (hour >= 1 && hour <= 8) { vol = 'Trung bình'; pct = 45; } // Asia
+  document.getElementById('ms-vol').textContent = vol;
+  document.getElementById('ms-vol-bar').style.width = pct + '%';
+}
+
+function updateSessions() {
+  const now = new Date();
+  const h   = now.getHours();
+  const m   = now.getMinutes();
+  const t   = h * 60 + m; // minutes since midnight ICT
+
+  const sessions = {
+    sydney:  { start: 22*60, end: 7*60,   el: 'sydney' },
+    tokyo:   { start: 0,     end: 9*60,   el: 'tokyo'  },
+    london:  { start: 14*60, end: 23*60,  el: 'london' },
+    ny:      { start: 19*60+30, end: 28*60+30, el: 'ny' },
+  };
+
+  let activeSessions = [];
+  Object.entries(sessions).forEach(([name, s]) => {
+    let active = false;
+    if (s.end > s.start) active = t >= s.start && t < s.end;
+    else active = t >= s.start || t < s.end; // overnight
+
+    const dot  = document.getElementById('dot-' + s.el);
+    const badge = document.getElementById('badge-' + s.el);
+    if (active) {
+      dot.className = 'session-dot dot-active';
+      badge.className = 'badge badge-bull';
+      badge.textContent = '● Đang mở';
+      activeSessions.push(name.charAt(0).toUpperCase() + name.slice(1));
+    } else {
+      dot.className = 'session-dot dot-inactive';
+      badge.className = 'badge badge-low';
+      badge.textContent = '○ Đóng';
+    }
+  });
+
+  const sessionEl = document.getElementById('ms-session');
+  const sessionSub = document.getElementById('ms-session-sub');
+  if (activeSessions.length) {
+    sessionEl.textContent = activeSessions.join(' + ');
+    sessionEl.style.color = 'var(--green)';
+    sessionSub.textContent = 'Thanh khoản đang cao';
+  } else {
+    sessionEl.textContent = 'Closed';
+    sessionEl.style.color = 'var(--muted)';
+    sessionSub.textContent = 'Ngoài giờ giao dịch';
+  }
+}
+
+function updateSMCBias(sym) {
+  // Bias đơn giản dựa theo giờ + symbol
+  const biases = {
+    xauusd: { htf: '📈 Bullish', struct: 'BOS ↑', liq: 'BSL Above' },
+    eurusd: { htf: '📉 Bearish', struct: 'CHoCH', liq: 'SSL Below' },
+    btcusd: { htf: '➡️ Neutral', struct: 'Range', liq: 'Equal Hi/Lo' },
+    usoil:  { htf: '📉 Bearish', struct: 'BOS ↓', liq: 'SSL Below' },
+  };
+  const b = biases[sym] || biases.xauusd;
+  document.getElementById('ms-htf').textContent    = b.htf;
+  document.getElementById('ms-struct').textContent = b.struct;
+  document.getElementById('ms-liq').textContent    = b.liq;
+
+  const trendEl  = document.getElementById('ms-trend');
+  const trendSub = document.getElementById('ms-trend-sub');
+  if (b.htf.includes('Bullish')) { trendEl.textContent = '📈 Tăng'; trendEl.style.color = 'var(--green)'; trendSub.textContent = 'Higher Highs / Higher Lows'; }
+  else if (b.htf.includes('Bearish')) { trendEl.textContent = '📉 Giảm'; trendEl.style.color = 'var(--red)'; trendSub.textContent = 'Lower Highs / Lower Lows'; }
+  else { trendEl.textContent = '➡️ Sideways'; trendEl.style.color = 'var(--yellow)'; trendSub.textContent = 'Tích lũy / Range'; }
+}
+
+async function analyzeMarketStructure() {
+  const box = document.getElementById('ms-ai-box');
+  box.innerHTML = '<span class="ai-loading">🤖 AI đang phân tích cấu trúc ' + currentMsLabel + '...</span>';
+
+  const price = document.getElementById('ms-price').textContent;
+  const r1 = document.getElementById('ms-r1').textContent;
+  const s1 = document.getElementById('ms-s1').textContent;
+  const trend = document.getElementById('ms-trend').textContent;
+  const struct = document.getElementById('ms-struct').textContent;
+
+  try {
+    const res = await fetch(API + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Phân tích cấu trúc thị trường ${currentMsLabel}: Giá=${price}, Xu hướng=${trend}, Cấu trúc=${struct}, Kháng cự R1=${r1}, Hỗ trợ S1=${s1}. Đưa ra nhận định Price Action & SMC ngắn gọn trong 80 từ tiếng Việt.`
+        }]
+      }),
+      signal: AbortSignal.timeout(15000)
+    });
+    const data = await res.json();
+    box.innerHTML = data.reply || 'Không nhận được phân tích.';
+  } catch(e) {
+    box.innerHTML = `📊 <strong>${currentMsLabel}</strong> đang giao dịch tại ${price}. Xu hướng ${trend} với cấu trúc ${struct}. Kháng cự gần nhất tại ${r1}, hỗ trợ tại ${s1}. Theo dõi price action tại các vùng key level để tìm điểm vào lệnh chất lượng cao.`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  loadNews(null);
+  renderCalendar('all');
+  setInterval(() => loadNews(null), 5 * 60 * 1000);
+  setInterval(() => { if (document.getElementById('ms-price').textContent !== '—') updateSessions(); }, 60000);
+});
+</script>
 </body>
 </html>

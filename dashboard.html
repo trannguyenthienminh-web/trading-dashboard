@@ -423,8 +423,6 @@
     <button class="nav-tab active" onclick="switchTab('chart')">📈 Biểu đồ</button>
     <button class="nav-tab" onclick="switchTab('signals')">🔔 Tín hiệu</button>
     <button class="nav-tab" onclick="switchTab('history')">📋 Lịch sử</button>
-    <a class="nav-tab" href="ai-chat.html">🤖 AI Chat</a>
-    <a class="nav-tab" href="news.html">📰 Tin tức</a>
   </div>
   <div class="nav-right">
     <span class="nav-user" id="navUser"></span>
@@ -553,7 +551,7 @@
 <script>
 // ── CONFIG ──────────────────────────────────────────────
 // Thay URL này sau khi chạy ngrok
-const API_BASE = localStorage.getItem('apiBase') || 'http://localhost:8000';
+const API_BASE = 'https://trading-proxy.trannguyenthienminh.workers.dev';
 
 // ── AUTH ────────────────────────────────────────────────
 const user = sessionStorage.getItem('user');

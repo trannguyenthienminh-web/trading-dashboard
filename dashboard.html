@@ -416,11 +416,78 @@
   }
 
   /* ── RESPONSIVE ── */
+  /* ── MOBILE RESPONSIVE ── */
   @media (max-width: 768px) {
-    #tab-chart { flex-direction: column; }
-    .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); max-height: 300px; }
-    .history-stats { grid-template-columns: repeat(2, 1fr); }
+    /* Nav top - ẩn tabs, chỉ giữ logo + right */
+    nav { padding: 0 16px; height: 52px; }
     .nav-tabs { display: none; }
+    .nav-logo { font-size: 13px; }
+    .nav-logo-mark { width: 28px; height: 28px; font-size: 11px; }
+    .btn-ea { display: none; }
+    .nav-user { display: none; }
+    .btn-logout { font-size: 11px; padding: 5px 10px; }
+
+    /* Bottom navigation bar */
+    .mobile-nav {
+      display: flex !important;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+    }
+    .mobile-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px; padding: 4px 2px;
+      font-size: 9px; color: var(--muted);
+      cursor: pointer; border: none; background: none;
+      transition: color 0.15s; font-family: 'Space Grotesk', sans-serif;
+      text-decoration: none;
+    }
+    .mobile-nav-item .mn-icon { font-size: 18px; line-height: 1; }
+    .mobile-nav-item.active { color: var(--gold); }
+    .mobile-nav-item:hover { color: var(--text); }
+
+    /* Main content padding for bottom nav */
+    #main { padding-bottom: 70px; }
+
+    /* Symbol bar */
+    .sym-bar { padding: 8px 12px; gap: 6px; }
+    .sym-btn { padding: 5px 12px; font-size: 11px; }
+
+    /* Chart tab layout */
+    #tab-chart { flex-direction: column; }
+    .sidebar {
+      width: 100%; border-left: none;
+      border-top: 1px solid var(--border);
+      max-height: 280px; overflow-y: auto;
+    }
+
+    /* Stats grid */
+    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .stat-card { padding: 12px !important; }
+    .stat-card .stat-val { font-size: 1.3rem !important; }
+
+    /* History */
+    .history-stats { grid-template-columns: repeat(2, 1fr); }
+
+    /* Signals table */
+    .signals-table { font-size: 11px; }
+    .signals-table th, .signals-table td { padding: 8px 6px; }
+
+    /* Tab content padding */
+    .tab-content { padding: 12px !important; }
+
+    /* Market tab */
+    .market-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Bottom nav - hidden on desktop */
+  .mobile-nav { display: none; }
+
+  /* iPhone safe area */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .mobile-nav { padding-bottom: max(6px, env(safe-area-inset-bottom)); }
   }
 </style>
 </head>
@@ -445,6 +512,28 @@
     <button class="btn-logout" onclick="logout()">Đăng xuất</button>
   </div>
 </nav>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-item active" id="mn-chart" onclick="switchTab('chart');setMobileNav('chart')">
+    <span class="mn-icon">📈</span>Biểu đồ
+  </button>
+  <button class="mobile-nav-item" id="mn-signals" onclick="switchTab('signals');setMobileNav('signals')">
+    <span class="mn-icon">🔔</span>Tín hiệu
+  </button>
+  <button class="mobile-nav-item" id="mn-market" onclick="switchTab('market');setMobileNav('market')">
+    <span class="mn-icon">🏛</span>Thị trường
+  </button>
+  <button class="mobile-nav-item" id="mn-history" onclick="switchTab('history');setMobileNav('history')">
+    <span class="mn-icon">📋</span>Lịch sử
+  </button>
+  <a class="mobile-nav-item" href="ai-chat.html">
+    <span class="mn-icon">🤖</span>AI Chat
+  </a>
+  <button class="mobile-nav-item" id="mn-news" onclick="switchTab('news');setMobileNav('news')">
+    <span class="mn-icon">📰</span>Tin tức
+  </button>
+</div>
 
 <!-- SYMBOL BAR -->
 <div class="sym-bar">
@@ -624,11 +713,18 @@ function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
-
+  const navBtn = document.querySelector(`.nav-tab[onclick*="'${name}'"]`);
+  if (navBtn) navBtn.classList.add('active');
+  setMobileNav(name);
   if (name === 'signals') loadOpenSignals();
   if (name === 'history') loadHistory();
   if (name === 'market')  loadMarket(currentMktSymbol, currentMktLabel, null);
+}
+
+function setMobileNav(name) {
+  document.querySelectorAll('.mobile-nav-item').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('mn-' + name);
+  if (el) el.classList.add('active');
 }
 
 // ── SYMBOL CHANGE ───────────────────────────────────────

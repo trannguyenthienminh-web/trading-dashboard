@@ -422,10 +422,10 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchTab('chart')">📈 Biểu đồ</button>
     <button class="nav-tab" onclick="switchTab('signals')">🔔 Tín hiệu</button>
+    <button class="nav-tab" onclick="switchTab('market')">🏛 Thị trường</button>
     <button class="nav-tab" onclick="switchTab('history')">📋 Lịch sử</button>
     <a class="nav-tab" href="ai-chat.html">🤖 AI Chat</a>
     <a class="nav-tab" href="news.html">📰 Tin tức</a>
-  </div>
   <div class="nav-right">
     <span class="nav-user" id="navUser"></span>
     <button class="btn-logout" onclick="logout()">Đăng xuất</button>
@@ -495,6 +495,41 @@
     <p class="page-title">Tín hiệu đang mở</p>
     <div class="signals-grid" id="openSignalsGrid">
       <div class="loading"><div class="spinner"></div> Đang tải...</div>
+    </div>
+  </div>
+
+  <!-- TAB: MARKET STRUCTURE -->
+  <div class="tab-content" id="tab-market">
+    <p class="page-title">🏛 Cấu trúc thị trường</p>
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="sym-btn active" onclick="loadMarket('XAUUSDs','XAU/USD',this)">XAU/USD</button>
+      <button class="sym-btn" onclick="loadMarket('EURUSDs','EUR/USD',this)">EUR/USD</button>
+      <button class="sym-btn" onclick="loadMarket('BTCUSDs','BTC/USD',this)">BTC/USD</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      <div class="stat-box" style="padding:16px;"><div class="s-label">Giá hiện tại</div><div class="s-val gold" id="mkt-price">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label">Xu hướng</div><div class="s-val" id="mkt-trend">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label">Spread</div><div class="s-val" id="mkt-spread">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label">Biến động</div><div class="s-val" id="mkt-vol">—</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">📍 Vùng giá quan trọng</div>
+        <div id="mkt-levels"><div class="loading"><div class="spinner"></div>Đang tải...</div></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">🕐 Phiên giao dịch</div>
+        <div id="mkt-session"></div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);">
+        <div style="font-size:14px;font-weight:700;">⚡ Phân tích AI — Cấu trúc thị trường</div>
+        <button onclick="refreshMarketAI()" style="padding:5px 14px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);border-radius:6px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 Phân tích lại</button>
+      </div>
+      <div id="mkt-ai" style="padding:20px;font-size:14px;line-height:1.75;color:#ccc;min-height:100px;">
+        <div class="loading"><div class="spinner"></div>Đang tải phân tích AI...</div>
+      </div>
     </div>
   </div>
 
@@ -574,6 +609,7 @@ function switchTab(name) {
 
   if (name === 'signals') loadOpenSignals();
   if (name === 'history') loadHistory();
+  if (name === 'market')  loadMarket(currentMktSymbol, currentMktLabel, null);
 }
 
 // ── SYMBOL CHANGE ───────────────────────────────────────
@@ -740,6 +776,146 @@ async function loadHistory() {
       <td class="td-mono" style="color:var(--green)">${s.tp1}</td>
       <td>${badgeMap[s.status] ?? s.status}</td>
     </tr>`).join('');
+}
+
+// ── MARKET STRUCTURE ─────────────────────────────────────
+let currentMktSymbol = 'XAUUSDs';
+let currentMktLabel  = 'XAU/USD';
+
+async function loadMarket(symbol, label, btn) {
+  // Update active button
+  if (btn) {
+    document.querySelectorAll('#tab-market .sym-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  currentMktSymbol = symbol;
+  currentMktLabel  = label;
+
+  // Reset
+  document.getElementById('mkt-price').textContent  = '—';
+  document.getElementById('mkt-trend').textContent  = '—';
+  document.getElementById('mkt-spread').textContent = '—';
+  document.getElementById('mkt-vol').textContent    = '—';
+  document.getElementById('mkt-levels').innerHTML   = '<div class="loading"><div class="spinner"></div>Đang tải...</div>';
+  document.getElementById('mkt-ai').innerHTML       = '<div class="loading"><div class="spinner"></div>Đang phân tích AI...</div>';
+
+  // Lấy giá từ /prices
+  try {
+    const res    = await fetch(API_BASE + '/prices');
+    const prices = await res.json();
+    const keyMap = { 'XAUUSDs':'xauusd', 'EURUSDs':'eurusd', 'BTCUSDs':'btcusd' };
+    const key    = keyMap[symbol];
+    if (prices[key]) {
+      const price = Number(prices[key]);
+      document.getElementById('mkt-price').textContent = price.toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+
+      // Tính key levels đơn giản
+      const step = symbol === 'XAUUSDs' ? 20 : symbol === 'BTCUSDs' ? 1000 : 0.005;
+      const r1 = (Math.ceil(price / step) * step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+      const r2 = (Math.ceil(price / step) * step + step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+      const s1 = (Math.floor(price / step) * step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+      const s2 = (Math.floor(price / step) * step - step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+
+      document.getElementById('mkt-levels').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:6px;">
+            <span style="font-size:12px;color:var(--muted);">Resistance 2</span>
+            <span style="font-family:monospace;color:var(--red);font-weight:600;">${r2}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(231,76,60,0.05);border:1px solid rgba(231,76,60,0.15);border-radius:6px;">
+            <span style="font-size:12px;color:var(--muted);">Resistance 1</span>
+            <span style="font-family:monospace;color:var(--red);font-weight:600;">${r1}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.3);border-radius:6px;">
+            <span style="font-size:12px;color:var(--gold);font-weight:600;">● Giá hiện tại</span>
+            <span style="font-family:monospace;color:var(--gold);font-weight:700;">${price.toFixed(symbol==='BTCUSDs'?0:2)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.15);border-radius:6px;">
+            <span style="font-size:12px;color:var(--muted);">Support 1</span>
+            <span style="font-family:monospace;color:var(--green);font-weight:600;">${s1}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.2);border-radius:6px;">
+            <span style="font-size:12px;color:var(--muted);">Support 2</span>
+            <span style="font-family:monospace;color:var(--green);font-weight:600;">${s2}</span>
+          </div>
+        </div>`;
+
+      if (prices.spread_xau) {
+        document.getElementById('mkt-spread').textContent = prices.spread_xau;
+      }
+    }
+  } catch(e) {}
+
+  // Phiên giao dịch
+  renderSession();
+
+  // Gọi AI phân tích
+  await refreshMarketAI();
+}
+
+function renderSession() {
+  const now  = new Date();
+  const hour = now.getUTCHours(); // UTC
+  const sessions = [
+    { name: 'Sydney',   open: 21, close: 6,  tz: 'UTC+10' },
+    { name: 'Tokyo',    open: 23, close: 8,  tz: 'UTC+9'  },
+    { name: 'London',   open: 7,  close: 16, tz: 'UTC+1'  },
+    { name: 'New York', open: 12, close: 21, tz: 'UTC-4'  },
+  ];
+  const html = sessions.map(s => {
+    const isOpen = s.open < s.close
+      ? (hour >= s.open && hour < s.close)
+      : (hour >= s.open || hour < s.close);
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:13px;font-weight:600;">${s.name}</div>
+          <div style="font-size:11px;color:var(--muted);">${s.tz} · ${s.open}:00–${s.close}:00 UTC</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;
+          ${isOpen ? 'background:rgba(46,204,113,0.12);color:var(--green);border:1px solid rgba(46,204,113,0.3);'
+                   : 'background:rgba(107,112,128,0.1);color:var(--muted);border:1px solid var(--border);'}">
+          ${isOpen ? '● Đang mở' : '○ Đã đóng'}
+        </span>
+      </div>`;
+  }).join('');
+  document.getElementById('mkt-session').innerHTML = html;
+}
+
+async function refreshMarketAI() {
+  const el = document.getElementById('mkt-ai');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div>Đang phân tích AI...</div>';
+
+  try {
+    const pricesRes = await fetch(API_BASE + '/prices');
+    const prices    = await pricesRes.json();
+    const keyMap    = { 'XAUUSDs':'xauusd', 'EURUSDs':'eurusd', 'BTCUSDs':'btcusd' };
+    const price     = prices[keyMap[currentMktSymbol]] ?? 'N/A';
+
+    const res  = await fetch(API_BASE + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Phân tích cấu trúc thị trường ${currentMktLabel} tại giá ${price}. 
+Bao gồm: (1) Xu hướng tổng thể H4/H1, (2) Cấu trúc SMC: BOS/CHOCH gần nhất, 
+(3) Vùng Order Block/FVG quan trọng, (4) Kịch bản giao dịch ưu tiên hôm nay.
+Trả lời ngắn gọn dưới 200 từ, tiếng Việt, dùng emoji.`
+        }]
+      }),
+      signal: AbortSignal.timeout(30000)
+    });
+
+    const data  = await res.json();
+    const reply = data.reply ?? 'Không nhận được phản hồi từ AI.';
+    el.innerHTML = reply
+      .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--gold)">$1</strong>')
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--red)">⚠️ Không kết nối được AI. Đảm bảo START_BOT.bat đang chạy.</span>';
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────────

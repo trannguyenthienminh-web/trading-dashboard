@@ -71,6 +71,19 @@
   .nav-right {
     display: flex; align-items: center; gap: 12px;
   }
+  .btn-ea {
+    padding: 6px 14px;
+    border: 1px solid rgba(245,200,66,0.4);
+    border-radius: 6px;
+    font-size: 12px; color: var(--gold);
+    cursor: pointer; background: rgba(245,200,66,0.06);
+    transition: all 0.15s;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .btn-ea:hover { background: rgba(245,200,66,0.14); border-color: var(--gold); }
   .nav-user {
     font-size: 13px; color: var(--muted);
   }
@@ -427,6 +440,7 @@
     <a class="nav-tab" href="ai-chat.html">🤖 AI Chat</a>
     <a class="nav-tab" href="news.html">📰 Tin tức</a>
   <div class="nav-right">
+    <a href="register.html" target="_blank" class="btn-ea">🤖 Đăng ký EA</a>
     <span class="nav-user" id="navUser"></span>
     <button class="btn-logout" onclick="logout()">Đăng xuất</button>
   </div>

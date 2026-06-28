@@ -447,7 +447,15 @@
     document.getElementById('rental-fields').style.display = plan === 'rental' ? 'block' : 'none';
     document.getElementById('plan-info').innerHTML = plan === 'ib'
       ? '✅ Bạn đang đăng ký gói <strong>IB Free</strong> — miễn phí khi mở tài khoản qua link IB'
-      : '💳 Bạn đang đăng ký gói <strong>Thuê EA $30/tháng</strong> — điền thông tin và thanh toán bên dưới';
+      : `💳 Bạn đang đăng ký gói <strong>Thuê EA $30/tháng</strong><br><br>
+         <div style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:12px 14px;margin-top:8px;">
+           ⚠️ <strong style="color:#C9A84C;">Làm NGAY trước khi điền form:</strong><br>
+           <span style="font-size:0.85rem;">Nhắn <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">/start</code> cho bot để nhận key tự động sau khi thanh toán</span><br>
+           <a href="https://t.me/mygroup_signal_bot" target="_blank"
+              style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;background:#C9A84C;color:#000;border-radius:6px;font-weight:700;font-size:0.825rem;text-decoration:none;">
+             ✈ Nhắn /start cho Bot ngay
+           </a>
+         </div>`;
     // Hide payment section nếu đổi gói
     hidePayment();
   }

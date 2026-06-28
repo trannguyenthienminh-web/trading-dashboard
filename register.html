@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký EA SmartGold — Trading AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090909; --surface: #111111; --card: #181818;
+    --border: #252525; --gold: #C9A84C; --white: #F5F5F5;
+    --muted: #888; --green: #34D399; --red: #F87171;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--white); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 56px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  .logo { font-weight: 700; font-size: 1rem; }
+  .logo span { color: var(--gold); }
+
+  .hero {
+    text-align: center; padding: 60px 20px 40px;
+    background: linear-gradient(180deg, rgba(201,168,76,0.05) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 { font-size: clamp(1.5rem,4vw,2.5rem); font-weight: 700; margin-bottom: 12px; }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: var(--muted); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
+
+  .plans {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    max-width: 700px; margin: 0 auto 40px;
+  }
+  .plan-card {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: 14px; padding: 24px; cursor: pointer;
+    transition: all 0.2s; position: relative;
+  }
+  .plan-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+  .plan-card:hover { border-color: #555; }
+  .plan-badge {
+    position: absolute; top: -10px; right: 16px;
+    background: var(--gold); color: #000;
+    font-size: 0.6875rem; font-weight: 700;
+    padding: 2px 10px; border-radius: 100px;
+  }
+  .plan-name { font-size: 1.125rem; font-weight: 700; margin-bottom: 6px; }
+  .plan-price { font-size: 1.5rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+  .plan-price span { font-size: 0.875rem; color: var(--muted); font-weight: 400; }
+  .plan-desc { font-size: 0.8125rem; color: var(--muted); line-height: 1.6; }
+  .plan-features { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .plan-feat { font-size: 0.8125rem; display: flex; gap: 8px; align-items: flex-start; }
+  .plan-feat::before { content: '✓'; color: var(--green); flex-shrink: 0; font-weight: 700; }
+
+  .form-wrap { max-width: 540px; margin: 0 auto; padding: 0 20px 60px; }
+  .form-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+  .form-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 24px; }
+
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 11px 14px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--white);
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.9375rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+  .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+  .field select option { background: var(--surface); }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field-hint { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+
+  .plan-selected-info {
+    padding: 12px 16px;
+    background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px; font-size: 0.875rem; margin-bottom: 20px;
+  }
+
+  .btn-submit {
+    width: 100%; padding: 14px;
+    background: var(--gold); color: #000;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: opacity 0.2s; margin-top: 8px;
+  }
+  .btn-submit:hover { opacity: 0.88; }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .success-msg {
+    display: none; padding: 20px;
+    background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.25);
+    border-radius: 10px; text-align: center; margin-top: 16px;
+  }
+  .success-msg.show { display: block; }
+  .success-msg h3 { color: var(--green); margin-bottom: 8px; }
+  .success-msg p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+  .err-msg {
+    display: none; padding: 12px 16px;
+    background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25);
+    border-radius: 8px; font-size: 0.875rem; color: var(--red); margin-bottom: 14px;
+  }
+  .err-msg.show { display: block; }
+
+  @media(max-width:600px) { .plans { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Trading<span>AI</span></div>
+  <a href="/" style="font-size:.875rem;color:var(--muted);">← Trang chủ</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Đăng ký <span>SmartGold EA</span></h1>
+  <p>EA giao dịch Vàng tự động — Recovery + Hedge thông minh. Chọn gói phù hợp với bạn.</p>
+
+  <!-- PLANS -->
+  <div class="plans">
+    <div class="plan-card selected" onclick="selectPlan('ib', this)" id="plan-ib">
+      <div class="plan-badge">⭐ KHUYẾN NGHỊ</div>
+      <div class="plan-name">IB Free</div>
+      <div class="plan-price">Miễn phí <span>/ mãi mãi</span></div>
+      <div class="plan-desc">Đăng ký tài khoản môi giới qua link IB của chúng tôi</div>
+      <div class="plan-features">
+        <div class="plan-feat">Toàn bộ tính năng EA</div>
+        <div class="plan-feat">Cập nhật miễn phí vĩnh viễn</div>
+        <div class="plan-feat">Hỗ trợ qua Telegram</div>
+        <div class="plan-feat">Yêu cầu: mở tài khoản qua link IB</div>
+      </div>
+    </div>
+    <div class="plan-card" onclick="selectPlan('rental', this)" id="plan-rental">
+      <div class="plan-name">Thuê EA</div>
+      <div class="plan-price">$30 <span>/ tháng</span></div>
+      <div class="plan-desc">Dùng tài khoản bất kỳ, trả phí hàng tháng</div>
+      <div class="plan-features">
+        <div class="plan-feat">Toàn bộ tính năng EA</div>
+        <div class="plan-feat">Cập nhật trong thời gian thuê</div>
+        <div class="plan-feat">Hỗ trợ qua Telegram</div>
+        <div class="plan-feat">Gia hạn hàng tháng</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="form-title">📝 Thông tin đăng ký</div>
+
+    <div class="plan-selected-info" id="plan-info">
+      ✅ Bạn đang đăng ký gói <strong>IB Free</strong> — miễn phí khi mở tài khoản qua link IB
+    </div>
+
+    <div class="err-msg" id="err-msg"></div>
+
+    <div class="field">
+      <label>Họ và tên</label>
+      <input type="text" id="f-name" placeholder="Nguyễn Văn A" />
+    </div>
+    <div class="field">
+      <label>Telegram username</label>
+      <input type="text" id="f-telegram" placeholder="@username" />
+      <div class="field-hint">Mình sẽ liên hệ qua Telegram để gửi key</div>
+    </div>
+    <div class="field">
+      <label>Số tài khoản MT5</label>
+      <input type="number" id="f-account" placeholder="700332" />
+      <div class="field-hint">Key sẽ được gắn với số tài khoản này</div>
+    </div>
+    <div class="field">
+      <label>Broker</label>
+      <select id="f-broker">
+        <option value="CXM Direct">CXM Direct LLC</option>
+        <option value="Exness">Exness</option>
+        <option value="ICMarkets">IC Markets</option>
+        <option value="FBS">FBS</option>
+        <option value="XM">XM</option>
+        <option value="other">Khác</option>
+      </select>
+    </div>
+
+    <!-- IB fields -->
+    <div id="ib-fields">
+      <div class="field">
+        <label>Link IB bạn đã dùng để mở tài khoản</label>
+        <input type="text" id="f-ib-link" placeholder="https://..." />
+        <div class="field-hint">Copy link từ email xác nhận của broker, hoặc hỏi admin</div>
+      </div>
+    </div>
+
+    <!-- Rental fields -->
+    <div id="rental-fields" style="display:none">
+      <div class="field">
+        <label>Ghi chú / Mã chuyển khoản</label>
+        <textarea id="f-payment" placeholder="Nhập mã giao dịch sau khi chuyển khoản $30..."></textarea>
+        <div class="field-hint">Chuyển khoản theo hướng dẫn của admin trước, sau đó điền mã vào đây</div>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitForm()" id="btn-submit">
+      Gửi đăng ký →
+    </button>
+
+    <div class="success-msg" id="success-msg">
+      <h3>✅ Đăng ký thành công!</h3>
+      <p>Chúng tôi đã nhận được yêu cầu của bạn.<br>
+      Admin sẽ xem xét và gửi License Key qua Telegram trong vòng <strong>24 giờ</strong>.<br><br>
+      Trong lúc chờ, bạn có thể tham gia group Telegram để theo dõi tín hiệu giao dịch!</p>
+      <a href="https://t.me/YOUR_GROUP" target="_blank"
+         style="display:inline-block;margin-top:16px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;">
+        ✈ Vào Telegram Group
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+  let selectedPlan = 'ib';
+
+  function selectPlan(plan, el) {
+    selectedPlan = plan;
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('ib-fields').style.display     = plan === 'ib'     ? 'block' : 'none';
+    document.getElementById('rental-fields').style.display = plan === 'rental' ? 'block' : 'none';
+    document.getElementById('plan-info').innerHTML = plan === 'ib'
+      ? '✅ Bạn đang đăng ký gói <strong>IB Free</strong> — miễn phí khi mở tài khoản qua link IB'
+      : '💳 Bạn đang đăng ký gói <strong>Thuê EA $30/tháng</strong> — liên hệ admin để chuyển khoản';
+  }
+
+  async function submitForm() {
+    const name     = document.getElementById('f-name').value.trim();
+    const telegram = document.getElementById('f-telegram').value.trim();
+    const account  = document.getElementById('f-account').value.trim();
+    const broker   = document.getElementById('f-broker').value;
+    const errEl    = document.getElementById('err-msg');
+
+    errEl.classList.remove('show');
+
+    if (!name || !telegram || !account) {
+      errEl.textContent = '⚠️ Vui lòng điền đầy đủ: Họ tên, Telegram, Số tài khoản MT5';
+      errEl.classList.add('show');
+      return;
+    }
+
+    const payload = {
+      name, telegram, account: parseInt(account), broker,
+      plan: selectedPlan,
+      ib_link:      selectedPlan === 'ib'     ? document.getElementById('f-ib-link').value.trim() : '',
+      payment_note: selectedPlan === 'rental' ? document.getElementById('f-payment').value.trim() : '',
+    };
+
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.textContent = 'Đang gửi...';
+
+    try {
+      const res = await fetch(API + '/api/license/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10000),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        document.getElementById('success-msg').classList.add('show');
+        btn.style.display = 'none';
+      } else {
+        errEl.textContent = data.error || 'Lỗi gửi đăng ký. Vui lòng thử lại.';
+        errEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Gửi đăng ký →';
+      }
+    } catch(e) {
+      errEl.textContent = '⚠️ Không kết nối được server. Vui lòng nhắn Telegram: @TradingAI_Support';
+      errEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Gửi đăng ký →';
+    }
+  }
+</script>
+</body>
+</html>

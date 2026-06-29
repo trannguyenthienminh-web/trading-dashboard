@@ -3,329 +3,1015 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — License Manager</title>
+<title>Admin — TradingAI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0a0b0e;--surface:#111318;--card:#161820;--border:#1e2028;--gold:#f5c842;--text:#e8eaf0;--muted:#6b7080;--green:#2ecc71;--red:#e74c3c;--blue:#3498db;--r:10px; }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
-  a{color:inherit;text-decoration:none;}
+:root {
+  --bg:#0a0b0e; --surface:#111318; --card:#161820; --border:#1e2028;
+  --gold:#f5c842; --gold-dim:rgba(245,200,66,.08); --gold-border:rgba(245,200,66,.2);
+  --text:#e8eaf0; --muted:#6b7080; --subtle:#3a3d4a;
+  --green:#2ecc71; --green-dim:rgba(46,204,113,.1); --green-border:rgba(46,204,113,.25);
+  --red:#e74c3c; --red-dim:rgba(231,76,60,.1); --red-border:rgba(231,76,60,.25);
+  --blue:#3b9eff; --blue-dim:rgba(59,158,255,.1); --blue-border:rgba(59,158,255,.25);
+  --purple:#a78bfa; --purple-dim:rgba(167,139,250,.1); --purple-border:rgba(167,139,250,.25);
+  --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+button{font-family:'Space Grotesk',sans-serif;}
 
-  /* Login */
-  #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
-  .login-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:36px;width:100%;max-width:380px;}
-  .login-box h2{font-size:1.25rem;margin-bottom:24px;}
-  .field{margin-bottom:16px;}
-  .field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  .field input{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;}
-  .field input:focus{border-color:var(--gold);}
-  .btn{padding:10px 20px;border:none;border-radius:7px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;}
-  .btn-gold{background:var(--gold);color:#000;}
-  .btn-gold:hover{opacity:.85;}
-  .btn-sm{padding:6px 14px;font-size:12px;}
-  .btn-green{background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);color:var(--green);}
-  .btn-red{background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.25);color:var(--red);}
-  .btn-blue{background:rgba(52,152,219,.12);border:1px solid rgba(52,152,219,.25);color:var(--blue);}
-  .btn-muted{background:var(--card);border:1px solid var(--border);color:var(--muted);}
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse at 50% 0%,rgba(245,200,66,.06) 0%,transparent 60%);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:380px;}
+.login-logo{font-size:1.3rem;font-weight:700;margin-bottom:6px;}
+.login-logo span{color:var(--gold);}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:80px;}
 
-  /* App */
-  #app{display:none;}
-  nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-  .nav-logo{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;}
-  .nav-logo span{color:var(--gold);}
-  .admin-badge{font-size:10px;font-weight:700;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:var(--red);padding:2px 8px;border-radius:4px;}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:7px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:hover{opacity:.85;}
+.btn-gold{background:var(--gold);color:#000;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-xs{padding:3px 9px;font-size:11px;border-radius:5px;}
+.btn-green{background:var(--green-dim);border:1px solid var(--green-border);color:var(--green);}
+.btn-red{background:var(--red-dim);border:1px solid var(--red-border);color:var(--red);}
+.btn-blue{background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--blue);}
+.btn-purple{background:var(--purple-dim);border:1px solid var(--purple-border);color:var(--purple);}
+.btn-muted{background:var(--card);border:1px solid var(--border);color:var(--muted);}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
 
-  .main{max-width:1200px;margin:0 auto;padding:24px 20px;}
+/* ── APP SHELL ── */
+#app{display:none;}
 
-  /* Stats row */
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
-  .stat-label{font-size:11px;color:var(--muted);margin-bottom:6px;}
-  .stat-val{font-size:1.5rem;font-weight:700;}
-  .stat-val.gold{color:var(--gold);}
-  .stat-val.green{color:var(--green);}
-  .stat-val.red{color:var(--red);}
+/* Sidebar */
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:220px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;flex-shrink:0;}
+.sb-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+.sb-logo-name{font-weight:700;font-size:15px;}
+.sb-logo-name span{color:var(--gold);}
+.sb-badge{font-size:9px;font-weight:700;background:var(--red-dim);border:1px solid var(--red-border);color:var(--red);padding:2px 7px;border-radius:4px;display:inline-block;margin-top:4px;}
+.sb-nav{padding:12px 10px;flex:1;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+.sb-item:hover{background:var(--card);color:var(--text);}
+.sb-item.active{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);}
+.sb-item .icon{font-size:15px;width:20px;text-align:center;}
+.sb-divider{height:1px;background:var(--border);margin:10px 10px;}
+.sb-section-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--subtle);padding:4px 12px 6px;}
+.sb-bottom{padding:14px 10px;border-top:1px solid var(--border);}
 
-  /* Tabs */
-  .tabs{display:flex;gap:4px;margin-bottom:20px;}
-  .tab{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;background:none;border:none;color:var(--muted);transition:all .15s;}
-  .tab:hover{color:var(--text);background:var(--card);}
-  .tab.active{color:var(--gold);background:rgba(245,200,66,.08);}
+/* Main content */
+.main-area{flex:1;overflow:auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:15px;font-weight:700;}
+.topbar-actions{display:flex;align-items:center;gap:10px;}
+.content{padding:24px;}
 
-  /* Table */
-  .tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto;}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  th{background:var(--card);padding:11px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
-  td{padding:12px 14px;border-top:1px solid var(--border);}
-  tr:hover td{background:rgba(255,255,255,.015);}
-  .mono{font-family:'JetBrains Mono',monospace;font-size:12px;}
-  .badge{display:inline-block;padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;}
-  .badge-pending{background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.3);}
-  .badge-active{background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.3);}
-  .badge-expired{background:rgba(107,112,128,.1);color:var(--muted);border:1px solid var(--border);}
-  .badge-revoked{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25);}
-  .badge-ib{background:rgba(52,152,219,.12);color:var(--blue);border:1px solid rgba(52,152,219,.25);}
-  .badge-rental{background:rgba(245,200,66,.08);color:var(--gold);border:1px solid rgba(245,200,66,.2);}
+/* Stats row */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.gold::before{background:var(--gold);}
+.stat-card.green::before{background:var(--green);}
+.stat-card.red::before{background:var(--red);}
+.stat-card.blue::before{background:var(--blue);}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:.04em;}
+.stat-val{font-size:1.8rem;font-weight:700;line-height:1;}
+.stat-val.c-gold{color:var(--gold);}
+.stat-val.c-green{color:var(--green);}
+.stat-val.c-red{color:var(--red);}
+.stat-val.c-blue{color:var(--blue);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:6px;}
 
-  /* Modal */
-  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
-  .modal-bg.show{display:flex;}
-  .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:480px;}
-  .modal h3{font-size:1.125rem;margin-bottom:20px;}
-  .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+/* Cards / panels */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:13px;font-weight:700;}
 
-  .empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
-  .loading{padding:30px;text-align:center;color:var(--muted);}
+/* Table */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--card);padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,.012);}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;}
 
-  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;} .tab{padding:7px 12px;font-size:12px;}}
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;}
+.badge-pending{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);}
+.badge-active{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);}
+.badge-expired{background:rgba(107,112,128,.1);color:var(--muted);border:1px solid var(--border);}
+.badge-revoked{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border);}
+.badge-ib{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);}
+.badge-rental{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);}
+.badge-paid{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);}
+.badge-processed{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple-border);}
+
+/* Search / filter bar */
+.filter-bar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.search-input{flex:1;min-width:180px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:13px;outline:none;}
+.search-input:focus{border-color:var(--gold);}
+select.filter-select{padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;outline:none;cursor:pointer;}
+
+/* Days remaining pill */
+.days-pill{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.days-ok{background:var(--green-dim);color:var(--green);}
+.days-warn{background:rgba(255,165,0,.1);color:orange;}
+.days-danger{background:var(--red-dim);color:var(--red);}
+.days-inf{background:var(--gold-dim);color:var(--gold);}
+
+/* Avatar */
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;}
+
+/* Telegram send */
+.tg-chat-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);}
+.tg-status-online{color:var(--green);font-size:12px;}
+.tg-status-offline{color:var(--red);font-size:12px;}
+
+/* Alert warning */
+.alert-warning{background:rgba(255,165,0,.08);border:1px solid rgba(255,165,0,.25);border-radius:8px;padding:12px 16px;font-size:12px;color:orange;display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:1.05rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+#toast.success{border-color:var(--green-border);color:var(--green);}
+#toast.error{border-color:var(--red-border);color:var(--red);}
+
+/* Tab pages */
+.page{display:none;}
+.page.active{display:block;}
+
+.empty{padding:48px;text-align:center;color:var(--muted);font-size:13px;}
+.loading{padding:32px;text-align:center;color:var(--muted);}
+.dot-pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* Telegram composer */
+.tg-compose{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;}
+
+/* Grid 2 col */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .grid-2{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ══════════════════ LOGIN ══════════════════ -->
 <div id="login-screen">
   <div class="login-box">
-    <h2>🔐 Admin Panel</h2>
-    <div class="field"><label>Mật khẩu admin</label><input type="password" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+    <div class="login-logo">Trading<span>AI</span></div>
+    <div class="login-sub">Admin Control Panel</div>
+    <div class="field">
+      <label>Mật khẩu admin</label>
+      <input type="password" id="admin-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+    </div>
     <button class="btn btn-gold" style="width:100%" onclick="adminLogin()">Đăng nhập</button>
-    <div id="login-err" style="margin-top:12px;font-size:13px;color:var(--red);display:none;">Sai mật khẩu!</div>
+    <div id="login-err" style="margin-top:12px;font-size:13px;color:var(--red);display:none;">⚠️ Sai mật khẩu!</div>
   </div>
 </div>
 
-<!-- APP -->
+<!-- ══════════════════ APP ══════════════════ -->
 <div id="app">
-  <nav>
-    <div class="nav-logo">Trading<span>AI</span> <span class="admin-badge">ADMIN</span></div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <a href="dashboard.html" style="font-size:13px;color:var(--muted);">← Dashboard</a>
-      <button class="btn btn-muted btn-sm" onclick="adminLogout()">Đăng xuất</button>
-    </div>
-  </nav>
+<div class="layout">
 
-  <div class="main">
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">Tổng đăng ký</div><div class="stat-val" id="s-total">—</div></div>
-      <div class="stat-card"><div class="stat-label">Chờ duyệt</div><div class="stat-val gold" id="s-pending">—</div></div>
-      <div class="stat-card"><div class="stat-label">Đang hoạt động</div><div class="stat-val green" id="s-active">—</div></div>
-      <div class="stat-card"><div class="stat-label">Đã thu hồi</div><div class="stat-val red" id="s-revoked">—</div></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">Trading<span>AI</span></div>
+      <span class="sb-badge">ADMIN</span>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section-label">Tổng quan</div>
+      <button class="sb-item active" onclick="switchPage('overview',this)"><span class="icon">📊</span>Dashboard</button>
+
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">Quản lý</div>
+      <button class="sb-item" onclick="switchPage('customers',this)"><span class="icon">👥</span>Khách hàng</button>
+      <button class="sb-item" onclick="switchPage('licenses',this)"><span class="icon">🔑</span>License EA</button>
+      <button class="sb-item" onclick="switchPage('payments',this)"><span class="icon">💳</span>Thanh toán</button>
+      <button class="sb-item" onclick="switchPage('telegram',this)"><span class="icon">📱</span>Telegram</button>
+
+      <div class="sb-divider"></div>
+      <a href="dashboard.html" style="display:block;">
+        <button class="sb-item"><span class="icon">🏠</span>Về Dashboard</button>
+      </a>
+    </nav>
+    <div class="sb-bottom">
+      <button class="sb-item" onclick="adminLogout()"><span class="icon">🚪</span>Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">📊 Dashboard</div>
+      <div class="topbar-actions">
+        <span style="font-size:12px;color:var(--muted)" id="last-refresh"></span>
+        <button class="btn btn-muted btn-sm" onclick="loadData()">↺ Refresh</button>
+      </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('pending',this)">⏳ Chờ duyệt</button>
-      <button class="tab" onclick="switchTab('active',this)">✅ Đang dùng</button>
-      <button class="tab" onclick="switchTab('all',this)">📋 Tất cả</button>
-    </div>
+    <div class="content">
 
-    <!-- Table -->
-    <div class="tbl-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Tên</th>
-            <th>Telegram</th>
-            <th>MT5 Account</th>
-            <th>Broker</th>
-            <th>Gói</th>
-            <th>License Key</th>
-            <th>Trạng thái</th>
-            <th>Ngày đăng ký</th>
-            <th>Hết hạn</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody id="tbl-body">
-          <tr><td colspan="10"><div class="loading">Đang tải...</div></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+      <!-- ══ PAGE: OVERVIEW ══ -->
+      <div class="page active" id="page-overview">
+        <div class="stats-grid">
+          <div class="stat-card gold">
+            <div class="stat-label">TỔNG KHÁCH HÀNG</div>
+            <div class="stat-val c-gold" id="s-total">—</div>
+            <div class="stat-sub">đã đăng ký</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">ĐANG HOẠT ĐỘNG</div>
+            <div class="stat-val c-green" id="s-active">—</div>
+            <div class="stat-sub">license active</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">CHỜ DUYỆT</div>
+            <div class="stat-val c-gold" id="s-pending">—</div>
+            <div class="stat-sub">cần xử lý</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">SẮP HẾT HẠN</div>
+            <div class="stat-val c-red" id="s-expiring">—</div>
+            <div class="stat-sub">trong 7 ngày</div>
+          </div>
+        </div>
 
-<!-- APPROVE MODAL -->
+        <!-- Warning: pending + expiring -->
+        <div id="overview-alerts"></div>
+
+        <div class="grid-2" style="margin-bottom:16px;">
+          <!-- Recent pending -->
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">⏳ Chờ duyệt</span>
+              <button class="btn btn-sm btn-gold" onclick="switchPage('licenses',document.querySelector('[onclick*=licenses]'))">Xem tất cả</button>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Tên</th><th>Gói</th><th>Ngày đăng ký</th><th></th></tr></thead>
+                <tbody id="ov-pending-body"><tr><td colspan="4"><div class="loading"><span class="dot-pulse"></span></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Expiring soon -->
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">⚠️ Sắp hết hạn (7 ngày)</span>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Tên</th><th>Hết hạn</th><th>Còn</th></tr></thead>
+                <tbody id="ov-expiring-body"><tr><td colspan="3"><div class="loading"><span class="dot-pulse"></span></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: CUSTOMERS ══ -->
+      <div class="page" id="page-customers">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">👥 Danh sách khách hàng</span>
+            <span id="cust-count" style="font-size:12px;color:var(--muted)"></span>
+          </div>
+          <div class="filter-bar">
+            <input class="search-input" id="cust-search" placeholder="🔍 Tìm theo tên, Telegram, MT5..." oninput="renderCustomers()">
+            <select class="filter-select" id="cust-filter-status" onchange="renderCustomers()">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="active">Đang dùng</option>
+              <option value="pending">Chờ duyệt</option>
+              <option value="expired">Hết hạn</option>
+              <option value="revoked">Thu hồi</option>
+            </select>
+            <select class="filter-select" id="cust-filter-plan" onchange="renderCustomers()">
+              <option value="all">Tất cả gói</option>
+              <option value="ib">IB Free</option>
+              <option value="rental">Rental</option>
+            </select>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Khách hàng</th>
+                  <th>Telegram</th>
+                  <th>MT5 Account</th>
+                  <th>Broker</th>
+                  <th>Gói</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày đăng ký</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="cust-body"><tr><td colspan="8"><div class="loading"><span class="dot-pulse"></span></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: LICENSES ══ -->
+      <div class="page" id="page-licenses">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">🔑 Quản lý License EA</span>
+            <span id="lic-count" style="font-size:12px;color:var(--muted)"></span>
+          </div>
+          <div class="filter-bar">
+            <input class="search-input" id="lic-search" placeholder="🔍 Tìm license key, tên, MT5..." oninput="renderLicenses()">
+            <select class="filter-select" id="lic-filter-status" onchange="renderLicenses()">
+              <option value="all">Tất cả</option>
+              <option value="pending">Chờ duyệt</option>
+              <option value="active">Đang dùng</option>
+              <option value="expired">Hết hạn</option>
+              <option value="revoked">Thu hồi</option>
+            </select>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tên</th>
+                  <th>License Key</th>
+                  <th>Gói</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày cấp</th>
+                  <th>Hết hạn</th>
+                  <th>Còn lại</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="lic-body"><tr><td colspan="8"><div class="loading"><span class="dot-pulse"></span></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: PAYMENTS ══ -->
+      <div class="page" id="page-payments">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">💳 Lịch sử thanh toán (SePay)</span>
+            <span id="pay-count" style="font-size:12px;color:var(--muted)"></span>
+          </div>
+          <div class="filter-bar">
+            <input class="search-input" id="pay-search" placeholder="🔍 Tìm mã GD, nội dung chuyển khoản..." oninput="renderPayments()">
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Số tiền</th>
+                  <th>Mã GD</th>
+                  <th>Nội dung</th>
+                  <th>Khách hàng liên quan</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="pay-body"><tr><td colspan="6"><div class="loading"><span class="dot-pulse"></span></div></td></tr></tbody>
+            </table>
+          </div>
+          <div id="pay-empty-note" style="display:none;" class="empty">
+            💡 Lịch sử thanh toán được ghi nhận từ SePay webhook. Đảm bảo <code>START_BOT.bat</code> đang chạy và webhook đã cấu hình đúng.
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: TELEGRAM ══ -->
+      <div class="page" id="page-telegram">
+        <!-- Bot status -->
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="stat-card blue">
+            <div class="stat-label">CÓ CHAT_ID</div>
+            <div class="stat-val c-blue" id="tg-s-captured">—</div>
+            <div class="stat-sub">đã /start bot</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">ĐÃ NHẬN KEY QUA DM</div>
+            <div class="stat-val c-green" id="tg-s-delivered">—</div>
+            <div class="stat-sub">tin nhắn thành công</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">CHƯA /START</div>
+            <div class="stat-val c-gold" id="tg-s-missing">—</div>
+            <div class="stat-sub">chưa nhận được DM</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Customer list with TG -->
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">📋 Danh sách Telegram</span>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr><th>Tên</th><th>Username</th><th>Chat ID</th><th>Gửi tin</th></tr>
+                </thead>
+                <tbody id="tg-body"><tr><td colspan="4"><div class="loading"><span class="dot-pulse"></span></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Broadcast -->
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">📢 Gửi thông báo</span>
+            </div>
+            <div style="padding:16px;">
+              <div class="field">
+                <label>Gửi đến</label>
+                <select class="filter-select" id="tg-send-to" style="width:100%">
+                  <option value="all_active">Tất cả khách active</option>
+                  <option value="expiring">Sắp hết hạn (7 ngày)</option>
+                  <option value="single">Một khách (chọn bên dưới)</option>
+                </select>
+              </div>
+              <div class="field" id="tg-single-wrap" style="display:none">
+                <label>Chọn khách</label>
+                <select class="filter-select" id="tg-single-id" style="width:100%"></select>
+              </div>
+              <div class="field">
+                <label>Nội dung tin nhắn</label>
+                <textarea id="tg-msg-text" placeholder="Nhập nội dung thông báo...&#10;&#10;Hỗ trợ emoji 🎯"></textarea>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-blue" onclick="sendTelegramMsg()" style="flex:1">📤 Gửi tin nhắn</button>
+                <button class="btn btn-muted" onclick="previewTgMsg()">👁 Preview</button>
+              </div>
+              <div id="tg-send-result" style="margin-top:12px;font-size:12px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="alert-warning" style="margin-top:16px;">
+          ⚠️ Khách phải gửi <strong>/start</strong> cho bot Telegram trước để bot lưu chat_id. Nếu chat_id trống → DM sẽ không gửi được.
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- ══ MODAL: APPROVE ══ -->
 <div class="modal-bg" id="approve-modal">
   <div class="modal">
-    <h3>✅ Duyệt đơn & Cấp License Key</h3>
+    <h3>✅ Duyệt & Cấp License Key</h3>
     <input type="hidden" id="m-id">
     <div class="field"><label>Tên khách</label><input type="text" id="m-name" readonly style="opacity:.6"></div>
     <div class="field"><label>MT5 Account</label><input type="text" id="m-account" readonly style="opacity:.6"></div>
-    <div class="field"><label>License Key (tự động tạo)</label><input type="text" id="m-key" style="font-family:monospace"></div>
+    <div class="field">
+      <label>License Key</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="m-key" style="font-family:monospace;flex:1">
+        <button class="btn btn-muted btn-sm" onclick="document.getElementById('m-key').value=genKey()">🎲 Tạo mới</button>
+      </div>
+    </div>
     <div class="field"><label>Hết hạn (để trống = vĩnh viễn với IB)</label><input type="date" id="m-expire"></div>
-    <div class="field"><label>Ghi chú</label><input type="text" id="m-note" placeholder="Ghi chú nội bộ..."></div>
+    <div class="field"><label>Ghi chú nội bộ</label><input type="text" id="m-note" placeholder="Ghi chú..."></div>
     <div class="modal-actions">
-      <button class="btn btn-muted" onclick="closeModal()">Hủy</button>
-      <button class="btn btn-gold" onclick="approveSubmit()">Cấp Key & Duyệt</button>
+      <button class="btn btn-muted" onclick="closeModal('approve-modal')">Hủy</button>
+      <button class="btn btn-gold" onclick="approveSubmit()">✅ Cấp Key & Duyệt</button>
     </div>
   </div>
 </div>
 
+<!-- ══ MODAL: RENEW ══ -->
+<div class="modal-bg" id="renew-modal">
+  <div class="modal">
+    <h3>↺ Gia hạn License</h3>
+    <input type="hidden" id="rn-id">
+    <div class="field"><label>Tên khách</label><input type="text" id="rn-name" readonly style="opacity:.6"></div>
+    <div class="field"><label>Hết hạn hiện tại</label><input type="text" id="rn-current" readonly style="opacity:.6"></div>
+    <div class="field">
+      <label>Gia hạn thêm</label>
+      <select class="filter-select" id="rn-days" style="width:100%" onchange="updateRenewDate()">
+        <option value="30">+30 ngày (1 tháng)</option>
+        <option value="60">+60 ngày (2 tháng)</option>
+        <option value="90">+90 ngày (3 tháng)</option>
+        <option value="180">+180 ngày (6 tháng)</option>
+        <option value="365">+365 ngày (1 năm)</option>
+      </select>
+    </div>
+    <div class="field"><label>Hết hạn mới</label><input type="date" id="rn-new-date"></div>
+    <div class="modal-actions">
+      <button class="btn btn-muted" onclick="closeModal('renew-modal')">Hủy</button>
+      <button class="btn btn-green" onclick="renewSubmit()">↺ Xác nhận gia hạn</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SEND TG ══ -->
+<div class="modal-bg" id="tg-single-modal">
+  <div class="modal">
+    <h3>📤 Gửi tin nhắn Telegram</h3>
+    <input type="hidden" id="tsm-id">
+    <div class="field"><label>Khách hàng</label><input type="text" id="tsm-name" readonly style="opacity:.6"></div>
+    <div class="field"><label>Chat ID</label><input type="text" id="tsm-chatid" readonly style="opacity:.6"></div>
+    <div class="field"><label>Nội dung</label><textarea id="tsm-msg" placeholder="Nhập tin nhắn..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-muted" onclick="closeModal('tg-single-modal')">Hủy</button>
+      <button class="btn btn-blue" onclick="sendSingleTg()">📤 Gửi</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
 <script>
-  const API       = 'https://trading-proxy.trannguyenthienminh.workers.dev';
-  const ADMIN_PASS = 'admin2026';   // ĐỔI MẬT KHẨU ADMIN Ở ĐÂY
+const API        = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+const ADMIN_PASS = 'admin2026';
 
-  let currentTab  = 'pending';
-  let allData     = [];
+let allData  = [];
+let payData  = [];
+let tgData   = [];
+let currentPage = 'overview';
 
-  // ── AUTH ──────────────────────────────────────────────────
-  function adminLogin() {
-    const pass = document.getElementById('admin-pass').value;
-    if (pass === ADMIN_PASS) {
-      sessionStorage.setItem('admin_auth', '1');
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      loadData();
-    } else {
-      document.getElementById('login-err').style.display = 'block';
-    }
-  }
-  function adminLogout() {
-    sessionStorage.removeItem('admin_auth');
-    location.reload();
-  }
-
-  // ── LOAD DATA ─────────────────────────────────────────────
-  async function loadData() {
-    try {
-      const res  = await fetch(API + '/api/license/list', { signal: AbortSignal.timeout(8000) });
-      const data = await res.json();
-      allData = data.licenses || [];
-      updateStats();
-      renderTable(currentTab);
-    } catch(e) {
-      document.getElementById('tbl-body').innerHTML =
-        '<tr><td colspan="10"><div class="empty">⚠️ Không kết nối được API. Đảm bảo START_BOT.bat đang chạy.</div></td></tr>';
-    }
-  }
-
-  function updateStats() {
-    document.getElementById('s-total').textContent   = allData.length;
-    document.getElementById('s-pending').textContent = allData.filter(r=>r.status==='pending').length;
-    document.getElementById('s-active').textContent  = allData.filter(r=>r.status==='active').length;
-    document.getElementById('s-revoked').textContent = allData.filter(r=>r.status==='revoked').length;
-  }
-
-  function switchTab(tab, btn) {
-    currentTab = tab;
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    btn.classList.add('active');
-    renderTable(tab);
-  }
-
-  function renderTable(tab) {
-    const data = tab === 'all' ? allData : allData.filter(r => {
-      if (tab === 'pending') return r.status === 'pending';
-      if (tab === 'active')  return r.status === 'active';
-      return true;
-    });
-
-    if (!data.length) {
-      document.getElementById('tbl-body').innerHTML =
-        '<tr><td colspan="10"><div class="empty">Không có dữ liệu</div></td></tr>';
-      return;
-    }
-
-    document.getElementById('tbl-body').innerHTML = data.map(r => `
-      <tr>
-        <td><strong>${r.name}</strong></td>
-        <td style="color:#3498db">${r.telegram}</td>
-        <td class="mono">${r.account}</td>
-        <td style="font-size:12px;color:var(--muted)">${r.broker}</td>
-        <td><span class="badge badge-${r.plan}">${r.plan === 'ib' ? '⭐ IB Free' : '💳 Rental'}</span></td>
-        <td class="mono" style="font-size:11px">${r.license_key || '—'}</td>
-        <td><span class="badge badge-${r.status}">${statusLabel(r.status)}</span></td>
-        <td style="font-size:11px;color:var(--muted)">${r.created_at?.slice(0,10)||'—'}</td>
-        <td style="font-size:11px;color:var(--muted)">${r.expires_at || '∞'}</td>
-        <td>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            ${r.status === 'pending' ? `<button class="btn btn-green btn-sm" onclick="openApprove(${r.id})">✓ Duyệt</button>` : ''}
-            ${r.status === 'active'  ? `<button class="btn btn-red btn-sm" onclick="revoke(${r.id})">✗ Thu hồi</button>` : ''}
-            ${r.status === 'revoked' ? `<button class="btn btn-blue btn-sm" onclick="reactivate(${r.id})">↺ Kích hoạt</button>` : ''}
-            ${r.telegram ? `<a href="https://t.me/${r.telegram.replace('@','')}" target="_blank" class="btn btn-muted btn-sm">TG</a>` : ''}
-          </div>
-        </td>
-      </tr>`).join('');
-  }
-
-  function statusLabel(s) {
-    return { pending:'⏳ Chờ duyệt', active:'✅ Đang dùng', revoked:'❌ Thu hồi', expired:'⌛ Hết hạn' }[s] || s;
-  }
-
-  // ── APPROVE ───────────────────────────────────────────────
-  function openApprove(id) {
-    const r = allData.find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('m-id').value      = id;
-    document.getElementById('m-name').value    = r.name;
-    document.getElementById('m-account').value = r.account;
-    document.getElementById('m-key').value     = genKey();
-    // IB = không hết hạn, rental = 30 ngày
-    if (r.plan === 'rental') {
-      const d = new Date(); d.setDate(d.getDate() + 30);
-      document.getElementById('m-expire').value = d.toISOString().slice(0,10);
-    } else {
-      document.getElementById('m-expire').value = '';
-    }
-    document.getElementById('approve-modal').classList.add('show');
-  }
-
-  function closeModal() {
-    document.getElementById('approve-modal').classList.remove('show');
-  }
-
-  async function approveSubmit() {
-    const id     = document.getElementById('m-id').value;
-    const key    = document.getElementById('m-key').value;
-    const expire = document.getElementById('m-expire').value;
-    const note   = document.getElementById('m-note').value;
-
-    try {
-      const res = await fetch(API + '/api/license/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: parseInt(id), license_key: key, expires_at: expire, note }),
-      });
-      const data = await res.json();
-      if (data.success) { closeModal(); loadData(); alert('✅ Đã duyệt và cấp key!'); }
-      else alert('Lỗi: ' + (data.error || 'Unknown'));
-    } catch(e) { alert('Lỗi kết nối: ' + e.message); }
-  }
-
-  async function revoke(id) {
-    if (!confirm('Thu hồi license này? EA của khách sẽ dừng hoạt động.')) return;
-    try {
-      await fetch(API + '/api/license/revoke', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      loadData();
-    } catch(e) { alert('Lỗi: ' + e.message); }
-  }
-
-  async function reactivate(id) {
-    try {
-      await fetch(API + '/api/license/reactivate', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      loadData();
-    } catch(e) { alert('Lỗi: ' + e.message); }
-  }
-
-  function genKey() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const seg = () => Array.from({length:4}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
-    return `SGR-${seg()}-${seg()}-${seg()}`;
-  }
-
-  // ── INIT ──────────────────────────────────────────────────
-  if (sessionStorage.getItem('admin_auth') === '1') {
+// ─── AUTH ────────────────────────────────────────────
+function adminLogin() {
+  const pass = document.getElementById('admin-pass').value;
+  if (pass === ADMIN_PASS) {
+    sessionStorage.setItem('admin_auth', '1');
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     loadData();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+function adminLogout() {
+  sessionStorage.removeItem('admin_auth');
+  location.reload();
+}
+
+// ─── NAVIGATION ──────────────────────────────────────
+function switchPage(page, btn) {
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const titles = { overview:'📊 Dashboard', customers:'👥 Khách hàng', licenses:'🔑 License EA', payments:'💳 Thanh toán', telegram:'📱 Telegram' };
+  document.getElementById('topbar-title').textContent = titles[page] || page;
+  if (page === 'customers') renderCustomers();
+  if (page === 'licenses')  renderLicenses();
+  if (page === 'payments')  renderPayments();
+  if (page === 'telegram')  renderTelegram();
+}
+
+// ─── LOAD DATA ───────────────────────────────────────
+async function loadData() {
+  try {
+    const res  = await fetch(API + '/api/license/list', { signal: AbortSignal.timeout(8000) });
+    const data = await res.json();
+    allData = data.licenses || [];
+    updateStats();
+    renderOverview();
+    if (currentPage === 'customers') renderCustomers();
+    if (currentPage === 'licenses')  renderLicenses();
+    if (currentPage === 'telegram')  renderTelegram();
+    document.getElementById('last-refresh').textContent = 'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
+  } catch(e) {
+    toast('⚠️ Không kết nối được API', 'error');
   }
 
-  setInterval(loadData, 60000); // Tự refresh mỗi 1 phút
+  // Load payments separately
+  try {
+    const res2 = await fetch(API + '/api/payments', { signal: AbortSignal.timeout(8000) });
+    const d2   = await res2.json();
+    payData = d2.payments || [];
+    if (currentPage === 'payments') renderPayments();
+  } catch(e) {
+    payData = [];
+  }
+}
+
+// ─── STATS ───────────────────────────────────────────
+function updateStats() {
+  const expiring = allData.filter(r => {
+    if (r.status !== 'active' || !r.expires_at) return false;
+    const days = Math.ceil((new Date(r.expires_at) - new Date()) / 86400000);
+    return days >= 0 && days <= 7;
+  });
+  document.getElementById('s-total').textContent    = allData.length;
+  document.getElementById('s-active').textContent   = allData.filter(r=>r.status==='active').length;
+  document.getElementById('s-pending').textContent  = allData.filter(r=>r.status==='pending').length;
+  document.getElementById('s-expiring').textContent = expiring.length;
+}
+
+// ─── OVERVIEW ────────────────────────────────────────
+function renderOverview() {
+  // Pending table
+  const pending = allData.filter(r => r.status === 'pending');
+  const pb = document.getElementById('ov-pending-body');
+  pb.innerHTML = pending.length ? pending.slice(0,5).map(r => `
+    <tr>
+      <td><strong>${r.name}</strong></td>
+      <td><span class="badge badge-${r.plan}">${r.plan==='ib'?'⭐ IB':'💳 Rental'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${r.created_at?.slice(0,10)||'—'}</td>
+      <td><button class="btn btn-green btn-xs" onclick="openApprove(${r.id})">✓ Duyệt</button></td>
+    </tr>`).join('') :
+    '<tr><td colspan="4"><div class="empty" style="padding:20px">✅ Không có đơn chờ duyệt</div></td></tr>';
+
+  // Expiring table
+  const expiring = allData.filter(r => {
+    if (r.status !== 'active' || !r.expires_at) return false;
+    const days = Math.ceil((new Date(r.expires_at) - new Date()) / 86400000);
+    return days >= 0 && days <= 7;
+  }).sort((a,b) => new Date(a.expires_at)-new Date(b.expires_at));
+  const eb = document.getElementById('ov-expiring-body');
+  eb.innerHTML = expiring.length ? expiring.map(r => {
+    const days = Math.ceil((new Date(r.expires_at) - new Date()) / 86400000);
+    return `<tr>
+      <td><strong>${r.name}</strong></td>
+      <td style="font-size:11px">${r.expires_at}</td>
+      <td><span class="days-pill ${days<=2?'days-danger':'days-warn'}">${days}d</span></td>
+    </tr>`;
+  }).join('') :
+    '<tr><td colspan="3"><div class="empty" style="padding:20px">✅ Không có license sắp hết hạn</div></td></tr>';
+}
+
+// ─── CUSTOMERS ───────────────────────────────────────
+function renderCustomers() {
+  const search = document.getElementById('cust-search')?.value.toLowerCase() || '';
+  const fStatus = document.getElementById('cust-filter-status')?.value || 'all';
+  const fPlan   = document.getElementById('cust-filter-plan')?.value || 'all';
+  let data = allData.filter(r => {
+    if (fStatus !== 'all' && r.status !== fStatus) return false;
+    if (fPlan !== 'all' && r.plan !== fPlan) return false;
+    if (search) {
+      const hay = `${r.name} ${r.telegram} ${r.account} ${r.broker}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+  document.getElementById('cust-count').textContent = data.length + ' khách';
+  const tbody = document.getElementById('cust-body');
+  if (!data.length) { tbody.innerHTML='<tr><td colspan="8"><div class="empty">Không tìm thấy</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="avatar">${r.name?r.name[0].toUpperCase():'?'}</div>
+          <div>
+            <div style="font-weight:600">${r.name}</div>
+            <div style="font-size:11px;color:var(--muted)">#${r.id}</div>
+          </div>
+        </div>
+      </td>
+      <td><span style="color:var(--blue);font-size:13px">${r.telegram||'—'}</span></td>
+      <td class="mono">${r.account||'—'}</td>
+      <td style="font-size:12px;color:var(--muted)">${r.broker||'—'}</td>
+      <td><span class="badge badge-${r.plan}">${r.plan==='ib'?'⭐ IB Free':'💳 Rental'}</span></td>
+      <td><span class="badge badge-${r.status}">${statusLabel(r.status)}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${r.created_at?.slice(0,10)||'—'}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          ${r.status==='pending'?`<button class="btn btn-green btn-xs" onclick="openApprove(${r.id})">✓ Duyệt</button>`:''}
+          ${r.status==='active'?`<button class="btn btn-blue btn-xs" onclick="openRenew(${r.id})">↺ Gia hạn</button>`:''}
+          ${r.status==='active'?`<button class="btn btn-red btn-xs" onclick="revoke(${r.id})">✗ Thu hồi</button>`:''}
+          ${r.status==='revoked'?`<button class="btn btn-blue btn-xs" onclick="reactivate(${r.id})">↺ Kích hoạt</button>`:''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ─── LICENSES ────────────────────────────────────────
+function renderLicenses() {
+  const search  = document.getElementById('lic-search')?.value.toLowerCase() || '';
+  const fStatus = document.getElementById('lic-filter-status')?.value || 'all';
+  let data = allData.filter(r => {
+    if (fStatus !== 'all' && r.status !== fStatus) return false;
+    if (search) {
+      const hay = `${r.name} ${r.license_key} ${r.account}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+  document.getElementById('lic-count').textContent = data.length + ' license';
+  const tbody = document.getElementById('lic-body');
+  if (!data.length) { tbody.innerHTML='<tr><td colspan="8"><div class="empty">Không có dữ liệu</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(r => {
+    const days = r.expires_at ? Math.ceil((new Date(r.expires_at)-new Date())/86400000) : null;
+    let daysPill = '';
+    if (!r.expires_at && r.plan==='ib') daysPill = '<span class="days-pill days-inf">∞</span>';
+    else if (days === null) daysPill = '—';
+    else if (days < 0) daysPill = '<span class="days-pill days-danger">Hết hạn</span>';
+    else if (days <= 2) daysPill = `<span class="days-pill days-danger">${days}d</span>`;
+    else if (days <= 7) daysPill = `<span class="days-pill days-warn">${days}d</span>`;
+    else daysPill = `<span class="days-pill days-ok">${days}d</span>`;
+    return `<tr>
+      <td><strong>${r.name}</strong><div style="font-size:11px;color:var(--muted)">${r.account||''}</div></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="mono">${r.license_key||'—'}</span>
+          ${r.license_key?`<button class="btn btn-muted btn-xs" onclick="copyKey('${r.license_key}')">📋</button>`:''}
+        </div>
+      </td>
+      <td><span class="badge badge-${r.plan}">${r.plan==='ib'?'⭐ IB':'💳 Rental'}</span></td>
+      <td><span class="badge badge-${r.status}">${statusLabel(r.status)}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${r.created_at?.slice(0,10)||'—'}</td>
+      <td style="font-size:11px;color:var(--muted)">${r.expires_at||'∞'}</td>
+      <td>${daysPill}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          ${r.status==='pending'?`<button class="btn btn-green btn-xs" onclick="openApprove(${r.id})">✓ Duyệt</button>`:''}
+          ${r.status==='active'?`<button class="btn btn-blue btn-xs" onclick="openRenew(${r.id})">↺ Gia hạn</button>`:''}
+          ${r.status==='active'?`<button class="btn btn-red btn-xs" onclick="revoke(${r.id})">✗ Thu hồi</button>`:''}
+          ${r.status==='revoked'?`<button class="btn btn-blue btn-xs" onclick="reactivate(${r.id})">↺ Kích hoạt</button>`:''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── PAYMENTS ────────────────────────────────────────
+function renderPayments() {
+  const search = document.getElementById('pay-search')?.value.toLowerCase() || '';
+  let data = payData.filter(p => {
+    if (!search) return true;
+    return `${p.transaction_id||''} ${p.description||''} ${p.amount||''}`.toLowerCase().includes(search);
+  });
+  document.getElementById('pay-count').textContent = data.length + ' giao dịch';
+  const tbody = document.getElementById('pay-body');
+  const note  = document.getElementById('pay-empty-note');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty">Chưa có giao dịch nào</div></td></tr>';
+    note.style.display = 'block';
+    return;
+  }
+  note.style.display = 'none';
+  // Try to match payment to customer
+  tbody.innerHTML = data.map(p => {
+    const relatedCust = allData.find(r => p.description && p.description.includes(r.account));
+    const custInfo = relatedCust ? `<span style="font-size:11px;color:var(--gold)">${relatedCust.name}</span>` : '<span style="color:var(--muted);font-size:11px">—</span>';
+    const amt = Number(p.amount||0).toLocaleString('vi-VN') + ' đ';
+    return `<tr>
+      <td style="font-size:12px;color:var(--muted)">${p.created_at?.replace('T',' ').slice(0,16)||'—'}</td>
+      <td style="font-weight:700;color:var(--green)">${amt}</td>
+      <td class="mono" style="font-size:11px">${p.transaction_id||'—'}</td>
+      <td style="font-size:12px;max-width:200px;word-break:break-word">${p.description||'—'}</td>
+      <td>${custInfo}</td>
+      <td><span class="badge badge-${p.status||'paid'}">${p.status==='processed'?'✅ Đã xử lý':'💰 Đã nhận'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── TELEGRAM ────────────────────────────────────────
+function renderTelegram() {
+  const withChatId    = allData.filter(r => r.chat_id);
+  const withoutChatId = allData.filter(r => r.status==='active' && !r.chat_id);
+  document.getElementById('tg-s-captured').textContent  = withChatId.length;
+  document.getElementById('tg-s-delivered').textContent = withChatId.filter(r=>r.status==='active').length;
+  document.getElementById('tg-s-missing').textContent   = withoutChatId.length;
+
+  // Table
+  const tbody = document.getElementById('tg-body');
+  tbody.innerHTML = allData.map(r => `
+    <tr>
+      <td><strong>${r.name}</strong><br><span class="badge badge-${r.status}" style="margin-top:3px">${statusLabel(r.status)}</span></td>
+      <td><span style="color:var(--blue);font-size:13px">${r.telegram||'—'}</span></td>
+      <td class="tg-chat-id">${r.chat_id ? r.chat_id : '<span style="color:var(--red);font-size:11px">❌ Chưa /start</span>'}</td>
+      <td>
+        ${r.chat_id
+          ? `<button class="btn btn-blue btn-xs" onclick="openSingleTg(${r.id})">📤 Gửi</button>`
+          : '<span style="font-size:11px;color:var(--muted)">—</span>'}
+      </td>
+    </tr>`).join('');
+
+  // Populate single dropdown in broadcast form
+  const sel = document.getElementById('tg-single-id');
+  sel.innerHTML = allData.filter(r=>r.chat_id).map(r=>
+    `<option value="${r.id}">${r.name} (${r.telegram||r.chat_id})</option>`
+  ).join('');
+
+  // Show/hide single select
+  document.getElementById('tg-send-to').onchange = function() {
+    document.getElementById('tg-single-wrap').style.display =
+      this.value === 'single' ? 'block' : 'none';
+  };
+}
+
+// ─── TELEGRAM SEND ───────────────────────────────────
+function openSingleTg(id) {
+  const r = allData.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('tsm-id').value     = id;
+  document.getElementById('tsm-name').value   = r.name;
+  document.getElementById('tsm-chatid').value = r.chat_id || '(chưa có)';
+  document.getElementById('tsm-msg').value    = '';
+  document.getElementById('tg-single-modal').classList.add('show');
+}
+
+async function sendSingleTg() {
+  const id  = parseInt(document.getElementById('tsm-id').value);
+  const msg = document.getElementById('tsm-msg').value.trim();
+  if (!msg) { toast('Vui lòng nhập nội dung', 'error'); return; }
+  const r = allData.find(x => x.id === id);
+  if (!r?.chat_id) { toast('Khách chưa có chat_id', 'error'); return; }
+  try {
+    const res = await fetch(API + '/api/telegram/send', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id: r.chat_id, message: msg })
+    });
+    const d = await res.json();
+    if (d.success) { toast('✅ Đã gửi tin nhắn!'); closeModal('tg-single-modal'); }
+    else toast('Lỗi: ' + (d.error||'Unknown'), 'error');
+  } catch(e) { toast('Lỗi kết nối', 'error'); }
+}
+
+async function sendTelegramMsg() {
+  const sendTo = document.getElementById('tg-send-to').value;
+  const msg    = document.getElementById('tg-msg-text').value.trim();
+  if (!msg) { toast('Vui lòng nhập nội dung', 'error'); return; }
+  let targets = [];
+  if (sendTo === 'all_active') targets = allData.filter(r => r.status==='active' && r.chat_id);
+  else if (sendTo === 'expiring') targets = allData.filter(r => {
+    if (r.status !== 'active' || !r.expires_at || !r.chat_id) return false;
+    const days = Math.ceil((new Date(r.expires_at)-new Date())/86400000);
+    return days >= 0 && days <= 7;
+  });
+  else if (sendTo === 'single') {
+    const selId = parseInt(document.getElementById('tg-single-id').value);
+    targets = allData.filter(r => r.id === selId && r.chat_id);
+  }
+  if (!targets.length) { toast('Không có khách nào phù hợp hoặc chưa có chat_id', 'error'); return; }
+  const result = document.getElementById('tg-send-result');
+  result.innerHTML = `<span style="color:var(--muted)">Đang gửi tới ${targets.length} khách...</span>`;
+  let ok=0, fail=0;
+  for (const r of targets) {
+    try {
+      const res = await fetch(API + '/api/telegram/send', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ chat_id: r.chat_id, message: msg })
+      });
+      const d = await res.json();
+      if (d.success) ok++; else fail++;
+    } catch { fail++; }
+  }
+  result.innerHTML = `<span style="color:var(--green)">✅ Thành công: ${ok}</span>${fail?` <span style="color:var(--red);margin-left:8px">❌ Thất bại: ${fail}</span>`:''}`;
+  toast(`Gửi xong: ${ok}/${targets.length} tin`);
+}
+
+function previewTgMsg() {
+  const msg = document.getElementById('tg-msg-text').value;
+  alert('Preview:\n\n' + msg);
+}
+
+// ─── APPROVE ─────────────────────────────────────────
+function openApprove(id) {
+  const r = allData.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('m-id').value      = id;
+  document.getElementById('m-name').value    = r.name;
+  document.getElementById('m-account').value = r.account;
+  document.getElementById('m-key').value     = genKey();
+  document.getElementById('m-note').value    = '';
+  if (r.plan === 'rental') {
+    const d = new Date(); d.setDate(d.getDate()+30);
+    document.getElementById('m-expire').value = d.toISOString().slice(0,10);
+  } else {
+    document.getElementById('m-expire').value = '';
+  }
+  document.getElementById('approve-modal').classList.add('show');
+}
+
+async function approveSubmit() {
+  const id     = document.getElementById('m-id').value;
+  const key    = document.getElementById('m-key').value;
+  const expire = document.getElementById('m-expire').value;
+  const note   = document.getElementById('m-note').value;
+  try {
+    const res = await fetch(API + '/api/license/approve', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id: parseInt(id), license_key: key, expires_at: expire, note })
+    });
+    const data = await res.json();
+    if (data.success) { closeModal('approve-modal'); loadData(); toast('✅ Đã duyệt và cấp key!'); }
+    else toast('Lỗi: ' + (data.error||'Unknown'), 'error');
+  } catch(e) { toast('Lỗi kết nối: ' + e.message, 'error'); }
+}
+
+// ─── RENEW ───────────────────────────────────────────
+function openRenew(id) {
+  const r = allData.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById('rn-id').value      = id;
+  document.getElementById('rn-name').value    = r.name;
+  document.getElementById('rn-current').value = r.expires_at || 'Không hết hạn';
+  updateRenewDate();
+  document.getElementById('renew-modal').classList.add('show');
+}
+
+function updateRenewDate() {
+  const id   = document.getElementById('rn-id').value;
+  const days = parseInt(document.getElementById('rn-days').value);
+  const r    = allData.find(x => x.id === parseInt(id));
+  const base = r?.expires_at ? new Date(r.expires_at) : new Date();
+  if (base < new Date()) base.setTime(new Date().getTime()); // if expired, renew from today
+  base.setDate(base.getDate() + days);
+  document.getElementById('rn-new-date').value = base.toISOString().slice(0,10);
+}
+
+async function renewSubmit() {
+  const id      = parseInt(document.getElementById('rn-id').value);
+  const newDate = document.getElementById('rn-new-date').value;
+  if (!newDate) { toast('Vui lòng chọn ngày', 'error'); return; }
+  try {
+    const res = await fetch(API + '/api/license/renew', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id, expires_at: newDate })
+    });
+    const data = await res.json();
+    if (data.success) { closeModal('renew-modal'); loadData(); toast('✅ Đã gia hạn thành công!'); }
+    else toast('Lỗi: ' + (data.error||'Unknown'), 'error');
+  } catch(e) { toast('Lỗi kết nối', 'error'); }
+}
+
+// ─── REVOKE / REACTIVATE ─────────────────────────────
+async function revoke(id) {
+  if (!confirm('Thu hồi license này? EA của khách sẽ dừng hoạt động.')) return;
+  try {
+    await fetch(API + '/api/license/revoke', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id })
+    });
+    loadData(); toast('🔒 Đã thu hồi license');
+  } catch(e) { toast('Lỗi: ' + e.message, 'error'); }
+}
+
+async function reactivate(id) {
+  try {
+    await fetch(API + '/api/license/reactivate', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id })
+    });
+    loadData(); toast('✅ Đã kích hoạt lại license');
+  } catch(e) { toast('Lỗi: ' + e.message, 'error'); }
+}
+
+// ─── HELPERS ─────────────────────────────────────────
+function genKey() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const seg = () => Array.from({length:4}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+  return `SGR-${seg()}-${seg()}-${seg()}`;
+}
+
+function statusLabel(s) {
+  return { pending:'⏳ Chờ duyệt', active:'✅ Đang dùng', revoked:'❌ Thu hồi', expired:'⌛ Hết hạn' }[s] || s;
+}
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key).then(() => toast('📋 Đã copy license key!'));
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+function toast(msg, type='success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ─── INIT ────────────────────────────────────────────
+if (sessionStorage.getItem('admin_auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadData();
+}
+setInterval(loadData, 60000);
 </script>
 </body>
 </html>

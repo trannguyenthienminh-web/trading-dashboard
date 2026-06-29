@@ -1,273 +1,1113 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading AI — Đăng nhập</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg:      #0a0b0e;
-    --surface: #111318;
-    --border:  #1e2028;
-    --gold:    #f5c842;
-    --text:    #e8eaf0;
-    --muted:   #6b7080;
-    --red:     #e74c3c;
-  }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading AI — Tín hiệu Vàng & Crypto thông minh</title>
+  <meta name="description" content="Tín hiệu giao dịch XAU/USD và Crypto tự động từ AI. Phân tích Price Action & SMC chuyên sâu. Cộng đồng trader Việt Nam." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── DESIGN TOKENS ──────────────────────────────────── */
+    :root {
+      --black:     #090909;
+      --surface:   #111111;
+      --card:      #181818;
+      --border:    #252525;
+      --gold:      #C9A84C;
+      --gold-dim:  #8A6E2F;
+      --gold-glow: rgba(201,168,76,0.15);
+      --white:     #F5F5F5;
+      --muted:     #888888;
+      --green:     #34D399;
+      --red:       #F87171;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
 
-  /* Grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(245,200,66,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(245,200,66,0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-  }
+    /* ─── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
 
-  .login-wrap {
-    width: 100%;
-    max-width: 400px;
-    position: relative;
-    z-index: 1;
-  }
+    /* ─── UTILITIES ──────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .gold { color: var(--gold); }
+    .mono { font-family: 'Courier New', monospace; }
 
-  /* Logo */
-  .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-  .logo-mark {
-    width: 44px; height: 44px;
-    background: var(--gold);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px; font-weight: 600; color: #0a0b0e;
-  }
-  .logo-name { font-size: 1.25rem; font-weight: 700; }
-  .logo-name span { color: var(--gold); }
+    /* ─── NAV ────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9,9,9,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.875rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--gold);
+      color: var(--black) !important;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      padding: 8px 18px;
+      border-radius: 6px;
+      transition: opacity 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.85 !important; color: var(--black) !important; }
+    .nav-cta-ea {
+      background: transparent;
+      color: var(--gold) !important;
+      font-weight: 600;
+      font-size: 0.8125rem;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(201,168,76,0.4);
+      transition: all 0.2s !important;
+    }
+    .nav-cta-ea:hover { background: rgba(201,168,76,0.08) !important; border-color: var(--gold) !important; }
+    .nav-mobile-toggle { display: none; cursor: pointer; color: var(--muted); }
 
-  /* Card */
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-  }
-  .login-card h2 {
-    font-size: 1.25rem; font-weight: 700;
-    margin-bottom: 6px;
-  }
-  .login-card p {
-    font-size: 0.875rem; color: var(--muted);
-    margin-bottom: 28px;
-  }
+    /* ─── HERO ───────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.25);
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .pulse {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+    .hero-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.5vw, 3.25rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 460px;
+      margin-bottom: 36px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 700;
+      font-size: 0.9375rem;
+      padding: 13px 26px;
+      border-radius: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--white);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      padding: 13px 26px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 44px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { display: flex; flex-direction: column; gap: 3px; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .stat-label { font-size: 0.75rem; color: var(--muted); }
 
-  /* Form */
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block;
-    font-size: 0.75rem; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .field input {
-    width: 100%;
-    padding: 11px 14px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9375rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .field input:focus { border-color: var(--gold); }
-  .field input::placeholder { color: var(--muted); }
+    /* ─── SIGNAL CARD (hero right) ───────────────────────── */
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-live {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.25);
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+    .signal-pair {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .signal-type {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+    .signal-rows { display: flex; flex-direction: column; gap: 10px; }
+    .signal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .sr-label { font-size: 0.75rem; color: var(--muted); }
+    .sr-value { font-size: 0.9375rem; font-weight: 600; font-family: 'Courier New', monospace; }
+    .sr-value.tp { color: var(--green); }
+    .sr-value.sl { color: var(--red); }
+    .signal-ai {
+      margin-top: 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(201,168,76,0.06), rgba(201,168,76,0.02));
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 10px;
+      font-size: 0.8125rem;
+      color: #ccc;
+      line-height: 1.6;
+    }
+    .ai-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
 
-  /* Error */
-  .error-msg {
-    display: none;
-    font-size: 0.8125rem;
-    color: var(--red);
-    background: rgba(231,76,60,0.08);
-    border: 1px solid rgba(231,76,60,0.2);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-  }
-  .error-msg.show { display: block; }
+    /* ─── SECTION SHARED ─────────────────────────────────── */
+    section { padding: 96px 0; }
+    .section-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .section-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
 
-  /* Button */
-  .btn-login {
-    width: 100%;
-    padding: 13px;
-    background: var(--gold);
-    color: #0a0b0e;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    margin-top: 6px;
-  }
-  .btn-login:hover { opacity: 0.88; }
-  .btn-login:active { opacity: 0.75; }
+    /* ─── FEATURES ───────────────────────────────────────── */
+    #features { background: var(--surface); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 28px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .feature-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      width: 48px; height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gold-glow);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 1.375rem;
+    }
+    .feature-h3 {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+    .feature-tag {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.08);
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
 
-  /* Footer */
-  .login-footer {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 0.75rem;
-    color: var(--muted);
-  }
-  .login-footer a { color: var(--gold); }
+    /* ─── RESULTS TABLE ──────────────────────────────────── */
+    #results {}
+    .results-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .results-summary {
+      display: flex;
+      gap: 20px;
+    }
+    .rs-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90px; height: 72px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .rs-chip .num {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .rs-chip .lbl {
+      font-size: 0.6875rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .results-table th {
+      background: var(--surface);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 14px 20px;
+      text-align: left;
+    }
+    .results-table td {
+      padding: 14px 20px;
+      font-size: 0.875rem;
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .results-table tr:hover td { background: rgba(255,255,255,0.015); }
+    .pair-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .pair-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dir-buy  { color: var(--green); font-weight: 600; font-size: 0.8125rem; }
+    .dir-sell { color: var(--red);   font-weight: 600; font-size: 0.8125rem; }
+    .tp-hit   { color: var(--green); font-weight: 600; }
+    .sl-hit   { color: var(--red);   font-weight: 600; }
+    .mono-val { font-family: 'Courier New', monospace; font-size: 0.875rem; }
+    .td-muted { color: var(--muted); font-size: 0.8rem; }
 
-  /* Ticker bar */
-  .ticker {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
-  }
-  .tick-item {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 0.8125rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 6px 14px;
-  }
-  .tick-label { color: var(--muted); font-size: 0.75rem; }
-  .tick-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
-  .tick-val.up { color: #2ecc71; }
-</style>
+    /* Widget placeholder */
+    .widget-placeholder {
+      margin-top: 48px;
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--muted);
+    }
+    .widget-placeholder .icon { font-size: 2.5rem; opacity: 0.4; }
+    .widget-placeholder p { font-size: 0.875rem; }
+    .widget-placeholder code {
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      background: var(--surface);
+      padding: 4px 10px;
+      border-radius: 4px;
+      color: var(--gold);
+    }
+
+    /* ─── HOW IT WORKS ───────────────────────────────────── */
+    #how { background: var(--surface); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 30px;
+      left: calc(12.5% + 16px);
+      right: calc(12.5% + 16px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold-dim) 80%, transparent);
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 16px;
+    }
+    .step-num {
+      width: 60px; height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 700;
+      background: var(--card);
+      border: 2px solid var(--gold-dim);
+      color: var(--gold);
+      border-radius: 50%;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .step h4 {
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p { font-size: 0.8125rem; color: var(--muted); line-height: 1.6; }
+
+    /* ─── CTA BANNER ─────────────────────────────────────── */
+    #cta-band {
+      padding: 80px 0;
+      background: linear-gradient(135deg, #0f0d07, #14110a);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    #cta-band .section-h2 { margin: 0 auto 12px; max-width: 580px; }
+    #cta-band .section-sub { margin: 0 auto 36px; }
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid var(--border);
+      padding: 56px 0 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand .nav-logo { font-size: 1.25rem; margin-bottom: 12px; display: block; }
+    .footer-brand p { font-size: 0.875rem; color: var(--muted); line-height: 1.7; max-width: 300px; }
+    .footer-col h5 {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
+    .footer-col ul a:hover { color: var(--gold); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.8125rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-disclaimer { max-width: 460px; font-size: 0.7rem; line-height: 1.5; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; gap: 40px; }
+      .hero-card { max-width: 480px; margin: 0 auto; }
+      .hero-h1 { text-align: center; }
+      .hero-eyebrow { margin-left: auto; margin-right: auto; }
+      .hero-sub { text-align: center; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .features-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .steps { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .steps::before { display: none; }
+      .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+      .results-header { flex-direction: column; align-items: flex-start; }
+      .nav-links { display: none; }
+      .nav-mobile-toggle { display: flex; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 64px 0; }
+      .steps { grid-template-columns: 1fr; }
+      .results-summary { flex-wrap: wrap; }
+      .table-wrap { overflow-x: auto; }
+      .results-table { min-width: 520px; }
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="login-wrap">
-
-  <!-- Logo -->
-  <div class="logo">
-    <div class="logo-mark">AI</div>
-    <div class="logo-name">Trading<span>AI</span> Dashboard</div>
-  </div>
-
-  <!-- Ticker mini -->
-  <div class="ticker" id="ticker">
-    <div class="tick-item">
-      <span class="tick-label">XAU/USD</span>
-      <span class="tick-val up" id="t-xau">—</span>
+  <!-- ─── NAV ──────────────────────────────────────────── -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">Trading<span>AI</span></a>
+      <ul class="nav-links">
+        <li><a href="#features">Tính năng</a></li>
+        <li><a href="#results">Kết quả</a></li>
+        <li><a href="#how">Cách hoạt động</a></li>
+        <li><a href="https://trading-dashboard-phi-nine.vercel.app/register.html" target="_blank" rel="noopener" class="nav-cta-ea">🤖 Thuê EA</a></li>
+        <li><a href="https://t.me/YOUR_GROUP" target="_blank" rel="noopener" class="nav-cta">Tham gia Telegram</a></li>
+      </ul>
+      <div class="nav-mobile-toggle" onclick="document.querySelector('.nav-links').style.cssText='display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:20px;gap:20px;z-index:99;'">☰</div>
     </div>
-    <div class="tick-item">
-      <span class="tick-label">BTC/USD</span>
-      <span class="tick-val up" id="t-btc">—</span>
+  </nav>
+
+  <!-- ─── HERO ──────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="container hero-content">
+      <!-- Left -->
+      <div>
+        <div class="hero-eyebrow">
+          <span class="pulse"></span>
+          Hệ thống đang hoạt động
+        </div>
+        <h1 class="hero-h1">
+          Giao dịch Vàng &amp; Crypto<br />
+          <span class="gold">thông minh hơn</span> với AI
+        </h1>
+        <p class="hero-sub">
+          Tín hiệu Price Action & SMC tự động từ MT5, phân tích chuyên sâu bằng AI,
+          cập nhật realtime. Dành cho trader Việt Nam nghiêm túc.
+        </p>
+        <div class="hero-actions">
+          <a href="https://t.me/YOUR_GROUP" target="_blank" rel="noopener" class="btn-primary">
+            ✈ Tham gia cộng đồng
+          </a>
+          <a href="https://trading-dashboard-phi-nine.vercel.app/register.html" target="_blank" rel="noopener" class="btn-outline">
+            🤖 Thuê EA SmartGold
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">78%</span>
+            <span class="stat-label">Win Rate</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">1:2.1</span>
+            <span class="stat-label">Avg R:R</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">500+</span>
+            <span class="stat-label">Thành viên</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">24/7</span>
+            <span class="stat-label">Tín hiệu liên tục</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right — LIVE signal card -->
+      <div>
+        <div class="hero-card" id="live-signal-card">
+          <div class="card-header">
+            <span class="card-title">Tín hiệu mới nhất</span>
+            <span class="badge-live" id="live-badge">● LIVE</span>
+          </div>
+          <div class="signal-pair" id="live-pair">XAU/USD <span style="color:var(--muted);font-size:1rem;font-weight:400;">· M5</span></div>
+          <div class="signal-type" id="live-type">⏳ Đang tải...</div>
+          <div class="signal-rows">
+            <div class="signal-row">
+              <span class="sr-label">Entry</span>
+              <span class="sr-value mono-val" id="live-entry">—</span>
+            </div>
+            <div class="signal-row">
+              <span class="sr-label">Stop Loss</span>
+              <span class="sr-value sl mono-val" id="live-sl">—</span>
+            </div>
+            <div class="signal-row">
+              <span class="sr-label">Take Profit</span>
+              <span class="sr-value tp mono-val" id="live-tp">—</span>
+            </div>
+            <div class="signal-row">
+              <span class="sr-label">R:R Ratio</span>
+              <span class="sr-value gold mono-val" id="live-rr">—</span>
+            </div>
+          </div>
+          <div class="signal-ai">
+            <div class="ai-label">⚡ Phân tích AI</div>
+            <span id="live-analysis">Đang tải phân tích...</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="tick-item">
-      <span class="tick-label">EUR/USD</span>
-      <span class="tick-val up" id="t-eur">—</span>
+  </section>
+
+  <!-- ─── FEATURES ──────────────────────────────────────── -->
+  <section id="features">
+    <div class="container">
+      <div class="section-label">Tại sao chọn chúng tôi</div>
+      <h2 class="section-h2">Hệ thống hoàn chỉnh,<br /><span class="gold">không cần đoán mò</span></h2>
+      <p class="section-sub">
+        Từ tín hiệu kỹ thuật MT5 đến phân tích AI sâu — mọi thứ đều tự động, minh bạch và
+        có thể kiểm chứng.
+      </p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📡</div>
+          <h3 class="feature-h3">Tín hiệu từ MT5</h3>
+          <p class="feature-p">
+            Indicator THIENMINHGOLD chạy trực tiếp trên MetaTrader 5, phát hiện tín hiệu
+            Price Action theo thời gian thực — Entry, SL, TP chính xác đến từng pip.
+          </p>
+          <span class="feature-tag">MT5 · Price Action · SMC</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3 class="feature-h3">Phân tích AI chuyên sâu</h3>
+          <p class="feature-p">
+            Claude AI phân tích cấu trúc thị trường, Order Block, FVG và cung cấp nhận
+            định tiếng Việt rõ ràng, dưới 150 từ — dễ hiểu cho mọi cấp độ trader.
+          </p>
+          <span class="feature-tag">Claude API · SMC · Tiếng Việt</span>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-h3">Dashboard quản lý</h3>
+          <p class="feature-p">
+            Web dashboard realtime với TradingView chart, lịch sử tín hiệu, thống kê win
+            rate và AI Agent hỏi đáp — tất cả trong một giao diện bảo mật.
+          </p>
+          <span class="feature-tag">Vercel · TradingView · SQLite</span>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Login card -->
-  <div class="login-card">
-    <h2>Đăng nhập</h2>
-    <p>Nhập thông tin tài khoản được cấp để tiếp tục.</p>
+  <!-- ─── RESULTS TABLE ─────────────────────────────────── -->
+  <section id="results">
+    <div class="container">
+      <div class="results-header">
+        <div>
+          <div class="section-label">Kết quả thực tế</div>
+          <h2 class="section-h2" style="margin-bottom:8px;">Lệnh gần đây</h2>
+          <p style="color:var(--muted);font-size:0.875rem;">Dữ liệu minh họa — kết quả thực cập nhật tự động từ hệ thống</p>
+        </div>
+        <div class="results-summary">
+          <div class="rs-chip"><span class="num">24</span><span class="lbl">Lệnh</span></div>
+          <div class="rs-chip"><span class="num" style="color:var(--green);">19</span><span class="lbl">TP hit</span></div>
+          <div class="rs-chip"><span class="num" style="color:var(--red);">5</span><span class="lbl">SL hit</span></div>
+          <div class="rs-chip"><span class="num">79%</span><span class="lbl">Win rate</span></div>
+        </div>
+      </div>
 
-    <div class="error-msg" id="errMsg">Sai tên đăng nhập hoặc mật khẩu!</div>
+      <div class="table-wrap">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Cặp</th>
+              <th>Hướng</th>
+              <th>Entry</th>
+              <th>SL</th>
+              <th>TP</th>
+              <th>R:R</th>
+              <th>Kết quả</th>
+              <th>Thời gian</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pair-badge"><span class="pair-dot" style="background:#f59e0b;"></span>XAU/USD</span></td>
+              <td><span class="dir-buy">▲ BUY</span></td>
+              <td class="mono-val">3,315.50</td>
+              <td class="mono-val sl">3,301.00</td>
+              <td class="mono-val tp">3,346.30</td>
+              <td class="mono-val gold">1:2.12</td>
+              <td><span class="tp-hit">✓ TP hit</span></td>
+              <td class="td-muted">28/06 08:15</td>
+            </tr>
+            <tr>
+              <td><span class="pair-badge"><span class="pair-dot" style="background:#60a5fa;"></span>BTC/USD</span></td>
+              <td><span class="dir-sell">▼ SELL</span></td>
+              <td class="mono-val">107,240</td>
+              <td class="mono-val sl">108,500</td>
+              <td class="mono-val tp">104,900</td>
+              <td class="mono-val gold">1:1.86</td>
+              <td><span class="tp-hit">✓ TP hit</span></td>
+              <td class="td-muted">27/06 14:30</td>
+            </tr>
+            <tr>
+              <td><span class="pair-badge"><span class="pair-dot" style="background:#f59e0b;"></span>XAU/USD</span></td>
+              <td><span class="dir-buy">▲ BUY</span></td>
+              <td class="mono-val">3,288.70</td>
+              <td class="mono-val sl">3,275.00</td>
+              <td class="mono-val tp">3,315.00</td>
+              <td class="mono-val gold">1:1.92</td>
+              <td><span class="tp-hit">✓ TP hit</span></td>
+              <td class="td-muted">27/06 09:45</td>
+            </tr>
+            <tr>
+              <td><span class="pair-badge"><span class="pair-dot" style="background:#a78bfa;"></span>EUR/USD</span></td>
+              <td><span class="dir-buy">▲ BUY</span></td>
+              <td class="mono-val">1.1724</td>
+              <td class="mono-val sl">1.1698</td>
+              <td class="mono-val tp">1.1778</td>
+              <td class="mono-val gold">1:2.08</td>
+              <td><span class="sl-hit">✗ SL hit</span></td>
+              <td class="td-muted">26/06 20:00</td>
+            </tr>
+            <tr>
+              <td><span class="pair-badge"><span class="pair-dot" style="background:#f59e0b;"></span>XAU/USD</span></td>
+              <td><span class="dir-sell">▼ SELL</span></td>
+              <td class="mono-val">3,264.20</td>
+              <td class="mono-val sl">3,276.00</td>
+              <td class="mono-val tp">3,240.00</td>
+              <td class="mono-val gold">1:2.05</td>
+              <td><span class="tp-hit">✓ TP hit</span></td>
+              <td class="td-muted">26/06 11:20</td>
+            </tr>
+            <tr>
+              <td><span class="pair-badge"><span class="pair-dot" style="background:#f59e0b;"></span>XAU/USD</span></td>
+              <td><span class="dir-buy">▲ BUY</span></td>
+              <td class="mono-val">3,248.50</td>
+              <td class="mono-val sl">3,236.00</td>
+              <td class="mono-val tp">3,274.00</td>
+              <td class="mono-val gold">1:2.04</td>
+              <td><span class="tp-hit">✓ TP hit</span></td>
+              <td class="td-muted">25/06 08:00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <div class="field">
-      <label>Tên đăng nhập</label>
-      <input type="text" id="username" placeholder="username" autocomplete="username" />
+      <!-- TradingView Chart 3 tab -->
+      <div class="chart-section">
+        <div class="chart-tabs">
+          <button class="chart-tab active" onclick="switchChart('XAUUSD', this)">⭐ XAU/USD</button>
+          <button class="chart-tab" onclick="switchChart('BTCUSD', this)">₿ BTC/USD</button>
+          <button class="chart-tab" onclick="switchChart('EURUSD', this)">💱 EUR/USD</button>
+        </div>
+        <div class="chart-wrap" id="chart-container">
+          <div id="tradingview-widget"></div>
+        </div>
+      </div>
+
+      <style>
+        .chart-section { margin-top: 48px; }
+        .chart-tabs {
+          display: flex; gap: 8px; margin-bottom: 0;
+        }
+        .chart-tab {
+          padding: 10px 20px;
+          background: var(--card);
+          border: 1px solid var(--border);
+          border-bottom: none;
+          border-radius: 8px 8px 0 0;
+          color: var(--muted);
+          font-size: 0.875rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: 'Inter', sans-serif;
+        }
+        .chart-tab.active {
+          background: var(--surface);
+          color: var(--gold);
+          border-color: var(--gold-dim);
+        }
+        .chart-tab:hover:not(.active) { color: var(--white); border-color: #333; }
+        .chart-wrap {
+          background: var(--surface);
+          border: 1px solid var(--gold-dim);
+          border-radius: 0 8px 8px 8px;
+          overflow: hidden;
+          height: 500px;
+        }
+        #tradingview-widget { width: 100%; height: 500px; }
+        #tradingview-widget > div { height: 500px !important; }
+        #tradingview-widget iframe { width: 100% !important; height: 500px !important; border: none; }
+        @media (max-width: 600px) {
+          .chart-wrap { height: 360px; }
+          #tradingview-widget, #tradingview-widget > div, #tradingview-widget iframe { height: 360px !important; }
+        }
+      </style>
+
+      <script>
+        function switchChart(symbol, btn) {
+          document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+          btn.classList.add('active');
+          loadChart(symbol);
+        }
+
+        function loadChart(symbol) {
+          const container = document.getElementById('tradingview-widget');
+          container.innerHTML = '';
+          const script = document.createElement('script');
+          script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+          script.async = true;
+          const isMobile = window.innerWidth <= 600;
+          const h = isMobile ? 360 : 500;
+          script.innerHTML = JSON.stringify({
+            autosize: false,
+            width: "100%",
+            height: h,
+            symbol: "OANDA:" + symbol,
+            interval: "H1",
+            timezone: "Asia/Ho_Chi_Minh",
+            theme: "dark",
+            style: "1",
+            locale: "vi_VN",
+            backgroundColor: "#111111",
+            gridColor: "rgba(37,37,37,0.5)",
+            hide_top_toolbar: false,
+            hide_legend: false,
+            save_image: false,
+            calendar: false,
+            support_host: "https://www.tradingview.com"
+          });
+          container.appendChild(script);
+        }
+
+        // Load XAU/USD mặc định khi trang load xong
+        document.addEventListener('DOMContentLoaded', function() {
+          loadChart('XAUUSD');
+          loadLiveSignal();
+          setInterval(loadLiveSignal, 60000); // Refresh mỗi 1 phút
+        });
+
+        // ── LIVE SIGNAL ──────────────────────────────────────
+        const PROXY = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+
+        async function loadLiveSignal() {
+          try {
+            const res  = await fetch(PROXY + '/api/signals?limit=1', { signal: AbortSignal.timeout(8000) });
+            const data = await res.json();
+            const sig  = data?.signals?.[0] || data?.[0];
+            if (!sig) { showSampleSignal(); return; }
+
+            const dir    = sig.direction === 'BUY' ? '▲ LONG' : '▼ SHORT';
+            const color  = sig.direction === 'BUY' ? '#34D399' : '#F87171';
+            const tf     = (sig.timeframe || 'M5').replace('PERIOD_', '');
+            const rr     = sig.rr_ratio ? `1 : ${sig.rr_ratio}` : '—';
+            const tp     = sig.tp1 || sig.tp3 || '—';
+            const status = sig.status === 'OPEN' ? '● LIVE' : '● CLOSED';
+
+            document.getElementById('live-pair').innerHTML =
+              `XAU/USD <span style="color:var(--muted);font-size:1rem;font-weight:400;">· ${tf}</span>`;
+            document.getElementById('live-type').innerHTML =
+              `<span style="color:${color}">${dir}</span> — ${sig.signal_type || 'Price Action'}`;
+            document.getElementById('live-entry').textContent  = fmt(sig.entry);
+            document.getElementById('live-sl').textContent     = fmt(sig.stop_loss);
+            document.getElementById('live-tp').textContent     = fmt(tp);
+            document.getElementById('live-rr').textContent     = rr;
+            document.getElementById('live-badge').textContent  = status;
+            document.getElementById('live-badge').style.color  = sig.status === 'OPEN' ? '#34D399' : '#888';
+
+            // Phân tích AI — lấy 150 ký tự đầu
+            const analysis = sig.analysis_text || '';
+            document.getElementById('live-analysis').textContent =
+              analysis.length > 200 ? analysis.substring(0, 200) + '...' : analysis || 'Đang cập nhật...';
+
+          } catch(e) {
+            showSampleSignal();
+          }
+        }
+
+        function fmt(val) {
+          if (!val || val === '—') return '—';
+          const n = parseFloat(val);
+          return isNaN(n) ? val : n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function showSampleSignal() {
+          document.getElementById('live-type').innerHTML = '<span style="color:#34D399">▲ LONG</span> — Price Action BOS';
+          document.getElementById('live-entry').textContent  = '—';
+          document.getElementById('live-sl').textContent     = '—';
+          document.getElementById('live-tp').textContent     = '—';
+          document.getElementById('live-rr').textContent     = '—';
+          document.getElementById('live-analysis').textContent = 'Chưa có tín hiệu mới. Hệ thống đang theo dõi thị trường...';
+          document.getElementById('live-badge').textContent = '● STANDBY';
+          document.getElementById('live-badge').style.color = '#888';
+        }
+      </script>
     </div>
-    <div class="field">
-      <label>Mật khẩu</label>
-      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"
-        onkeydown="if(event.key==='Enter') doLogin()" />
+  </section>
+
+  <!-- ─── HOW IT WORKS ──────────────────────────────────── -->
+  <section id="how">
+    <div class="container">
+      <div class="section-label">Quy trình</div>
+      <h2 class="section-h2">Từ chart đến<br /><span class="gold">tín hiệu trong vài giây</span></h2>
+      <p class="section-sub">Hoàn toàn tự động — không cần nhìn chart liên tục.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4>MT5 phát hiện</h4>
+          <p>Indicator THIENMINHGOLD quét cấu trúc thị trường 24/5, phát hiện BOS, OB, FVG trên các khung giờ.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4>AI phân tích</h4>
+          <p>Claude AI nhận dữ liệu, viết phân tích Price Action & SMC bằng tiếng Việt, xác nhận R:R hợp lý.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4>Gửi Telegram</h4>
+          <p>Tín hiệu hoàn chỉnh với Entry/SL/TP và phân tích được gửi ngay vào group — dưới 10 giây.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h4>Theo dõi Dashboard</h4>
+          <p>Xem lịch sử, win rate, chart realtime và hỏi AI Agent trực tiếp trên web dashboard.</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <button class="btn-login" onclick="doLogin()">Đăng nhập</button>
-  </div>
+  <!-- ─── CTA BAND ───────────────────────────────────────── -->
+  <section id="cta-band">
+    <div class="container">
+      <div class="section-label">Bắt đầu ngay</div>
+      <h2 class="section-h2">Sẵn sàng giao dịch<br /><span class="gold">có hệ thống chưa?</span></h2>
+      <p class="section-sub">
+        Tham gia cộng đồng Trading AI ngay hôm nay — miễn phí, không cần kinh nghiệm lập trình.
+      </p>
+      <div class="cta-actions">
+        <a href="https://t.me/YOUR_GROUP" target="_blank" rel="noopener" class="btn-primary">
+          ✈ Tham gia Telegram miễn phí
+        </a>
+        <a href="https://trading-dashboard-phi-nine.vercel.app/register.html" target="_blank" rel="noopener" class="btn-outline">
+          🤖 Đăng ký EA SmartGold
+        </a>
+        <a href="https://trading-dashboard-phi-nine.vercel.app" target="_blank" rel="noopener" class="btn-outline">
+          📊 Xem Dashboard
+        </a>
+      </div>
+    </div>
+  </section>
 
-  <div class="login-footer">
-    Hệ thống dành riêng cho thành viên · © 2026 Trading AI<br/>
-    <a href="https://trading-landing-lac.vercel.app" target="_blank">← Về trang giới thiệu</a>
-  </div>
-
-</div>
-
-<script>
-  // ── TÀI KHOẢN (thêm/sửa ở đây) ──────────────────────────
-  const ACCOUNTS = {
-    "admin":   "admin123",
-    "xuyen": "Xuyen1988@",
-    "member2": "member123",
-    "vip":     "vip2026",
-  };
-
-  function doLogin() {
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value;
-    const err = document.getElementById('errMsg');
-
-    if (ACCOUNTS[u] && ACCOUNTS[u] === p) {
-      sessionStorage.setItem('user', u);
-      window.location.href = 'dashboard.html';
-    } else {
-      err.classList.add('show');
-      document.getElementById('password').value = '';
-      document.getElementById('password').focus();
-      setTimeout(() => err.classList.remove('show'), 3000);
-    }
-  }
-
-  // ── Lấy giá realtime ──────────────────────────────────────
-  async function fetchPrices() {
-    try {
-      const res = await fetch(
-        'https://trading-proxy.trannguyenthienminh.workers.dev/prices',
-        { signal: AbortSignal.timeout(5000) }
-      );
-      const d = await res.json();
-      if (d.xauusd) document.getElementById('t-xau').textContent = Number(d.xauusd).toFixed(2);
-      if (d.btcusd) document.getElementById('t-btc').textContent = Number(d.btcusd).toFixed(0);
-      if (d.eurusd) document.getElementById('t-eur').textContent = Number(d.eurusd).toFixed(5);
-    } catch {}
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // Redirect nếu đã đăng nhập
-    if (sessionStorage.getItem('user')) {
-      window.location.href = 'dashboard.html';
-    }
-    fetchPrices();
-    document.getElementById('username').focus();
-  });
-</script>
+  <!-- ─── FOOTER ─────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="nav-logo">Trading<span class="gold">AI</span></span>
+          <p>Hệ thống tín hiệu giao dịch tự động kết hợp Price Action, Smart Money Concept và phân tích AI — dành cho cộng đồng trader Việt Nam.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Truy cập nhanh</h5>
+          <ul>
+            <li><a href="#hero">Trang chủ</a></li>
+            <li><a href="#features">Tính năng</a></li>
+            <li><a href="#results">Kết quả</a></li>
+            <li><a href="#how">Cách hoạt động</a></li>
+            <li><a href="https://trading-dashboard-phi-nine.vercel.app/register.html" target="_blank" rel="noopener">🤖 Đăng ký EA</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Kênh hỗ trợ</h5>
+          <ul>
+            <li><a href="https://t.me/YOUR_GROUP" target="_blank" rel="noopener">📱 Telegram Group</a></li>
+            <li><a href="https://trading-dashboard-phi-nine.vercel.app" target="_blank" rel="noopener">🌐 Web Dashboard</a></li>
+            <li><a href="https://t.me/YOUR_SUPPORT" target="_blank" rel="noopener">🆘 Hỗ trợ kỹ thuật</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Trading AI · Thien Minh</span>
+        <span class="footer-disclaimer">
+          ⚠️ Cảnh báo rủi ro: Giao dịch ngoại hối và tiền mã hóa có rủi ro cao.
+          Các tín hiệu chỉ mang tính tham khảo, không phải lời khuyên đầu tư.
+          Bạn có thể mất toàn bộ vốn đầu tư.
+        </span>
+      </div>
+    </div>
+  </footer>
 
 </body>
 </html>

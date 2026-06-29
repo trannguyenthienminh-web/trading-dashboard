@@ -328,6 +328,159 @@
   }
   .btn-expand:hover { color: var(--gold); }
 
+  /* ── CONFLUENCE TAB ── */
+  #tab-confluence {
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .cf-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .cf-intro {
+    background: linear-gradient(135deg, rgba(245,200,66,0.06) 0%, rgba(245,200,66,0.02) 100%);
+    border: 1px solid rgba(245,200,66,0.2);
+    border-radius: var(--r);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .cf-intro-icon { font-size: 28px; }
+  .cf-intro-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .cf-intro-text strong { color: var(--gold); }
+  .cf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 16px;
+  }
+  .cf-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .cf-card:hover { border-color: rgba(245,200,66,0.35); }
+  .cf-card-top {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .cf-card-sym {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 600;
+  }
+  .cf-badge-dir {
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 5px;
+  }
+  .cf-badge-dir.buy  { background: rgba(46,204,113,0.12); color: var(--green); }
+  .cf-badge-dir.sell { background: rgba(231,76,60,0.12);  color: var(--red); }
+
+  /* Score ring area */
+  .cf-score-row {
+    padding: 16px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cf-ring {
+    position: relative;
+    width: 72px; height: 72px; flex-shrink: 0;
+  }
+  .cf-ring svg { transform: rotate(-90deg); }
+  .cf-ring-num {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 700;
+    line-height: 1;
+  }
+  .cf-ring-num span { font-size: 9px; color: var(--muted); margin-top: 1px; }
+  .cf-score-info { flex: 1; }
+  .cf-label-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 800;
+    letter-spacing: .08em; padding: 3px 10px;
+    border-radius: 4px; margin-bottom: 6px;
+  }
+  .label-excellent { background: rgba(245,200,66,0.15); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
+  .label-good      { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
+  .label-fair      { background: rgba(52,152,219,0.12); color: var(--blue); border: 1px solid rgba(52,152,219,0.25); }
+  .label-weak      { background: rgba(107,112,128,0.1); color: var(--muted); border: 1px solid var(--border); }
+  .cf-summary {
+    font-size: 12px; color: var(--muted); line-height: 1.55;
+  }
+
+  /* Factor bars */
+  .cf-factors {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .cf-factor-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cf-factor-label {
+    font-size: 10px; color: var(--muted);
+    width: 100px; flex-shrink: 0;
+  }
+  .cf-factor-track {
+    flex: 1; height: 4px;
+    background: var(--border); border-radius: 2px;
+    overflow: hidden;
+  }
+  .cf-factor-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+  .cf-factor-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    width: 28px; text-align: right; flex-shrink: 0;
+  }
+
+  /* Strengths & warnings */
+  .cf-tags {
+    padding: 12px 16px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cf-tag {
+    font-size: 11px; padding: 3px 9px;
+    border-radius: 100px;
+  }
+  .cf-tag.strength { background: rgba(46,204,113,0.08); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
+  .cf-tag.warning  { background: rgba(245,200,66,0.08); color: var(--gold);  border: 1px solid rgba(245,200,66,0.2); }
+
+  /* Levels & time */
+  .cf-footer {
+    padding: 12px 16px;
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .cf-levels-mini {
+    display: flex; gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .cf-lv-item { display: flex; flex-direction: column; gap: 2px; }
+  .cf-lv-item .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; }
+  .cf-time { font-size: 11px; color: var(--muted); }
+  .cf-status-badge {
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 4px; font-weight: 600;
+  }
+
+  .cf-empty {
+    grid-column: 1 / -1;
+    text-align: center; padding: 60px 20px;
+    color: var(--muted); font-size: 14px; line-height: 1.8;
+  }
+  .cf-empty .ce-icon { font-size: 40px; margin-bottom: 12px; }
+
   /* ── HISTORY TAB ── */
   #tab-history {
     padding: 20px 24px;
@@ -416,78 +569,11 @@
   }
 
   /* ── RESPONSIVE ── */
-  /* ── MOBILE RESPONSIVE ── */
   @media (max-width: 768px) {
-    /* Nav top - ẩn tabs, chỉ giữ logo + right */
-    nav { padding: 0 16px; height: 52px; }
-    .nav-tabs { display: none; }
-    .nav-logo { font-size: 13px; }
-    .nav-logo-mark { width: 28px; height: 28px; font-size: 11px; }
-    .btn-ea { display: none; }
-    .nav-user { display: none; }
-    .btn-logout { font-size: 11px; padding: 5px 10px; }
-
-    /* Bottom navigation bar */
-    .mobile-nav {
-      display: flex !important;
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 6px 0 max(6px, env(safe-area-inset-bottom));
-    }
-    .mobile-nav-item {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 3px; padding: 4px 2px;
-      font-size: 9px; color: var(--muted);
-      cursor: pointer; border: none; background: none;
-      transition: color 0.15s; font-family: 'Space Grotesk', sans-serif;
-      text-decoration: none;
-    }
-    .mobile-nav-item .mn-icon { font-size: 18px; line-height: 1; }
-    .mobile-nav-item.active { color: var(--gold); }
-    .mobile-nav-item:hover { color: var(--text); }
-
-    /* Main content padding for bottom nav */
-    #main { padding-bottom: 70px; }
-
-    /* Symbol bar */
-    .sym-bar { padding: 8px 12px; gap: 6px; }
-    .sym-btn { padding: 5px 12px; font-size: 11px; }
-
-    /* Chart tab layout */
     #tab-chart { flex-direction: column; }
-    .sidebar {
-      width: 100%; border-left: none;
-      border-top: 1px solid var(--border);
-      max-height: 280px; overflow-y: auto;
-    }
-
-    /* Stats grid */
-    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-    .stat-card { padding: 12px !important; }
-    .stat-card .stat-val { font-size: 1.3rem !important; }
-
-    /* History */
+    .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); max-height: 300px; }
     .history-stats { grid-template-columns: repeat(2, 1fr); }
-
-    /* Signals table */
-    .signals-table { font-size: 11px; }
-    .signals-table th, .signals-table td { padding: 8px 6px; }
-
-    /* Tab content padding */
-    .tab-content { padding: 12px !important; }
-
-    /* Market tab */
-    .market-grid { grid-template-columns: 1fr !important; }
-  }
-
-  /* Bottom nav - hidden on desktop */
-  .mobile-nav { display: none; }
-
-  /* iPhone safe area */
-  @supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .mobile-nav { padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+    .nav-tabs { display: none; }
   }
 </style>
 </head>
@@ -502,6 +588,7 @@
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="switchTab('chart')">📈 Biểu đồ</button>
     <button class="nav-tab" onclick="switchTab('signals')">🔔 Tín hiệu</button>
+    <button class="nav-tab" onclick="switchTab('confluence')">⭐ Confluence</button>
     <button class="nav-tab" onclick="switchTab('market')">🏛 Thị trường</button>
     <button class="nav-tab" onclick="switchTab('history')">📋 Lịch sử</button>
     <a class="nav-tab" href="ai-chat.html">🤖 AI Chat</a>
@@ -512,28 +599,6 @@
     <button class="btn-logout" onclick="logout()">Đăng xuất</button>
   </div>
 </nav>
-
-<!-- MOBILE BOTTOM NAV -->
-<div class="mobile-nav" id="mobileNav">
-  <button class="mobile-nav-item active" id="mn-chart" onclick="switchTab('chart');setMobileNav('chart')">
-    <span class="mn-icon">📈</span>Biểu đồ
-  </button>
-  <button class="mobile-nav-item" id="mn-signals" onclick="switchTab('signals');setMobileNav('signals')">
-    <span class="mn-icon">🔔</span>Tín hiệu
-  </button>
-  <button class="mobile-nav-item" id="mn-market" onclick="switchTab('market');setMobileNav('market')">
-    <span class="mn-icon">🏛</span>Thị trường
-  </button>
-  <button class="mobile-nav-item" id="mn-history" onclick="switchTab('history');setMobileNav('history')">
-    <span class="mn-icon">📋</span>Lịch sử
-  </button>
-  <a class="mobile-nav-item" href="ai-chat.html">
-    <span class="mn-icon">🤖</span>AI Chat
-  </a>
-  <button class="mobile-nav-item" id="mn-news" onclick="switchTab('news');setMobileNav('news')">
-    <span class="mn-icon">📰</span>Tin tức
-  </button>
-</div>
 
 <!-- SYMBOL BAR -->
 <div class="sym-bar">
@@ -598,6 +663,24 @@
     <p class="page-title">Tín hiệu đang mở</p>
     <div class="signals-grid" id="openSignalsGrid">
       <div class="loading"><div class="spinner"></div> Đang tải...</div>
+    </div>
+  </div>
+
+  <!-- TAB: CONFLUENCE -->
+  <div class="tab-content" id="tab-confluence">
+    <div class="cf-header">
+      <p class="page-title">⭐ Tín hiệu AI Confluence</p>
+      <button onclick="loadConfluence()" style="padding:6px 16px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);border-radius:7px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 Làm mới</button>
+    </div>
+    <div class="cf-intro">
+      <div class="cf-intro-icon">🧠</div>
+      <div class="cf-intro-text">
+        <strong>AI Confluence Filter</strong> — Chỉ hiển thị những tín hiệu được AI chấm <strong>≥ 75/100 điểm</strong>.
+        Telegram nhận tất cả tín hiệu, Dashboard chỉ hiển thị những setup <strong>chất lượng cao nhất</strong> đã qua bộ lọc R:R, SMC context, ATR và risk management.
+      </div>
+    </div>
+    <div class="cf-grid" id="confluenceGrid">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Đang tải tín hiệu Confluence...</div>
     </div>
   </div>
 
@@ -713,18 +796,134 @@ function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  const navBtn = document.querySelector(`.nav-tab[onclick*="'${name}'"]`);
-  if (navBtn) navBtn.classList.add('active');
-  setMobileNav(name);
-  if (name === 'signals') loadOpenSignals();
-  if (name === 'history') loadHistory();
-  if (name === 'market')  loadMarket(currentMktSymbol, currentMktLabel, null);
+  event.target.classList.add('active');
+
+  if (name === 'signals')    loadOpenSignals();
+  if (name === 'confluence') loadConfluence();
+  if (name === 'history')    loadHistory();
+  if (name === 'market')     loadMarket(currentMktSymbol, currentMktLabel, null);
 }
 
-function setMobileNav(name) {
-  document.querySelectorAll('.mobile-nav-item').forEach(t => t.classList.remove('active'));
-  const el = document.getElementById('mn-' + name);
-  if (el) el.classList.add('active');
+// ── CONFLUENCE ───────────────────────────────────────────
+async function loadConfluence() {
+  const grid = document.getElementById('confluenceGrid');
+  grid.innerHTML = '<div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Đang tải...</div>';
+  const data = await fetchAPI('/api/signals/confluence');
+  if (!data || !data.signals) {
+    grid.innerHTML = '<div class="cf-empty"><div class="ce-icon">⚠️</div>Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.</div>';
+    return;
+  }
+  if (data.signals.length === 0) {
+    grid.innerHTML = `<div class="cf-empty">
+      <div class="ce-icon">🧠</div>
+      <strong style="color:var(--text)">Chưa có tín hiệu Confluence nào</strong><br><br>
+      Hệ thống đang chờ tín hiệu mới từ indicator.<br>
+      Mỗi tín hiệu sẽ được AI chấm điểm — chỉ những tín hiệu <strong style="color:var(--gold)">≥ 75/100</strong> mới xuất hiện tại đây.
+    </div>`;
+    return;
+  }
+  grid.innerHTML = data.signals.map(s => confluenceCard(s)).join('');
+}
+
+function scoreColor(score) {
+  if (score >= 85) return '#f5c842';
+  if (score >= 75) return '#2ecc71';
+  if (score >= 60) return '#3498db';
+  return '#6b7080';
+}
+
+function labelClass(label) {
+  const map = { EXCELLENT: 'excellent', GOOD: 'good', FAIR: 'fair', WEAK: 'weak' };
+  return 'label-' + (map[label?.toUpperCase()] || 'fair');
+}
+
+function confluenceCard(s) {
+  const isBuy   = s.direction === 'BUY';
+  const score   = s.score ?? 0;
+  const color   = scoreColor(score);
+  const label   = s.label ?? 'FAIR';
+  const factors = typeof s.factors === 'object' ? s.factors : {};
+  const strengths = Array.isArray(s.strengths) ? s.strengths : [];
+  const warnings  = Array.isArray(s.warnings)  ? s.warnings  : [];
+
+  // SVG donut
+  const r = 28, circ = 2 * Math.PI * r;
+  const dash = (score / 100) * circ;
+  const ring = `<svg width="72" height="72" viewBox="0 0 72 72">
+    <circle cx="36" cy="36" r="${r}" fill="none" stroke="var(--border)" stroke-width="6"/>
+    <circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="6"
+      stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
+      stroke-linecap="round"/>
+  </svg>`;
+
+  // Factor bars
+  const factorDefs = [
+    { key: 'rr_score',       label: 'R:R Ratio',  max: 25 },
+    { key: 'signal_quality', label: 'Signal',      max: 20 },
+    { key: 'volatility',     label: 'ATR/Vol',     max: 15 },
+    { key: 'smc_context',    label: 'SMC Context', max: 25 },
+    { key: 'risk_mgmt',      label: 'Risk Mgmt',   max: 15 },
+  ];
+  const factorBars = factorDefs.map(f => {
+    const val = factors[f.key] ?? 0;
+    const pct = Math.min(100, (val / f.max) * 100);
+    const fc  = pct >= 70 ? '#2ecc71' : pct >= 40 ? '#f5c842' : '#e74c3c';
+    return `<div class="cf-factor-row">
+      <span class="cf-factor-label">${f.label}</span>
+      <div class="cf-factor-track">
+        <div class="cf-factor-fill" style="width:${pct}%;background:${fc}"></div>
+      </div>
+      <span class="cf-factor-val">${val}/${f.max}</span>
+    </div>`;
+  }).join('');
+
+  // Tags
+  const tags = [
+    ...strengths.map(t => `<span class="cf-tag strength">✓ ${t}</span>`),
+    ...warnings.map(t  => `<span class="cf-tag warning">⚠ ${t}</span>`),
+  ].join('');
+
+  // Status badge
+  const stMap = { OPEN:'badge-open', TP1_HIT:'badge-tp', TP2_HIT:'badge-tp', TP3_HIT:'badge-tp', SL_HIT:'badge-sl' };
+  const stLabel = { OPEN:'● OPEN', TP1_HIT:'TP1 ✓', TP2_HIT:'TP2 ✓', TP3_HIT:'TP3 ✓', SL_HIT:'SL ✗', SL_AFTER_TP1:'SL/TP1', SL_AFTER_TP2:'SL/TP2' };
+
+  return `<div class="cf-card">
+    <div class="cf-card-top">
+      <div>
+        <div class="cf-card-sym">${s.symbol} · ${s.timeframe}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${s.signal_type ?? ''}</div>
+      </div>
+      <span class="cf-badge-dir ${isBuy?'buy':'sell'}">${s.direction}</span>
+    </div>
+
+    <div class="cf-score-row">
+      <div class="cf-ring">
+        ${ring}
+        <div class="cf-ring-num" style="color:${color}">${score}<span>/ 100</span></div>
+      </div>
+      <div class="cf-score-info">
+        <div class="cf-label-badge ${labelClass(label)}">${label}</div>
+        <div class="cf-summary">${s.summary || 'Không có nhận xét.'}</div>
+      </div>
+    </div>
+
+    <div class="cf-factors">${factorBars}</div>
+
+    ${tags ? `<div class="cf-tags">${tags}</div>` : ''}
+
+    <div class="cf-footer">
+      <div class="cf-levels-mini">
+        <div class="cf-lv-item"><span class="lbl">Entry</span><span style="color:var(--blue)">${s.entry}</span></div>
+        <div class="cf-lv-item"><span class="lbl">SL</span><span style="color:var(--red)">${s.stop_loss}</span></div>
+        <div class="cf-lv-item"><span class="lbl">TP1</span><span style="color:var(--green)">${s.tp1}</span></div>
+        <div class="cf-lv-item"><span class="lbl">TP3</span><span style="color:var(--green)">${s.tp3}</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span class="cf-status-badge ${stMap[s.status]??'badge-open'}">${stLabel[s.status]??s.status}</span>
+        <span class="cf-time">${s.created_at?.slice(0,16)??''}</span>
+      </div>
+    </div>
+  </div>`;
 }
 
 // ── SYMBOL CHANGE ───────────────────────────────────────

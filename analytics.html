@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Analytics — Trading AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0b0e;
+  --surface: #111318;
+  --card:    #161820;
+  --border:  #1e2028;
+  --gold:    #f5c842;
+  --gold-dim:rgba(245,200,66,.08);
+  --gold-br: rgba(245,200,66,.2);
+  --text:    #e8eaf0;
+  --muted:   #6b7080;
+  --subtle:  #2a2d38;
+  --green:   #2ecc71;
+  --green-d: rgba(46,204,113,.1);
+  --green-b: rgba(46,204,113,.25);
+  --red:     #e74c3c;
+  --red-d:   rgba(231,76,60,.1);
+  --red-b:   rgba(231,76,60,.25);
+  --blue:    #3b9eff;
+  --blue-d:  rgba(59,158,255,.1);
+  --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.nav-logo{font-weight:700;font-size:15px;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;transition:color .15s;}
+.nav-back:hover{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-refresh{padding:6px 14px;background:var(--gold-dim);border:1px solid var(--gold-br);border-radius:6px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;}
+.btn-refresh:hover{background:rgba(245,200,66,.14);}
+#last-update{font-size:11px;color:var(--muted);}
+
+/* LAYOUT */
+.content{padding:24px;max-width:1400px;margin:0 auto;}
+
+/* OVERVIEW CARDS */
+.ov-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
+.ov-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;}
+.ov-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.ov-card.c-gold::after{background:var(--gold);}
+.ov-card.c-green::after{background:var(--green);}
+.ov-card.c-red::after{background:var(--red);}
+.ov-card.c-blue::after{background:var(--blue);}
+.ov-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.ov-val{font-size:2rem;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1;}
+.ov-val.c-gold{color:var(--gold);}
+.ov-val.c-green{color:var(--green);}
+.ov-val.c-red{color:var(--red);}
+.ov-val.c-blue{color:var(--blue);}
+.ov-sub{font-size:11px;color:var(--muted);margin-top:6px;}
+
+/* EQUITY CURVE */
+.equity-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;}
+.panel-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+#equity-canvas{width:100%;height:200px;display:block;}
+
+/* GRID 2 / 3 COL */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* STAT TABLE */
+.stat-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.stat-panel-header{padding:13px 18px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.stat-table{width:100%;border-collapse:collapse;font-size:12px;}
+.stat-table th{padding:8px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--card);}
+.stat-table td{padding:9px 14px;border-top:1px solid var(--border);vertical-align:middle;}
+.stat-table tr:hover td{background:rgba(255,255,255,.012);}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;}
+
+/* Win rate bar */
+.wr-bar-wrap{display:flex;align-items:center;gap:8px;}
+.wr-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;min-width:60px;}
+.wr-bar-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+.wr-text{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;min-width:36px;text-align:right;}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;}
+.badge-win {background:var(--green-d);color:var(--green);border:1px solid var(--green-b);}
+.badge-loss{background:var(--red-d);color:var(--red);border:1px solid var(--red-b);}
+.badge-tp3 {background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-br);}
+.badge-open{background:var(--blue-d);color:var(--blue);border:1px solid rgba(59,158,255,.25);}
+
+/* Mini donut */
+.mini-donut{width:48px;height:48px;position:relative;flex-shrink:0;}
+.mini-donut svg{transform:rotate(-90deg);}
+.mini-donut-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+/* HEATMAP */
+.heatmap-wrap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.heatmap-day{border-radius:4px;padding:8px 4px;text-align:center;font-size:10px;}
+.heatmap-day .hm-name{color:var(--muted);margin-bottom:4px;}
+.heatmap-day .hm-wr{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+
+/* Rank badges */
+.rank-1{color:var(--gold);}
+.rank-2{color:#c0c0c0;}
+.rank-3{color:#cd7f32;}
+
+/* Loading / empty */
+.loading{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;}
+
+/* Recent table */
+.recent-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
+
+/* Progress rings for session */
+.session-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.session-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;}
+.session-info{flex:1;}
+.session-name{font-size:12px;font-weight:600;margin-bottom:3px;}
+.session-sub{font-size:10px;color:var(--muted);}
+
+/* Section title */
+.section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:4px;}
+
+/* Insight cards */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.insight-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;display:flex;gap:10px;align-items:flex-start;}
+.insight-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px;}
+.insight-title{font-size:12px;font-weight:700;margin-bottom:3px;}
+.insight-text{font-size:11px;color:var(--muted);line-height:1.55;}
+.insight-val{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+@media(max-width:900px){
+  .ov-grid{grid-template-columns:repeat(3,1fr);}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .insight-grid{grid-template-columns:1fr;}
+  .heatmap-wrap{grid-template-columns:repeat(4,1fr);}
+}
+@media(max-width:600px){
+  .ov-grid{grid-template-columns:1fr 1fr;}
+  .content{padding:14px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">Performance Analytics</span></div>
+  <div class="nav-right">
+    <span id="last-update"></span>
+    <button class="btn-refresh" onclick="loadAnalytics()">↺ Refresh</button>
+    <a href="dashboard.html" class="nav-back">← Dashboard</a>
+  </div>
+</nav>
+
+<div class="content" id="main-content">
+  <div class="loading"><span class="spinner"></span>Đang tải dữ liệu analytics...</div>
+</div>
+
+<script>
+const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+let DATA = null;
+
+// ─── LOAD ──────────────────────────────────────────────────
+async function loadAnalytics() {
+  document.getElementById('main-content').innerHTML =
+    '<div class="loading"><span class="spinner"></span>Đang tải dữ liệu analytics...</div>';
+  try {
+    const res  = await fetch(API + '/api/analytics', {signal: AbortSignal.timeout(15000)});
+    const data = await res.json();
+    if (data.error && data.closed === 0) {
+      document.getElementById('main-content').innerHTML =
+        `<div class="empty">📊 Chưa có tín hiệu đã đóng.<br>Analytics sẽ hiển thị sau khi có lệnh TP/SL đầu tiên.</div>`;
+      return;
+    }
+    DATA = data;
+    document.getElementById('last-update').textContent =
+      'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
+    render(data);
+  } catch(e) {
+    document.getElementById('main-content').innerHTML =
+      `<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.</div>`;
+  }
+}
+
+// ─── RENDER ────────────────────────────────────────────────
+function render(d) {
+  const ov = d.overview;
+  const html = `
+
+  <!-- OVERVIEW -->
+  <div class="ov-grid">
+    <div class="ov-card c-gold">
+      <div class="ov-label">Win Rate</div>
+      <div class="ov-val c-gold">${ov.winrate}%</div>
+      <div class="ov-sub">${ov.wins} thắng / ${ov.total} lệnh đóng</div>
+    </div>
+    <div class="ov-card c-green">
+      <div class="ov-label">Tổng Pip</div>
+      <div class="ov-val c-green">${ov.total_pnl > 0 ? '+' : ''}${ov.total_pnl}</div>
+      <div class="ov-sub">Tích lũy tất cả lệnh</div>
+    </div>
+    <div class="ov-card c-blue">
+      <div class="ov-label">Avg R:R</div>
+      <div class="ov-val c-blue">1:${ov.avg_rr}</div>
+      <div class="ov-sub">Tỷ lệ Risk:Reward TB</div>
+    </div>
+    <div class="ov-card c-gold">
+      <div class="ov-label">TP3 Hit Rate</div>
+      <div class="ov-val c-gold">${ov.total ? Math.round(ov.tp3_hit/ov.total*100) : 0}%</div>
+      <div class="ov-sub">${ov.tp3_hit} lệnh full target</div>
+    </div>
+    <div class="ov-card c-green">
+      <div class="ov-label">Best Streak</div>
+      <div class="ov-val c-green">${ov.best_streak}</div>
+      <div class="ov-sub">Lệnh thắng liên tiếp</div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  ${renderInsights(d)}
+
+  <!-- EQUITY CURVE -->
+  <div class="equity-wrap" style="margin-bottom:20px;">
+    <div class="panel-title">📈 Đường tăng trưởng Pip (Equity Curve)</div>
+    <canvas id="equity-canvas" height="200"></canvas>
+  </div>
+
+  <!-- ROW 1: Symbol + Timeframe -->
+  <div class="grid-2">
+    ${renderGroupTable('🏆 Winrate theo Symbol', d.by_symbol, 'symbol')}
+    ${renderGroupTable('⏱ Winrate theo Timeframe', d.by_timeframe, 'tf')}
+  </div>
+
+  <!-- ROW 2: Session + Weekday -->
+  <div class="grid-2">
+    ${renderGroupTable('🕐 Winrate theo Phiên giao dịch', d.by_session, 'session')}
+    ${renderGroupTable('📅 Winrate theo Ngày trong tuần', d.by_weekday, 'weekday')}
+  </div>
+
+  <!-- ROW 3: Direction + Type -->
+  <div class="grid-2">
+    ${renderGroupTable('↕ Winrate theo Chiều lệnh', d.by_direction, 'dir')}
+    ${renderGroupTable('🎯 Winrate theo Loại tín hiệu', d.by_type, 'type')}
+  </div>
+
+  <!-- ROW 4: RR + Score -->
+  <div class="grid-2">
+    ${renderGroupTable('📊 Winrate theo R:R Ratio', d.by_rr, 'rr')}
+    ${renderGroupTable('⭐ Winrate theo AI Confluence Score', d.by_score, 'score')}
+  </div>
+
+  <!-- ROW 5: Monthly -->
+  <div style="margin-bottom:16px;">
+    ${renderGroupTable('📆 Hiệu suất theo Tháng', d.by_month, 'month')}
+  </div>
+
+  <!-- RECENT 20 -->
+  ${renderRecent(d.recent)}
+  `;
+
+  document.getElementById('main-content').innerHTML = html;
+  drawEquity(d.equity_curve);
+}
+
+// ─── INSIGHTS ──────────────────────────────────────────────
+function renderInsights(d) {
+  const insights = [];
+
+  // Best symbol
+  const syms = Object.entries(d.by_symbol).sort((a,b)=>b[1].winrate-a[1].winrate);
+  if (syms.length) {
+    const [sym, st] = syms[0];
+    insights.push({icon:'🥇', title:'Symbol mạnh nhất', val:`${sym}`, text:`Win rate ${st.winrate}% (${st.total} lệnh)`});
+  }
+
+  // Best session
+  const sess = Object.entries(d.by_session).sort((a,b)=>b[1].winrate-a[1].winrate);
+  if (sess.length) {
+    const [s, st] = sess[0];
+    insights.push({icon:'⏰', title:'Phiên tốt nhất', val:s, text:`Win rate ${st.winrate}% — nên tập trung vào khung giờ này`});
+  }
+
+  // Best weekday
+  const days = Object.entries(d.by_weekday).sort((a,b)=>b[1].winrate-a[1].winrate);
+  if (days.length) {
+    const [day, st] = days[0];
+    insights.push({icon:'📅', title:'Ngày tốt nhất', val:day, text:`Win rate ${st.winrate}% — ưu tiên giao dịch vào ngày này`});
+  }
+
+  // Score validation
+  const scoreData = d.by_score;
+  const exc = scoreData['85-100 (Excellent)'];
+  const good = scoreData['75-84 (Good)'];
+  if (exc && good) {
+    const diff = (exc.winrate - good.winrate).toFixed(1);
+    insights.push({icon:'🧠', title:'Hiệu quả Confluence AI', val:`+${diff}%`, text:`Lệnh Excellent cao hơn Good ${diff}% win rate — AI filter đang hoạt động tốt`});
+  }
+
+  // Best direction
+  const buy = d.by_direction['BUY'];
+  const sell = d.by_direction['SELL'];
+  if (buy && sell) {
+    const better = buy.winrate >= sell.winrate ? 'BUY' : 'SELL';
+    const wr = Math.max(buy.winrate, sell.winrate);
+    insights.push({icon:'↕', title:'Chiều mạnh hơn', val:better, text:`${better} win rate ${wr}% — tập trung vào chiều này`});
+  }
+
+  // Worst symbol (cảnh báo)
+  if (syms.length > 1) {
+    const [worst, wst] = syms[syms.length-1];
+    if (wst.winrate < 50 && wst.total >= 5) {
+      insights.push({icon:'⚠️', title:'Cần xem lại', val:worst, text:`Win rate chỉ ${wst.winrate}% (${wst.total} lệnh) — cân nhắc tăng filter cho symbol này`});
+    }
+  }
+
+  return `
+  <div class="insight-grid">
+    ${insights.slice(0,6).map(ins => `
+    <div class="insight-card">
+      <div class="insight-icon">${ins.icon}</div>
+      <div>
+        <div class="insight-title">${ins.title}</div>
+        <div class="insight-val" style="margin:3px 0;">${ins.val}</div>
+        <div class="insight-text">${ins.text}</div>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ─── GROUP TABLE ───────────────────────────────────────────
+function renderGroupTable(title, data, type) {
+  const entries = Object.entries(data).sort((a,b)=>b[1].total-a[1].total);
+  if (!entries.length) return `<div class="stat-panel"><div class="stat-panel-header">${title}</div><div class="empty" style="padding:20px">Chưa có data</div></div>`;
+
+  const rows = entries.map(([key, st], i) => {
+    const wr    = st.winrate;
+    const color = wr >= 65 ? 'var(--green)' : wr >= 50 ? 'var(--gold)' : 'var(--red)';
+    const rank  = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    const pnl   = st.pnl >= 0
+      ? `<span style="color:var(--green)">+${st.pnl}</span>`
+      : `<span style="color:var(--red)">${st.pnl}</span>`;
+    return `<tr>
+      <td><span style="margin-right:4px">${rank}</span><span class="mono">${key}</span></td>
+      <td style="text-align:center" class="mono">${st.total}</td>
+      <td>
+        <div class="wr-bar-wrap">
+          <div class="wr-bar-track"><div class="wr-bar-fill" style="width:${wr}%;background:${color}"></div></div>
+          <span class="wr-text" style="color:${color}">${wr}%</span>
+        </div>
+      </td>
+      <td style="text-align:right">${pnl}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="stat-panel">
+    <div class="stat-panel-header">${title}</div>
+    <table class="stat-table">
+      <thead><tr><th>Nhóm</th><th style="text-align:center">Lệnh</th><th>Win Rate</th><th style="text-align:right">Pip</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ─── RECENT ────────────────────────────────────────────────
+function renderRecent(recent) {
+  if (!recent || !recent.length) return '';
+  const statusMap = {
+    TP3_HIT:'<span style="background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">TP3 🏆</span>',
+    TP2_HIT:'<span style="background:var(--green-d);color:var(--green);border:1px solid var(--green-b);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">TP2 ✓</span>',
+    TP1_HIT:'<span style="background:var(--green-d);color:var(--green);border:1px solid var(--green-b);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">TP1 ✓</span>',
+    SL_HIT: '<span style="background:var(--red-d);color:var(--red);border:1px solid var(--red-b);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">SL ✗</span>',
+    SL_AFTER_TP1:'<span style="background:var(--blue-d);color:var(--blue);border:1px solid rgba(59,158,255,.25);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">SL/TP1</span>',
+    SL_AFTER_TP2:'<span style="background:var(--blue-d);color:var(--blue);border:1px solid rgba(59,158,255,.25);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">SL/TP2</span>',
+  };
+  const rows = recent.map(s => {
+    const dirColor = s.direction==='BUY' ? 'var(--green)' : 'var(--red)';
+    const pnl = s.pnl_pips >= 0
+      ? `<span style="color:var(--green);font-family:monospace">+${s.pnl_pips}</span>`
+      : `<span style="color:var(--red);font-family:monospace">${s.pnl_pips}</span>`;
+    const scoreEl = s.score
+      ? `<span style="font-family:monospace;color:${s.score>=75?'var(--gold)':'var(--muted)'}">${s.score}</span>`
+      : '<span style="color:var(--subtle)">—</span>';
+    return `<tr>
+      <td style="font-size:11px;color:var(--muted)">${s.created_at?.slice(0,16)??''}</td>
+      <td class="mono">${s.symbol}</td>
+      <td style="color:${dirColor};font-weight:700;font-size:12px">${s.direction}</td>
+      <td style="font-size:11px;color:var(--muted)">${s.signal_type??''}</td>
+      <td class="mono">${s.entry}</td>
+      <td style="text-align:center">${scoreEl}</td>
+      <td>${pnl}</td>
+      <td>${statusMap[s.status]??s.status}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="stat-panel" style="margin-bottom:20px;">
+    <div class="stat-panel-header">📋 20 Lệnh gần nhất</div>
+    <div style="overflow-x:auto">
+    <table class="stat-table" style="min-width:700px">
+      <thead><tr>
+        <th>Thời gian</th><th>Symbol</th><th>Chiều</th><th>Loại</th>
+        <th>Entry</th><th style="text-align:center">AI Score</th>
+        <th>Pip</th><th>Kết quả</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+  </div>`;
+}
+
+// ─── EQUITY CURVE (Canvas) ─────────────────────────────────
+function drawEquity(equity) {
+  const canvas = document.getElementById('equity-canvas');
+  if (!canvas || !equity || !equity.length) return;
+  const ctx    = canvas.getContext('2d');
+  const dpr    = window.devicePixelRatio || 1;
+  const W      = canvas.offsetWidth;
+  const H      = canvas.offsetHeight || 200;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const vals   = equity.map(e => e.equity);
+  const minVal = Math.min(...vals, 0);
+  const maxVal = Math.max(...vals, 1);
+  const range  = maxVal - minVal || 1;
+  const pad    = { t:16, r:16, b:32, l:52 };
+  const cW     = W - pad.l - pad.r;
+  const cH     = H - pad.t - pad.b;
+
+  const toX = i  => pad.l + (i / (vals.length - 1 || 1)) * cW;
+  const toY = v  => pad.t + (1 - (v - minVal) / range) * cH;
+
+  // Grid
+  ctx.strokeStyle = '#1e2028';
+  ctx.lineWidth   = 1;
+  for (let g = 0; g <= 4; g++) {
+    const y = pad.t + (g / 4) * cH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+    const v = maxVal - (g / 4) * range;
+    ctx.fillStyle = '#6b7080';
+    ctx.font      = '10px JetBrains Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(0), pad.l - 6, y + 4);
+  }
+
+  // Zero line
+  if (minVal < 0 && maxVal > 0) {
+    const zy = toY(0);
+    ctx.strokeStyle = 'rgba(107,112,128,.4)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l, zy); ctx.lineTo(pad.l + cW, zy); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + cH);
+  const lastVal = vals[vals.length-1];
+  const isPos   = lastVal >= 0;
+  grad.addColorStop(0, isPos ? 'rgba(46,204,113,.3)' : 'rgba(231,76,60,.3)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(vals[0]));
+  vals.forEach((v,i) => ctx.lineTo(toX(i), toY(v)));
+  ctx.lineTo(toX(vals.length-1), toY(0));
+  ctx.lineTo(toX(0), toY(0));
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = isPos ? 'var(--green, #2ecc71)' : 'var(--red, #e74c3c)';
+  ctx.lineWidth   = 2;
+  ctx.lineJoin    = 'round';
+  vals.forEach((v,i) => i===0 ? ctx.moveTo(toX(0), toY(v)) : ctx.lineTo(toX(i), toY(v)));
+  ctx.stroke();
+
+  // Dots for TP3
+  equity.forEach((e, i) => {
+    if (e.status === 'TP3_HIT') {
+      ctx.beginPath();
+      ctx.arc(toX(i), toY(e.equity), 4, 0, Math.PI*2);
+      ctx.fillStyle = '#f5c842';
+      ctx.fill();
+    }
+  });
+
+  // X-axis labels (dates)
+  ctx.fillStyle   = '#6b7080';
+  ctx.font        = '10px Space Grotesk, sans-serif';
+  ctx.textAlign   = 'center';
+  const step = Math.max(1, Math.floor(equity.length / 6));
+  equity.forEach((e, i) => {
+    if (i % step === 0 || i === equity.length - 1) {
+      ctx.fillText(e.date?.slice(5), toX(i), H - pad.b + 14);
+    }
+  });
+
+  // Last value label
+  const lastX = toX(vals.length-1);
+  const lastY = toY(lastVal);
+  ctx.fillStyle   = isPos ? '#2ecc71' : '#e74c3c';
+  ctx.font        = 'bold 11px JetBrains Mono, monospace';
+  ctx.textAlign   = 'right';
+  ctx.fillText((lastVal>=0?'+':'')+lastVal.toFixed(1)+' pip', lastX, lastY - 8);
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+loadAnalytics();
+window.addEventListener('resize', () => { if (DATA) drawEquity(DATA.equity_curve); });
+</script>
+</body>
+</html>

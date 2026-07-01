@@ -816,7 +816,7 @@
 
 </div><!-- /main -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightweight-charts/4.1.3/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <script>
 // ── CONFIG ──────────────────────────────────────────────
 // Thay URL này sau khi chạy ngrok
@@ -1459,9 +1459,15 @@ Trả lời ngắn gọn dưới 200 từ, tiếng Việt, dùng emoji.`
 loadSidebar();
 setInterval(loadSidebar, 30000); // Refresh mỗi 30 giây
 
-initCharts();
-loadChart();
-chartRefreshTimer = setInterval(loadChart, 10000); // Làm mới nến mỗi 10 giây
+try {
+  initCharts();
+  loadChart();
+  chartRefreshTimer = setInterval(loadChart, 10000); // Làm mới nến mỗi 10 giây
+} catch (e) {
+  console.error('Lỗi khởi tạo biểu đồ:', e);
+  const el = document.getElementById('chartStatus');
+  if (el) el.textContent = '⚠️ Lỗi tải thư viện biểu đồ — thử tải lại trang';
+}
 
 // Prompt nhập API URL nếu chưa có
 function setApiUrl() {

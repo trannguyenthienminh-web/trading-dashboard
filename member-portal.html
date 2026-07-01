@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cổng Thành Viên — Trading AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0b0e;
+  --surface: #111318;
+  --card:    #161820;
+  --border:  #1e2028;
+  --gold:    #f5c842;
+  --gold-dim:rgba(245,200,66,.08);
+  --gold-br: rgba(245,200,66,.2);
+  --text:    #e8eaf0;
+  --muted:   #6b7080;
+  --green:   #2ecc71;
+  --green-d: rgba(46,204,113,.1);
+  --green-b: rgba(46,204,113,.25);
+  --red:     #e74c3c;
+  --red-d:   rgba(231,76,60,.1);
+  --red-b:   rgba(231,76,60,.25);
+  --blue:    #3b9eff;
+  --blue-d:  rgba(59,158,255,.1);
+  --r:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.nav-logo{font-weight:700;font-size:15px;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:13px;color:var(--muted);}
+.nav-back:hover{color:var(--text);}
+
+/* ══ LOGIN SCREEN ══ */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 54px);padding:20px;background:radial-gradient(ellipse at 50% 0%,rgba(245,200,66,.06) 0%,transparent 60%);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:400px;}
+.login-icon{font-size:2.2rem;margin-bottom:12px;text-align:center;}
+.login-title{font-size:1.2rem;font-weight:700;margin-bottom:6px;text-align:center;}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:26px;text-align:center;line-height:1.6;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;outline:none;transition:border-color .15s;}
+.field input:focus{border-color:var(--gold);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border:none;border-radius:9px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;}
+.btn-gold{background:var(--gold);color:#000;}
+.btn-gold:hover{opacity:.9;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:rgba(255,255,255,.2);}
+.login-err{margin-top:12px;font-size:12px;color:var(--red);text-align:center;display:none;}
+.login-hint{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;line-height:1.7;}
+
+/* ══ PORTAL SCREEN ══ */
+#portal-screen{display:none;max-width:720px;margin:0 auto;padding:28px 20px 60px;}
+
+/* Member card */
+.member-hero{background:linear-gradient(135deg,rgba(245,200,66,.08),rgba(245,200,66,.02));border:1px solid var(--gold-br);border-radius:var(--r);padding:26px;margin-bottom:20px;}
+.mh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.mh-name{font-size:1.3rem;font-weight:700;}
+.mh-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.mh-badge{font-size:11px;font-weight:800;padding:5px 14px;border-radius:100px;letter-spacing:.03em;}
+.mh-badge.active{background:var(--green-d);color:var(--green);border:1px solid var(--green-b);}
+.mh-badge.expired{background:var(--red-d);color:var(--red);border:1px solid var(--red-b);}
+.mh-badge.pending{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-br);}
+.mh-badge.revoked{background:rgba(107,112,128,.1);color:var(--muted);border:1px solid var(--border);}
+
+.mh-countdown{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.mh-days-num{font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;line-height:1;}
+.mh-days-label{font-size:11px;color:var(--muted);margin-top:4px;}
+.mh-exp-date{text-align:right;}
+.mh-exp-date .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.mh-exp-date .v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.info-card .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.info-card .v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;word-break:break-all;}
+.info-card .v.copyable{cursor:pointer;display:flex;align-items:center;gap:6px;}
+.info-card .v.copyable:hover{color:var(--gold);}
+
+/* Actions */
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.action-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:border-color .15s;}
+.action-card:hover{border-color:rgba(245,200,66,.3);}
+.action-icon{font-size:1.6rem;margin-bottom:8px;}
+.action-title{font-size:13px;font-weight:700;margin-bottom:3px;}
+.action-desc{font-size:11px;color:var(--muted);}
+
+/* Renew section */
+.renew-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;}
+.renew-box.urgent{border-color:rgba(231,76,60,.3);background:rgba(231,76,60,.03);}
+.renew-title{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.renew-text{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.renew-payment{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;font-size:12px;line-height:2;}
+.renew-payment strong{color:var(--gold);}
+.renew-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.renew-actions .btn{width:auto;flex:1;min-width:160px;}
+
+/* Overall performance */
+.perf-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:20px;}
+.perf-title{font-size:13px;font-weight:700;margin-bottom:14px;}
+.perf-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.perf-item{text-align:center;}
+.perf-val{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;}
+.perf-val.gold{color:var(--gold);}
+.perf-val.green{color:var(--green);}
+.perf-label{font-size:10px;color:var(--muted);margin-top:4px;}
+
+.logout-link{text-align:center;margin-top:10px;}
+.logout-link a{font-size:12px;color:var(--muted);}
+.logout-link a:hover{color:var(--red);}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;right:24px;left:24px;max-width:340px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;text-align:center;}
+#toast.show{opacity:1;transform:translateY(0);}
+#toast.ok{border-color:var(--green-b);color:var(--green);}
+#toast.err{border-color:var(--red-b);color:var(--red);}
+
+.loading{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:520px){
+  .info-grid,.action-grid{grid-template-columns:1fr;}
+  .mh-top{flex-direction:column;align-items:flex-start;}
+  .perf-row{grid-template-columns:1fr;gap:14px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">Cổng Thành Viên</span></div>
+  <a href="index.html" class="nav-back">← Trang chủ</a>
+</nav>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Đăng nhập Cổng Thành Viên</div>
+    <div class="login-sub">Nhập Account ID và License Key để xem thông tin license, gia hạn, và theo dõi hiệu suất.</div>
+
+    <div class="field">
+      <label>Account ID (MT5)</label>
+      <input type="text" id="l-account" placeholder="Ví dụ: 12345678" inputmode="numeric" onkeydown="if(event.key==='Enter')document.getElementById('l-key').focus()">
+    </div>
+    <div class="field">
+      <label>License Key</label>
+      <input type="text" id="l-key" placeholder="SGR-XXXX-XXXX-XXXX" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+
+    <button class="btn btn-gold" onclick="doLogin()" id="login-btn">🔓 Đăng nhập</button>
+    <div class="login-err" id="login-err"></div>
+
+    <div class="login-hint">
+      Chưa có License Key? <a href="register.html" style="color:var(--gold)">Đăng ký EA SmartGold</a> hoặc key được gửi tự động qua Telegram sau khi thanh toán.
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL SCREEN -->
+<div id="portal-screen">
+  <div id="portal-content">
+    <div class="loading"><span class="spinner"></span>Đang tải...</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+let MEMBER = null;
+
+// ─── LOGIN ───────────────────────────────────────────────
+async function doLogin() {
+  const account = document.getElementById('l-account').value.trim();
+  const key     = document.getElementById('l-key').value.trim().toUpperCase();
+  const errBox  = document.getElementById('login-err');
+  const btn     = document.getElementById('login-btn');
+  errBox.style.display = 'none';
+
+  if (!account || !key) {
+    errBox.textContent = '⚠️ Vui lòng nhập đầy đủ Account ID và License Key';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang kiểm tra...';
+
+  try {
+    const res  = await fetch(API + '/api/member/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ account, license_key: key })
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      errBox.textContent = '❌ ' + (data.error || 'Đăng nhập thất bại');
+      errBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '🔓 Đăng nhập';
+      return;
+    }
+
+    MEMBER = data.member;
+    sessionStorage.setItem('member_data', JSON.stringify(MEMBER));
+    showPortal();
+  } catch(e) {
+    errBox.textContent = '⚠️ Không kết nối được server. Thử lại sau.';
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '🔓 Đăng nhập';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('member_data');
+  MEMBER = null;
+  document.getElementById('portal-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ─── PORTAL RENDER ───────────────────────────────────────
+function showPortal() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('portal-screen').style.display = 'block';
+  renderPortal();
+  loadOverallPerformance();
+}
+
+function statusInfo(status) {
+  const map = {
+    active:  {cls:'active',  label:'✅ ĐANG HOẠT ĐỘNG'},
+    pending: {cls:'pending', label:'⏳ CHỜ DUYỆT'},
+    expired: {cls:'expired', label:'⌛ ĐÃ HẾT HẠN'},
+    revoked: {cls:'revoked', label:'🔒 ĐÃ THU HỒI'},
+  };
+  return map[status] || {cls:'pending', label:status};
+}
+
+function renderPortal() {
+  const m = MEMBER;
+  const st = statusInfo(m.status);
+  const isIB = m.plan === 'ib';
+
+  let daysBlock = '';
+  if (isIB && !m.expires_at) {
+    daysBlock = `
+    <div class="mh-countdown">
+      <div>
+        <div class="mh-days-num" style="color:var(--gold)">∞</div>
+        <div class="mh-days-label">License vĩnh viễn (gói IB)</div>
+      </div>
+    </div>`;
+  } else if (m.days_remaining !== null) {
+    const days = m.days_remaining;
+    const color = days <= 3 ? 'var(--red)' : days <= 7 ? 'var(--gold)' : 'var(--green)';
+    daysBlock = `
+    <div class="mh-countdown">
+      <div>
+        <div class="mh-days-num" style="color:${color}">${days >= 0 ? days : 0}</div>
+        <div class="mh-days-label">${days >= 0 ? 'ngày còn lại' : 'đã hết hạn'}</div>
+      </div>
+      <div class="mh-exp-date">
+        <div class="l">Ngày hết hạn</div>
+        <div class="v">${m.expires_at}</div>
+      </div>
+    </div>`;
+  }
+
+  const needsRenew = m.status === 'expired' || (m.days_remaining !== null && m.days_remaining <= 7);
+
+  const renewSection = (needsRenew && m.status !== 'revoked') ? `
+  <div class="renew-box ${m.status==='expired' ? 'urgent' : ''}">
+    <div class="renew-title">${m.status==='expired' ? '🚨' : '⏰'} ${m.status==='expired' ? 'License đã hết hạn' : 'Sắp hết hạn — Gia hạn ngay'}</div>
+    <div class="renew-text">
+      Chuyển khoản theo thông tin bên dưới, sau đó bấm "Gửi yêu cầu gia hạn" — Admin sẽ xác nhận và kích hoạt trong thời gian sớm nhất.
+    </div>
+    <div class="renew-payment">
+      🏦 Ngân hàng: <strong>VPBank</strong><br>
+      💳 Số TK: <strong>138490319</strong> — Tran Nguyen Thien Minh<br>
+      📝 Nội dung CK: <strong>SGREA ${m.account} 01 thang</strong>
+    </div>
+    <div class="renew-actions">
+      <button class="btn btn-gold" onclick="sendRenewRequest()">📤 Gửi yêu cầu gia hạn</button>
+      <a href="https://t.me/trannguyenthienminh" target="_blank" rel="noopener" class="btn btn-outline">✈ Nhắn Admin trực tiếp</a>
+    </div>
+  </div>` : '';
+
+  document.getElementById('portal-content').innerHTML = `
+    <div class="member-hero">
+      <div class="mh-top">
+        <div>
+          <div class="mh-name">👋 Xin chào, ${m.name}</div>
+          <div class="mh-sub">${isIB ? '⭐ Gói IB Free' : '💳 Gói Rental'} · Account ${m.account}</div>
+        </div>
+        <span class="mh-badge ${st.cls}">${st.label}</span>
+      </div>
+      ${daysBlock}
+    </div>
+
+    ${renewSection}
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="l">Broker</div>
+        <div class="v">${m.broker || 'CXM Direct'}</div>
+      </div>
+      <div class="info-card">
+        <div class="l">Telegram</div>
+        <div class="v">${m.telegram ? '@'+m.telegram : '—'}</div>
+      </div>
+      <div class="info-card" style="grid-column:1/-1">
+        <div class="l">License Key</div>
+        <div class="v copyable" onclick="copyKey('${m.license_key}')">🔑 ${m.license_key} <span style="margin-left:auto;font-size:11px;color:var(--muted)">📋 copy</span></div>
+      </div>
+    </div>
+
+    <div class="action-grid">
+      <a href="journal.html" class="action-card">
+        <div class="action-icon">📖</div>
+        <div class="action-title">Trade Journal</div>
+        <div class="action-desc">Xem lý do AI vào lệnh</div>
+      </a>
+      <a href="analytics.html" class="action-card">
+        <div class="action-icon">📊</div>
+        <div class="action-title">Performance</div>
+        <div class="action-desc">Thống kê win rate hệ thống</div>
+      </a>
+    </div>
+
+    <div class="perf-panel" id="perf-panel" style="display:none;">
+      <div class="perf-title">📈 Hiệu suất hệ thống tổng quan</div>
+      <div class="perf-row" id="perf-row"></div>
+    </div>
+
+    <div class="logout-link">
+      <a href="#" onclick="logout();return false;">🚪 Đăng xuất</a>
+    </div>
+  `;
+}
+
+async function loadOverallPerformance() {
+  try {
+    const res  = await fetch(API + '/api/analytics', {signal: AbortSignal.timeout(10000)});
+    const data = await res.json();
+    if (data.error) return;
+    const ov = data.overview;
+    document.getElementById('perf-row').innerHTML = `
+      <div class="perf-item"><div class="perf-val gold">${ov.winrate}%</div><div class="perf-label">Win Rate</div></div>
+      <div class="perf-item"><div class="perf-val green">${ov.total_pnl>=0?'+':''}${ov.total_pnl}</div><div class="perf-label">Tổng Pip</div></div>
+      <div class="perf-item"><div class="perf-val">1:${ov.avg_rr}</div><div class="perf-label">Avg R:R</div></div>
+    `;
+    document.getElementById('perf-panel').style.display = 'block';
+  } catch(e) { /* silent fail, không quan trọng */ }
+}
+
+async function sendRenewRequest() {
+  try {
+    await fetch(API + '/api/member/renew-request', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        account: MEMBER.account, name: MEMBER.name,
+        plan: MEMBER.plan, telegram: MEMBER.telegram || ''
+      })
+    });
+    toast('✅ Đã gửi yêu cầu! Admin sẽ xác nhận sớm.', 'ok');
+  } catch(e) {
+    toast('⚠️ Lỗi gửi yêu cầu, thử nhắn trực tiếp Admin.', 'err');
+  }
+}
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key).then(() => toast('📋 Đã copy License Key!', 'ok'));
+}
+
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(window._t);
+  window._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ─── INIT: khôi phục phiên nếu có ────────────────────────
+(function init() {
+  const saved = sessionStorage.getItem('member_data');
+  if (saved) {
+    try {
+      MEMBER = JSON.parse(saved);
+      showPortal();
+    } catch(e) { /* ignore */ }
+  }
+})();
+</script>
+</body>
+</html>

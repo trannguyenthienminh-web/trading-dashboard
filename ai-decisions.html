@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Decision Engine — Trading AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0b0e;
+  --surface: #111318;
+  --card:    #161820;
+  --border:  #1e2028;
+  --gold:    #f5c842;
+  --gold-dim:rgba(245,200,66,.08);
+  --gold-br: rgba(245,200,66,.2);
+  --text:    #e8eaf0;
+  --muted:   #6b7080;
+  --green:   #2ecc71;
+  --green-d: rgba(46,204,113,.1);
+  --green-b: rgba(46,204,113,.25);
+  --red:     #e74c3c;
+  --red-d:   rgba(231,76,60,.1);
+  --red-b:   rgba(231,76,60,.25);
+  --blue:    #3b9eff;
+  --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.nav-logo{font-weight:700;font-size:15px;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:13px;color:var(--muted);}
+.nav-back:hover{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-refresh{padding:6px 14px;background:var(--gold-dim);border:1px solid var(--gold-br);border-radius:6px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
+
+.content{padding:24px;max-width:1000px;margin:0 auto;}
+.page-header{margin-bottom:20px;}
+.page-title{font-size:1.3rem;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);}
+
+/* INTRO BOX */
+.intro-box{
+  background:linear-gradient(135deg,rgba(245,200,66,.06),rgba(245,200,66,.02));
+  border:1px solid rgba(245,200,66,.2);border-radius:var(--r);
+  padding:16px 20px;margin-bottom:20px;
+  display:flex;gap:14px;align-items:center;
+}
+.intro-icon{font-size:28px;flex-shrink:0;}
+.intro-text{font-size:13px;color:var(--muted);line-height:1.6;}
+.intro-text strong{color:var(--gold);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.c-green::before{background:var(--green);}
+.stat-card.c-gold::before{background:var(--gold);}
+.stat-card.c-red::before{background:var(--red);}
+.stat-card.c-blue::before{background:var(--blue);}
+.stat-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.stat-val{font-size:1.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.stat-val.c-green{color:var(--green);}
+.stat-val.c-gold{color:var(--gold);}
+.stat-val.c-red{color:var(--red);}
+.stat-val.c-blue{color:var(--blue);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* FILTER */
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-btn{padding:7px 16px;background:var(--surface);border:1px solid var(--border);border-radius:100px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .15s;}
+.filter-btn.active{background:var(--gold-dim);border-color:var(--gold-br);color:var(--gold);}
+.filter-btn:hover:not(.active){border-color:rgba(255,255,255,.15);}
+
+/* LOG LIST */
+.log-list{display:flex;flex-direction:column;gap:10px;}
+.log-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.log-card.reject{border-left:3px solid var(--red);}
+.log-card.warn{border-left:3px solid var(--gold);}
+.log-card.approve{border-left:3px solid var(--green);}
+.log-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+.log-left{display:flex;align-items:center;gap:10px;}
+.log-sym{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;}
+.log-dir{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;}
+.log-dir.buy{background:var(--green-d);color:var(--green);}
+.log-dir.sell{background:var(--red-d);color:var(--red);}
+.decision-badge{font-size:11px;font-weight:800;padding:4px 12px;border-radius:6px;letter-spacing:.03em;}
+.decision-badge.approve{background:var(--green-d);color:var(--green);border:1px solid var(--green-b);}
+.decision-badge.warn{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-br);}
+.decision-badge.reject{background:var(--red-d);color:var(--red);border:1px solid var(--red-b);}
+.log-time{font-size:11px;color:var(--muted);}
+.log-reason{font-size:12px;color:#ccc;line-height:1.6;margin-bottom:6px;}
+.log-action{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.log-action strong{color:var(--text);}
+.log-confidence{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
+.log-meta-row{display:flex;gap:16px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+
+.loading{padding:60px;text-align:center;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;}
+
+@media(max-width:640px){
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .content{padding:14px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">AI Decision Engine</span></div>
+  <div class="nav-right">
+    <button class="btn-refresh" onclick="loadDecisions()">↺ Refresh</button>
+    <a href="dashboard.html" class="nav-back">← Dashboard</a>
+  </div>
+</nav>
+
+<div class="content">
+  <div class="page-header">
+    <div class="page-title">⚖️ AI Decision Engine</div>
+    <div class="page-sub">Nhật ký mọi quyết định AI đưa ra trước khi tín hiệu được gửi đi.</div>
+  </div>
+
+  <div class="intro-box">
+    <div class="intro-icon">🧠</div>
+    <div class="intro-text">
+      <strong>AI không chỉ chấm điểm — AI quyết định.</strong> Mỗi tín hiệu từ indicator đều đi qua bước
+      kiểm tra này trước khi được gửi. <strong style="color:var(--red)">REJECT</strong> = không gửi,
+      <strong style="color:var(--gold)">WARN</strong> = gửi kèm cảnh báo, <strong style="color:var(--green)">APPROVE</strong> = gửi bình thường.
+    </div>
+  </div>
+
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card c-green"><div class="stat-label">Approve</div><div class="stat-val c-green">—</div></div>
+    <div class="stat-card c-gold"><div class="stat-label">Warn</div><div class="stat-val c-gold">—</div></div>
+    <div class="stat-card c-red"><div class="stat-label">Reject</div><div class="stat-val c-red">—</div></div>
+    <div class="stat-card c-blue"><div class="stat-label">Reject Rate</div><div class="stat-val c-blue">—</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterBy(null, this)">Tất cả</button>
+    <button class="filter-btn" onclick="filterBy('APPROVE', this)">✅ Approve</button>
+    <button class="filter-btn" onclick="filterBy('WARN', this)">⚠️ Warn</button>
+    <button class="filter-btn" onclick="filterBy('REJECT', this)">🚫 Reject</button>
+  </div>
+
+  <div class="log-list" id="log-list">
+    <div class="loading"><span class="spinner"></span>Đang tải...</div>
+  </div>
+</div>
+
+<script>
+const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+let currentFilter = null;
+
+async function loadDecisions() {
+  const list = document.getElementById('log-list');
+  list.innerHTML = '<div class="loading"><span class="spinner"></span>Đang tải...</div>';
+
+  const qs = new URLSearchParams();
+  if (currentFilter) qs.set('decision', currentFilter);
+  qs.set('limit', '150');
+
+  try {
+    const res  = await fetch(`${API}/api/decisions?${qs.toString()}`, {signal: AbortSignal.timeout(12000)});
+    const data = await res.json();
+    renderStats(data.stats, data.reject_rate);
+    renderList(data.logs);
+  } catch(e) {
+    list.innerHTML = `<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.</div>`;
+  }
+}
+
+function renderStats(stats, rejectRate) {
+  const grid = document.getElementById('stats-grid');
+  const total = (stats.APPROVE||0) + (stats.WARN||0) + (stats.REJECT||0);
+  grid.innerHTML = `
+    <div class="stat-card c-green">
+      <div class="stat-label">Approve</div>
+      <div class="stat-val c-green">${stats.APPROVE||0}</div>
+      <div class="stat-sub">${total? Math.round((stats.APPROVE||0)/total*100):0}% tổng số</div>
+    </div>
+    <div class="stat-card c-gold">
+      <div class="stat-label">Warn</div>
+      <div class="stat-val c-gold">${stats.WARN||0}</div>
+      <div class="stat-sub">${total? Math.round((stats.WARN||0)/total*100):0}% tổng số</div>
+    </div>
+    <div class="stat-card c-red">
+      <div class="stat-label">Reject</div>
+      <div class="stat-val c-red">${stats.REJECT||0}</div>
+      <div class="stat-sub">Đã chặn không gửi</div>
+    </div>
+    <div class="stat-card c-blue">
+      <div class="stat-label">Reject Rate</div>
+      <div class="stat-val c-blue">${rejectRate}%</div>
+      <div class="stat-sub">Tỷ lệ AI từ chối</div>
+    </div>
+  `;
+}
+
+function renderList(logs) {
+  const list = document.getElementById('log-list');
+  if (!logs.length) {
+    list.innerHTML = `<div class="empty">⚖️ Chưa có quyết định nào được ghi nhận.<br>Decision Engine sẽ hoạt động ngay khi có tín hiệu mới.</div>`;
+    return;
+  }
+
+  const badgeMap = {
+    APPROVE: {cls:'approve', icon:'✅', text:'APPROVE'},
+    WARN:    {cls:'warn',    icon:'⚠️', text:'WARN'},
+    REJECT:  {cls:'reject',  icon:'🚫', text:'REJECT'},
+  };
+
+  list.innerHTML = logs.map(l => {
+    const b = badgeMap[l.decision] || badgeMap.APPROVE;
+    const isBuy = l.direction === 'BUY';
+    return `<div class="log-card ${b.cls}">
+      <div class="log-top">
+        <div class="log-left">
+          <span class="log-sym">${l.symbol} · ${l.timeframe}</span>
+          <span class="log-dir ${isBuy?'buy':'sell'}">${l.direction}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="log-confidence">Confidence: ${l.confidence}%</span>
+          <span class="decision-badge ${b.cls}">${b.icon} ${b.text}</span>
+        </div>
+      </div>
+      <div class="log-reason">${l.reason || 'Không có lý do chi tiết.'}</div>
+      <div class="log-action">💡 <strong>Hành động:</strong> ${l.action || '—'}</div>
+      <div class="log-meta-row">
+        <span>Entry: ${l.entry}</span>
+        <span>SL: ${l.stop_loss}</span>
+        <span>R:R 1:${l.rr_ratio}</span>
+        <span style="margin-left:auto;color:var(--muted)">${l.created_at?.slice(0,16)??''}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterBy(decision, btn) {
+  currentFilter = decision;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadDecisions();
+}
+
+loadDecisions();
+</script>
+</body>
+</html>

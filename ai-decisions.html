@@ -96,6 +96,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 .log-action{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
 .log-action strong{color:var(--text);}
 .log-risk{font-size:11px;color:var(--blue);background:rgba(59,158,255,.06);border:1px solid rgba(59,158,255,.15);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.5;}
+.log-learning{font-size:11px;color:#a78bfa;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.15);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.5;}
 .log-confidence{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
 .log-meta-row{display:flex;gap:16px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
 
@@ -238,6 +239,7 @@ function renderList(logs) {
       <div class="log-reason">${l.reason || 'Không có lý do chi tiết.'}</div>
       <div class="log-action">💡 <strong>Hành động:</strong> ${l.action || '—'}</div>
       ${l.risk_note ? `<div class="log-risk">🛡️ ${l.risk_note.replace(/\\n/g,' · ')}</div>` : ''}
+      ${l.learning_note ? `<div class="log-learning">🧠 ${l.learning_note.replace(/\\n/g,' · ')}</div>` : ''}
       <div class="log-meta-row">
         <span>Entry: ${l.entry}</span>
         <span>SL: ${l.stop_loss}</span>

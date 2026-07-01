@@ -117,6 +117,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 /* Recent table */
 .recent-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
 
+/* Learning patterns panel */
+.learn-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.25);}
+
 /* Progress rings for session */
 .session-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .session-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;}
@@ -260,12 +263,16 @@ function render(d) {
     ${renderGroupTable('📆 Hiệu suất theo Tháng', d.by_month, 'month')}
   </div>
 
+  <!-- LEARNING PATTERNS (Module 3) -->
+  <div id="learning-panel-wrap" style="margin-bottom:16px;"></div>
+
   <!-- RECENT 20 -->
   ${renderRecent(d.recent)}
   `;
 
   document.getElementById('main-content').innerHTML = html;
   drawEquity(d.equity_curve);
+  loadLearningPatterns();
 }
 
 // ─── INSIGHTS ──────────────────────────────────────────────
@@ -412,6 +419,60 @@ function renderRecent(recent) {
       <tbody>${rows}</tbody>
     </table>
     </div>
+  </div>`;
+}
+
+// ─── LEARNING PATTERNS (Module 3) ──────────────────────────
+async function loadLearningPatterns() {
+  const wrap = document.getElementById('learning-panel-wrap');
+  if (!wrap) return;
+  try {
+    const res  = await fetch(API + '/api/learning', {signal: AbortSignal.timeout(10000)});
+    const data = await res.json();
+    renderLearningPatterns(data.patterns || []);
+  } catch(e) {
+    wrap.innerHTML = '';
+  }
+}
+
+function renderLearningPatterns(patterns) {
+  const wrap = document.getElementById('learning-panel-wrap');
+  if (!patterns.length) {
+    wrap.innerHTML = `
+    <div class="stat-panel">
+      <div class="stat-panel-header">🧠 AI Learning Patterns (Module 3)</div>
+      <div class="empty" style="padding:24px">
+        Chưa có pattern nào đủ dữ liệu (cần ≥5 lệnh lịch sử cho mỗi combo Symbol × Phiên × Loại tín hiệu).<br>
+        Patterns sẽ tự xuất hiện khi hệ thống tích lũy thêm dữ liệu.
+      </div>
+    </div>`;
+    return;
+  }
+
+  const rows = patterns.map(p => {
+    const color = p.winrate >= 65 ? 'var(--green)' : p.winrate >= 50 ? 'var(--gold)' : 'var(--red)';
+    return `<tr>
+      <td class="mono">${p.symbol}</td>
+      <td style="font-size:11px;color:var(--muted)">${p.session}</td>
+      <td style="font-size:11px;color:var(--muted)">${p.signal_type}</td>
+      <td style="text-align:center" class="mono">${p.total}</td>
+      <td>
+        <div class="wr-bar-wrap">
+          <div class="wr-bar-track"><div class="wr-bar-fill" style="width:${p.winrate}%;background:${color}"></div></div>
+          <span class="wr-text" style="color:${color}">${p.winrate}%</span>
+        </div>
+      </td>
+      <td><span class="learn-badge">AI đã học</span></td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+  <div class="stat-panel">
+    <div class="stat-panel-header">🧠 AI Learning Patterns (Module 3) — Bằng chứng lịch sử AI dùng để quyết định</div>
+    <table class="stat-table">
+      <thead><tr><th>Symbol</th><th>Phiên</th><th>Loại</th><th style="text-align:center">Lệnh</th><th>Win Rate</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
   </div>`;
 }
 

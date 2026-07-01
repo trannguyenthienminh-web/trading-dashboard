@@ -227,6 +227,47 @@
     }
     #send-btn:hover { opacity: 0.85; }
     #send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .attach-btn {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .attach-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .attach-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+    #image-preview-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    #image-preview-bar.show { display: flex; }
+    #image-preview-bar img {
+      width: 40px; height: 40px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    #image-preview-bar .preview-label { flex: 1; font-size: 0.75rem; color: var(--muted); }
+    #image-preview-bar .preview-remove {
+      background: transparent; border: none; color: var(--muted);
+      cursor: pointer; font-size: 1rem; padding: 4px 8px;
+    }
+    #image-preview-bar .preview-remove:hover { color: #F87171; }
+    .msg-bubble img.chat-attached-image {
+      max-width: 220px; border-radius: 10px; display: block; margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
     .input-hint {
       margin-top: 6px;
       text-align: center;
@@ -310,7 +351,14 @@
 
   <!-- ─── INPUT BAR ─────────────────────────────── -->
   <div id="input-bar">
+    <div id="image-preview-bar">
+      <img id="image-preview-thumb" src="" alt="preview" />
+      <span class="preview-label">Đã đính kèm ảnh — AI sẽ đọc biểu đồ/trendline trong ảnh này</span>
+      <button class="preview-remove" onclick="removeImage()" title="Bỏ ảnh">✕</button>
+    </div>
     <div class="input-wrap">
+      <button class="attach-btn" id="attach-btn" onclick="triggerImageUpload()" title="Đính kèm ảnh chart">📎</button>
+      <input type="file" id="image-input" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="handleImageSelect(event)" />
       <textarea
         id="user-input"
         rows="1"
@@ -320,7 +368,7 @@
       ></textarea>
       <button id="send-btn" onclick="sendMessage()" title="Gửi (Enter)">➤</button>
     </div>
-    <div class="input-hint">Enter để gửi · Shift+Enter xuống dòng</div>
+    <div class="input-hint">Enter để gửi · Shift+Enter xuống dòng · 📎 để gửi kèm ảnh chart</div>
   </div>
 
   <script>
@@ -331,6 +379,43 @@
 
     let conversationHistory = [];
     let isTyping = false;
+    let pendingImageDataUrl = null;   // v4.5 Phase 2 — Vision AI
+    const MAX_IMAGE_MB = 4;
+
+    // ─── IMAGE ATTACH (v4.5 Phase 2 — Vision AI) ───────────
+    function triggerImageUpload() {
+      document.getElementById("image-input").click();
+    }
+
+    function handleImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+        alert(`Ảnh quá lớn (tối đa ${MAX_IMAGE_MB}MB). Vui lòng chọn ảnh nhỏ hơn.`);
+        event.target.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingImageDataUrl = reader.result; // data:image/png;base64,...
+        document.getElementById("image-preview-thumb").src = pendingImageDataUrl;
+        document.getElementById("image-preview-bar").classList.add("show");
+        document.getElementById("attach-btn").classList.add("active");
+      };
+      reader.onerror = () => {
+        alert("Không đọc được ảnh, thử lại nhé.");
+      };
+      reader.readAsDataURL(file);
+      event.target.value = ""; // cho phép chọn lại cùng 1 file lần sau nếu cần
+    }
+
+    function removeImage() {
+      pendingImageDataUrl = null;
+      document.getElementById("image-preview-bar").classList.remove("show");
+      document.getElementById("attach-btn").classList.remove("active");
+    }
 
     // ─── INIT ──────────────────────────────────────────────
     document.addEventListener("DOMContentLoaded", () => {
@@ -371,15 +456,19 @@
     async function sendMessage(text) {
       const input = document.getElementById("user-input");
       const msg   = (text || input.value).trim();
-      if (!msg || isTyping) return;
+      if ((!msg && !pendingImageDataUrl) || isTyping) return;
 
+      const imageToSend = pendingImageDataUrl; // chụp lại trước khi bị clear
       input.value = "";
       autoResize(input);
       input.focus();
 
-      // Add to history
-      conversationHistory.push({ role: "user", content: msg });
-      appendMessage("user", msg);
+      // Add to history — nếu chỉ gửi ảnh không kèm chữ, vẫn cần 1 content text
+      // để giữ conversationHistory hợp lệ cho các lượt chat chung sau này
+      const historyText = msg || "(đã gửi ảnh biểu đồ)";
+      conversationHistory.push({ role: "user", content: historyText });
+      appendMessage("user", msg || "📎 Đã gửi ảnh biểu đồ để AI phân tích", false, imageToSend);
+      removeImage(); // dọn preview ngay sau khi đã "chốt" ảnh gửi đi
 
       // Show typing
       isTyping = true;
@@ -387,11 +476,14 @@
       const typingEl = appendTyping();
 
       try {
+        const body = { messages: conversationHistory };
+        if (imageToSend) body.image_url = imageToSend;
+
         const res = await fetch(CHAT_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: conversationHistory }),
-          signal: AbortSignal.timeout(30_000),
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(45_000), // ảnh cần thời gian xử lý lâu hơn text thường
         });
 
         if (!res.ok) {
@@ -424,7 +516,7 @@
     }
 
     // ─── DOM HELPERS ───────────────────────────────────────
-    function appendMessage(role, text, isError = false) {
+    function appendMessage(role, text, isError = false, imageDataUrl = null) {
       const container = document.getElementById("messages");
 
       const msgEl = document.createElement("div");
@@ -444,7 +536,12 @@
       const bubble  = document.createElement("div");
       bubble.className = "msg-bubble";
       if (isError) bubble.style.color = "#F87171";
-      bubble.innerHTML = formatText(text);
+      let bubbleHtml = "";
+      if (imageDataUrl) {
+        bubbleHtml += `<img class="chat-attached-image" src="${imageDataUrl}" alt="ảnh đính kèm" />`;
+      }
+      bubbleHtml += formatText(text);
+      bubble.innerHTML = bubbleHtml;
 
       const time    = document.createElement("div");
       time.className = "msg-time";

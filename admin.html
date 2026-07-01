@@ -550,7 +550,6 @@ select.filter-select{padding:8px 12px;background:var(--bg);border:1px solid var(
 
 <script>
 const API        = 'https://trading-proxy.trannguyenthienminh.workers.dev';
-const ADMIN_PASS = 'admin2026';
 
 let allData  = [];
 let payData  = [];
@@ -558,19 +557,31 @@ let tgData   = [];
 let currentPage = 'overview';
 
 // ─── AUTH ────────────────────────────────────────────
-function adminLogin() {
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (localStorage.getItem('admin_token') || '') };
+}
+async function adminLogin() {
   const pass = document.getElementById('admin-pass').value;
-  if (pass === ADMIN_PASS) {
-    sessionStorage.setItem('admin_auth', '1');
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    loadData();
-  } else {
+  try {
+    const res = await fetch(API + '/api/login/admin', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pass })
+    });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem('admin_token', data.token);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadData();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  } catch(e) {
     document.getElementById('login-err').style.display = 'block';
   }
 }
 function adminLogout() {
-  sessionStorage.removeItem('admin_auth');
+  localStorage.removeItem('admin_token');
   location.reload();
 }
 
@@ -592,7 +603,8 @@ function switchPage(page, btn) {
 // ─── LOAD DATA ───────────────────────────────────────
 async function loadData() {
   try {
-    const res  = await fetch(API + '/api/license/list', { signal: AbortSignal.timeout(8000) });
+    const res  = await fetch(API + '/api/license/list', { headers: authHeaders(), signal: AbortSignal.timeout(8000) });
+    if (res.status === 401) { adminLogout(); return; }
     const data = await res.json();
     allData = data.licenses || [];
     updateStats();
@@ -607,7 +619,7 @@ async function loadData() {
 
   // Load payments separately
   try {
-    const res2 = await fetch(API + '/api/payments', { signal: AbortSignal.timeout(8000) });
+    const res2 = await fetch(API + '/api/payments', { headers: authHeaders(), signal: AbortSignal.timeout(8000) });
     const d2   = await res2.json();
     payData = d2.payments || [];
     if (currentPage === 'payments') renderPayments();
@@ -841,7 +853,7 @@ async function sendSingleTg() {
   if (!r?.chat_id) { toast('Khách chưa có chat_id', 'error'); return; }
   try {
     const res = await fetch(API + '/api/telegram/send', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
+      method: 'POST', headers: authHeaders(),
       body: JSON.stringify({ chat_id: r.chat_id, message: msg })
     });
     const d = await res.json();
@@ -872,7 +884,7 @@ async function sendTelegramMsg() {
   for (const r of targets) {
     try {
       const res = await fetch(API + '/api/telegram/send', {
-        method:'POST', headers:{'Content-Type':'application/json'},
+        method:'POST', headers: authHeaders(),
         body: JSON.stringify({ chat_id: r.chat_id, message: msg })
       });
       const d = await res.json();
@@ -913,7 +925,7 @@ async function approveSubmit() {
   const note   = document.getElementById('m-note').value;
   try {
     const res = await fetch(API + '/api/license/approve', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST', headers: authHeaders(),
       body: JSON.stringify({ id: parseInt(id), license_key: key, expires_at: expire, note })
     });
     const data = await res.json();
@@ -949,7 +961,7 @@ async function renewSubmit() {
   if (!newDate) { toast('Vui lòng chọn ngày', 'error'); return; }
   try {
     const res = await fetch(API + '/api/license/renew', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST', headers: authHeaders(),
       body: JSON.stringify({ id, expires_at: newDate })
     });
     const data = await res.json();
@@ -963,7 +975,7 @@ async function revoke(id) {
   if (!confirm('Thu hồi license này? EA của khách sẽ dừng hoạt động.')) return;
   try {
     await fetch(API + '/api/license/revoke', {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id })
+      method:'POST', headers: authHeaders(), body: JSON.stringify({ id })
     });
     loadData(); toast('🔒 Đã thu hồi license');
   } catch(e) { toast('Lỗi: ' + e.message, 'error'); }
@@ -972,7 +984,7 @@ async function revoke(id) {
 async function reactivate(id) {
   try {
     await fetch(API + '/api/license/reactivate', {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id })
+      method:'POST', headers: authHeaders(), body: JSON.stringify({ id })
     });
     loadData(); toast('✅ Đã kích hoạt lại license');
   } catch(e) { toast('Lỗi: ' + e.message, 'error'); }
@@ -1006,7 +1018,7 @@ function toast(msg, type='success') {
 }
 
 // ─── INIT ────────────────────────────────────────────
-if (sessionStorage.getItem('admin_auth') === '1') {
+if (localStorage.getItem('admin_token')) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   loadData();

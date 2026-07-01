@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade Journal — Trading AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0b0e;
+  --surface: #111318;
+  --card:    #161820;
+  --border:  #1e2028;
+  --gold:    #f5c842;
+  --gold-dim:rgba(245,200,66,.08);
+  --gold-br: rgba(245,200,66,.2);
+  --text:    #e8eaf0;
+  --muted:   #6b7080;
+  --subtle:  #2a2d38;
+  --green:   #2ecc71;
+  --green-d: rgba(46,204,113,.1);
+  --green-b: rgba(46,204,113,.25);
+  --red:     #e74c3c;
+  --red-d:   rgba(231,76,60,.1);
+  --red-b:   rgba(231,76,60,.25);
+  --blue:    #3b9eff;
+  --blue-d:  rgba(59,158,255,.1);
+  --purple:  #a78bfa;
+  --purple-d:rgba(167,139,250,.1);
+  --r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.nav-logo{font-weight:700;font-size:15px;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--text);}
+
+/* CONTENT */
+.content{padding:24px;max-width:1100px;margin:0 auto;}
+.page-header{margin-bottom:20px;}
+.page-title{font-size:1.3rem;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-select,.filter-input{padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer;}
+.filter-select:focus,.filter-input:focus{border-color:var(--gold);}
+
+/* TRADE CARD LIST */
+.trade-list{display:flex;flex-direction:column;gap:12px;}
+.trade-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .15s;}
+.trade-card:hover{border-color:rgba(245,200,66,.3);}
+.tc-top{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.tc-left{display:flex;align-items:center;gap:14px;}
+.tc-dir-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.tc-dir-icon.buy{background:var(--green-d);color:var(--green);}
+.tc-dir-icon.sell{background:var(--red-d);color:var(--red);}
+.tc-info .tc-sym{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;}
+.tc-info .tc-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.tc-right{display:flex;align-items:center;gap:16px;}
+.tc-score{display:flex;align-items:center;gap:6px;font-size:12px;}
+.tc-score .dot{width:8px;height:8px;border-radius:50%;}
+.tc-pnl{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;min-width:70px;text-align:right;}
+.tc-status-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;white-space:nowrap;}
+.st-tp3{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-br);}
+.st-tp{background:var(--green-d);color:var(--green);border:1px solid var(--green-b);}
+.st-sl{background:var(--red-d);color:var(--red);border:1px solid var(--red-b);}
+.st-mixed{background:var(--blue-d);color:var(--blue);border:1px solid rgba(59,158,255,.25);}
+
+.tc-postmortem-preview{
+  padding:12px 20px; border-top:1px solid var(--border);
+  font-size:12px; color:var(--muted); line-height:1.5;
+  display:flex; gap:8px; align-items:flex-start;
+  background:rgba(255,255,255,.01);
+}
+.tc-postmortem-preview .pm-icon{flex-shrink:0;}
+
+/* DETAIL MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+.modal-bg.show{display:flex;}
+.detail-modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:640px;width:100%;overflow:hidden;margin-bottom:40px;}
+.dm-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.dm-title{font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.dm-close{width:30px;height:30px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.dm-close:hover{color:var(--text);}
+.dm-body{padding:24px;}
+
+.dm-section{margin-bottom:22px;}
+.dm-section-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+/* Levels grid */
+.dm-levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.dm-lv{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;}
+.dm-lv .l{font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.dm-lv .v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;}
+
+/* Score ring in detail */
+.dm-score-row{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+.dm-ring{width:56px;height:56px;position:relative;flex-shrink:0;}
+.dm-ring svg{transform:rotate(-90deg);}
+.dm-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;}
+
+.dm-text-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;line-height:1.7;color:#ccc;}
+.dm-text-box.postmortem{border-color:rgba(167,139,250,.25);background:var(--purple-d);}
+.dm-text-box.postmortem-loss{border-color:rgba(231,76,60,.25);background:var(--red-d);}
+.dm-text-box.postmortem-win{border-color:rgba(46,204,113,.25);background:var(--green-d);}
+
+.dm-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.dm-tag{font-size:11px;padding:3px 10px;border-radius:100px;}
+.dm-tag.strength{background:var(--green-d);color:var(--green);border:1px solid var(--green-b);}
+.dm-tag.warning{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-br);}
+
+.loading{padding:60px;text-align:center;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;}
+
+@media(max-width:600px){
+  .content{padding:14px;}
+  .dm-levels{grid-template-columns:1fr 1fr;}
+  .tc-top{flex-direction:column;align-items:flex-start;}
+  .tc-right{width:100%;justify-content:space-between;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">Trade Journal</span></div>
+  <a href="dashboard.html" class="nav-back">← Dashboard</a>
+</nav>
+
+<div class="content">
+  <div class="page-header">
+    <div class="page-title">📖 Trade Journal</div>
+    <div class="page-sub">Mỗi tín hiệu là một bài học — xem lý do AI vào lệnh và đánh giá hậu kiểm sau khi đóng.</div>
+  </div>
+
+  <div class="filter-bar">
+    <select class="filter-select" id="f-symbol" onchange="loadJournal()">
+      <option value="">Tất cả Symbol</option>
+      <option value="XAUUSDs">XAUUSDs</option>
+      <option value="EURUSDs">EURUSDs</option>
+      <option value="BTCUSDs">BTCUSDs</option>
+      <option value="GBPUSDs">GBPUSDs</option>
+    </select>
+    <select class="filter-select" id="f-status" onchange="loadJournal()">
+      <option value="">Tất cả kết quả</option>
+      <option value="TP3_HIT">🏆 TP3 Full Target</option>
+      <option value="TP2_HIT">✅ TP2</option>
+      <option value="SL_HIT">❌ SL ngay đầu</option>
+      <option value="SL_AFTER_TP1">🔵 SL sau TP1</option>
+      <option value="SL_AFTER_TP2">🔵 SL sau TP2</option>
+    </select>
+  </div>
+
+  <div class="trade-list" id="trade-list">
+    <div class="loading"><span class="spinner"></span>Đang tải Trade Journal...</div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="detail-modal" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal" id="detail-content"></div>
+</div>
+
+<script>
+const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+let TRADES = [];
+
+async function loadJournal() {
+  const list = document.getElementById('trade-list');
+  list.innerHTML = '<div class="loading"><span class="spinner"></span>Đang tải...</div>';
+
+  const symbol = document.getElementById('f-symbol').value;
+  const status = document.getElementById('f-status').value;
+  const qs = new URLSearchParams();
+  if (symbol) qs.set('symbol', symbol);
+  if (status) qs.set('status', status);
+
+  try {
+    const res  = await fetch(`${API}/api/journal?${qs.toString()}`, {signal: AbortSignal.timeout(12000)});
+    const data = await res.json();
+    TRADES = data.trades || [];
+    render();
+  } catch(e) {
+    list.innerHTML = `<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.</div>`;
+  }
+}
+
+function statusBadge(status) {
+  const map = {
+    TP3_HIT:      {cls:'st-tp3',  text:'🏆 TP3 FULL'},
+    TP2_HIT:      {cls:'st-tp',   text:'✅ TP2'},
+    TP1_HIT:      {cls:'st-tp',   text:'✅ TP1'},
+    SL_HIT:       {cls:'st-sl',   text:'❌ SL'},
+    SL_AFTER_TP1: {cls:'st-mixed',text:'🔵 SL/TP1'},
+    SL_AFTER_TP2: {cls:'st-mixed',text:'🔵 SL/TP2'},
+  };
+  return map[status] || {cls:'st-mixed', text:status};
+}
+
+function scoreColor(score) {
+  if (score >= 85) return 'var(--gold)';
+  if (score >= 75) return 'var(--green)';
+  if (score >= 60) return 'var(--blue)';
+  return 'var(--muted)';
+}
+
+function render() {
+  const list = document.getElementById('trade-list');
+  if (!TRADES.length) {
+    list.innerHTML = `<div class="empty">📖 Chưa có lệnh nào trong Trade Journal.<br>Journal sẽ hiển thị sau khi có lệnh đóng đầu tiên.</div>`;
+    return;
+  }
+
+  list.innerHTML = TRADES.map(t => {
+    const badge   = statusBadge(t.status);
+    const isBuy   = t.direction === 'BUY';
+    const pnlColor= t.pnl_pips >= 0 ? 'var(--green)' : 'var(--red)';
+    const pnlText = (t.pnl_pips >= 0 ? '+' : '') + t.pnl_pips;
+    const scoreDot= t.score ? `<span class="dot" style="background:${scoreColor(t.score)}"></span>${t.score}/100` : '';
+    const pmPreview = t.post_mortem
+      ? `<div class="tc-postmortem-preview"><span class="pm-icon">📖</span><span>${truncate(t.post_mortem, 130)}</span></div>`
+      : '';
+
+    return `<div class="trade-card" onclick="openDetail(${t.id})">
+      <div class="tc-top">
+        <div class="tc-left">
+          <div class="tc-dir-icon ${isBuy?'buy':'sell'}">${isBuy?'▲':'▼'}</div>
+          <div class="tc-info">
+            <div class="tc-sym">${t.symbol} · ${t.timeframe}</div>
+            <div class="tc-meta">${t.direction} ${t.signal_type||''} · ${t.created_at?.slice(0,16)??''}</div>
+          </div>
+        </div>
+        <div class="tc-right">
+          ${scoreDot ? `<div class="tc-score">${scoreDot}</div>` : ''}
+          <span class="tc-status-badge ${badge.cls}">${badge.text}</span>
+          <span class="tc-pnl" style="color:${pnlColor}">${pnlText} pip</span>
+        </div>
+      </div>
+      ${pmPreview}
+    </div>`;
+  }).join('');
+}
+
+function truncate(text, len) {
+  if (!text) return '';
+  return text.length > len ? text.slice(0, len).trim() + '…' : text;
+}
+
+async function openDetail(id) {
+  const modal   = document.getElementById('detail-modal');
+  const content = document.getElementById('detail-content');
+  content.innerHTML = '<div class="loading"><span class="spinner"></span>Đang tải chi tiết...</div>';
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const res  = await fetch(`${API}/api/journal?id=${id}`, {signal: AbortSignal.timeout(10000)});
+    const data = await res.json();
+    renderDetail(data.trade);
+  } catch(e) {
+    content.innerHTML = '<div class="dm-body"><div class="empty">Lỗi tải chi tiết</div></div>';
+  }
+}
+
+function closeDetail() {
+  document.getElementById('detail-modal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function renderDetail(t) {
+  const badge   = statusBadge(t.status);
+  const isBuy   = t.direction === 'BUY';
+  const pnlColor= t.pnl_pips >= 0 ? 'var(--green)' : 'var(--red)';
+  const isLoss  = t.status === 'SL_HIT';
+
+  // Score ring
+  let scoreRingHtml = '';
+  if (t.score) {
+    const r = 22, circ = 2*Math.PI*r;
+    const dash = (t.score/100)*circ;
+    const color = scoreColor(t.score);
+    scoreRingHtml = `
+    <div class="dm-score-row">
+      <div class="dm-ring">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle cx="28" cy="28" r="${r}" fill="none" stroke="${color}" stroke-width="5"
+            stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" stroke-linecap="round"/>
+        </svg>
+        <div class="dm-ring-num" style="color:${color}">${t.score}</div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:${color};margin-bottom:3px;">${t.label||''}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;">${t.summary||'AI Confluence đã đánh giá tín hiệu này trước khi vào lệnh.'}</div>
+      </div>
+    </div>`;
+  }
+
+  // Tags
+  const strengths = Array.isArray(t.strengths) ? t.strengths : [];
+  const warnings  = Array.isArray(t.warnings)  ? t.warnings  : [];
+  const tagsHtml  = (strengths.length || warnings.length) ? `
+    <div class="dm-tags">
+      ${strengths.map(s=>`<span class="dm-tag strength">✓ ${s}</span>`).join('')}
+      ${warnings.map(w=>`<span class="dm-tag warning">⚠ ${w}</span>`).join('')}
+    </div>` : '';
+
+  // Post-mortem box style
+  let pmClass = 'postmortem';
+  if (isLoss) pmClass = 'postmortem-loss';
+  else if (t.pnl_pips > 0) pmClass = 'postmortem-win';
+
+  const pmSection = t.post_mortem ? `
+  <div class="dm-section">
+    <div class="dm-section-title">📖 AI Đánh giá hậu kiểm (Post-Mortem)</div>
+    <div class="dm-text-box ${pmClass}">${t.post_mortem}</div>
+  </div>` : `
+  <div class="dm-section">
+    <div class="dm-section-title">📖 AI Đánh giá hậu kiểm</div>
+    <div class="dm-text-box" style="color:var(--muted);font-style:italic;">Đang chờ AI phân tích sau khi đóng lệnh...</div>
+  </div>`;
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="dm-header">
+      <div class="dm-title">${t.symbol} · ${t.timeframe} — ${t.direction}</div>
+      <button class="dm-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="dm-body">
+
+      <div class="dm-section">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span class="tc-status-badge ${badge.cls}">${badge.text}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${pnlColor};font-size:15px;">
+            ${t.pnl_pips >= 0 ? '+' : ''}${t.pnl_pips} pip
+          </span>
+          <span style="font-size:11px;color:var(--muted);margin-left:auto;">${t.created_at?.slice(0,16)??''}</span>
+        </div>
+        <div class="dm-levels">
+          <div class="dm-lv"><div class="l">Entry</div><div class="v" style="color:var(--blue)">${t.entry}</div></div>
+          <div class="dm-lv"><div class="l">Stop Loss</div><div class="v" style="color:var(--red)">${t.stop_loss}</div></div>
+          <div class="dm-lv"><div class="l">R:R</div><div class="v">1:${t.rr_ratio}</div></div>
+          <div class="dm-lv"><div class="l">TP1</div><div class="v" style="color:var(--green)">${t.tp1}</div></div>
+          <div class="dm-lv"><div class="l">TP2</div><div class="v" style="color:var(--green)">${t.tp2}</div></div>
+          <div class="dm-lv"><div class="l">TP3</div><div class="v" style="color:var(--green)">${t.tp3}</div></div>
+        </div>
+      </div>
+
+      ${scoreRingHtml ? `<div class="dm-section"><div class="dm-section-title">🧠 AI Confluence lúc vào lệnh</div>${scoreRingHtml}${tagsHtml}</div>` : ''}
+
+      <div class="dm-section">
+        <div class="dm-section-title">💡 Lý do AI vào lệnh (lúc phát tín hiệu)</div>
+        <div class="dm-text-box">${(t.analysis_text||'Không có phân tích.').replace(/\\n/g,'<br>')}</div>
+      </div>
+
+      ${pmSection}
+
+    </div>
+  `;
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+loadJournal();
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+</script>
+</body>
+</html>

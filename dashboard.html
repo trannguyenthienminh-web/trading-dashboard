@@ -140,10 +140,36 @@
   .chart-wrap {
     flex: 1;
     min-height: 0;
+    display: flex; flex-direction: column;
   }
-  .chart-wrap iframe {
-    width: 100%; height: 100%; border: none;
+  .chart-toolbar {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
   }
+  .chart-toolbar .ind-btn {
+    padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    cursor: pointer; font-family: inherit; transition: all .15s;
+  }
+  .chart-toolbar .ind-btn:hover { border-color: var(--gold); color: var(--text); }
+  .chart-toolbar .ind-btn.active { color: var(--bg); border-color: transparent; }
+  .chart-toolbar .ind-btn[data-ind="sma20"].active { background: var(--blue); }
+  .chart-toolbar .ind-btn[data-ind="ema50"].active { background: var(--gold); }
+  .chart-toolbar .ind-btn[data-ind="bb"].active    { background: #b892ff; }
+  .chart-toolbar .ind-btn[data-ind="rsi"].active   { background: var(--green); }
+  .chart-toolbar .tf-btn {
+    padding: 6px 10px; border-radius: 7px; font-size: 11px; font-weight: 600;
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    cursor: pointer; font-family: inherit;
+  }
+  .chart-toolbar .tf-btn.active { background: var(--gold); color: var(--bg); border-color: transparent; }
+  .chart-toolbar .tb-sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 4px; }
+  .chart-toolbar .chart-status { margin-left: auto; font-size: 11px; color: var(--muted); }
+  #priceChart { flex: 1; min-height: 0; }
+  #rsiChart   { height: 120px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  #rsiChart.hidden { display: none; }
 
   /* ── SIDEBAR ── */
   .sidebar {
@@ -620,10 +646,20 @@
   <div class="tab-content active" id="tab-chart">
     <div class="chart-area">
       <div class="chart-wrap">
-        <iframe id="tvChart"
-          src="https://www.tradingview.com/widgetembed/?frameElementId=tvChart&symbol=XAUUSD&interval=5&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=0a0b0e&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&showpopupbutton=1&studies=RSI%402"
-          allowtransparency="true" allowfullscreen="true">
-        </iframe>
+        <div class="chart-toolbar">
+          <button class="tf-btn active" data-tf="M5"  onclick="changeTimeframe('M5',this)">M5</button>
+          <button class="tf-btn"        data-tf="M15" onclick="changeTimeframe('M15',this)">M15</button>
+          <button class="tf-btn"        data-tf="H1"  onclick="changeTimeframe('H1',this)">H1</button>
+          <button class="tf-btn"        data-tf="H4"  onclick="changeTimeframe('H4',this)">H4</button>
+          <div class="tb-sep"></div>
+          <button class="ind-btn" data-ind="sma20" onclick="toggleIndicator('sma20',this)">SMA 20</button>
+          <button class="ind-btn" data-ind="ema50" onclick="toggleIndicator('ema50',this)">EMA 50</button>
+          <button class="ind-btn" data-ind="bb"    onclick="toggleIndicator('bb',this)">Bollinger</button>
+          <button class="ind-btn" data-ind="rsi"   onclick="toggleIndicator('rsi',this)">RSI 14</button>
+          <span class="chart-status" id="chartStatus">Đang tải...</span>
+        </div>
+        <div id="priceChart"></div>
+        <div id="rsiChart" class="hidden"></div>
       </div>
     </div>
 
@@ -780,6 +816,7 @@
 
 </div><!-- /main -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightweight-charts/4.1.3/lightweight-charts.standalone.production.js"></script>
 <script>
 // ── CONFIG ──────────────────────────────────────────────
 // Thay URL này sau khi chạy ngrok
@@ -931,16 +968,198 @@ function confluenceCard(s) {
 }
 
 // ── SYMBOL CHANGE ───────────────────────────────────────
-let currentSymbol = 'XAUUSD';
+let currentSymbol = 'XAUUSDs';
 function changeSymbol(btn, tvSym, apiSym) {
   document.querySelectorAll('.sym-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentSymbol = apiSym;
+  loadChart();
+}
 
-  // Update TradingView
-  const tf = '5';
-  document.getElementById('tvChart').src =
-    `https://www.tradingview.com/widgetembed/?frameElementId=tvChart&symbol=${tvSym}&interval=${tf}&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=0a0b0e&theme=dark&style=1&timezone=Asia%2FHo_Chi_Minh&withdateranges=1&showpopupbutton=1&studies=RSI%402`;
+// ── PRICE CHART (Phase 3 — TradingView Lightweight Charts) ──
+let currentTimeframe = 'M5';
+let priceChart, rsiChartInstance, candleSeries;
+let indicatorSeries = { sma20: null, ema50: null, bbUpper: null, bbMid: null, bbLower: null, rsi: null };
+let activeIndicators = { sma20: false, ema50: false, bb: false, rsi: false };
+let lastCandles = [];
+let chartRefreshTimer = null;
+
+const CHART_COLORS = {
+  sma20: '#3498db', ema50: '#f5c842',
+  bbLine: '#b892ff', bbBand: 'rgba(184,146,255,0.08)',
+  rsi: '#2ecc71',
+};
+
+function initCharts() {
+  const wrap = document.getElementById('priceChart');
+  priceChart = LightweightCharts.createChart(wrap, {
+    layout: { background: { color: '#111318' }, textColor: '#6b7080' },
+    grid: { vertLines: { color: '#1e2028' }, horzLines: { color: '#1e2028' } },
+    rightPriceScale: { borderColor: '#1e2028' },
+    timeScale: { borderColor: '#1e2028', timeVisible: true, secondsVisible: false },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    autoSize: true,
+  });
+  candleSeries = priceChart.addCandlestickSeries({
+    upColor: '#2ecc71', downColor: '#e74c3c',
+    borderUpColor: '#2ecc71', borderDownColor: '#e74c3c',
+    wickUpColor: '#2ecc71', wickDownColor: '#e74c3c',
+  });
+
+  const rsiWrap = document.getElementById('rsiChart');
+  rsiChartInstance = LightweightCharts.createChart(rsiWrap, {
+    layout: { background: { color: '#111318' }, textColor: '#6b7080' },
+    grid: { vertLines: { color: '#1e2028' }, horzLines: { color: '#1e2028' } },
+    rightPriceScale: { borderColor: '#1e2028' },
+    timeScale: { borderColor: '#1e2028', timeVisible: true, secondsVisible: false },
+    autoSize: true,
+  });
+
+  // Đồng bộ 2 biểu đồ (kéo/zoom biểu đồ giá thì RSI cũng chạy theo)
+  priceChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+    if (range) rsiChartInstance.timeScale().setVisibleLogicalRange(range);
+  });
+  rsiChartInstance.timeScale().subscribeVisibleLogicalRangeChange(range => {
+    if (range) priceChart.timeScale().setVisibleLogicalRange(range);
+  });
+}
+
+function changeTimeframe(tf, btn) {
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTimeframe = tf;
+  loadChart();
+}
+
+function toggleIndicator(name, btn) {
+  activeIndicators[name] = !activeIndicators[name];
+  btn.classList.toggle('active', activeIndicators[name]);
+  if (name === 'rsi') {
+    document.getElementById('rsiChart').classList.toggle('hidden', !activeIndicators.rsi);
+  }
+  renderIndicators();
+}
+
+// ── Tính toán chỉ báo — thuần JS, không cần thư viện ngoài ──
+function calcSMA(closes, period) {
+  const out = [];
+  for (let i = 0; i < closes.length; i++) {
+    if (i < period - 1) { out.push(null); continue; }
+    let sum = 0;
+    for (let j = i - period + 1; j <= i; j++) sum += closes[j];
+    out.push(sum / period);
+  }
+  return out;
+}
+function calcEMA(closes, period) {
+  const out = [];
+  const k = 2 / (period + 1);
+  let prevEma = null;
+  for (let i = 0; i < closes.length; i++) {
+    if (i < period - 1) { out.push(null); continue; }
+    if (prevEma === null) {
+      let sum = 0;
+      for (let j = i - period + 1; j <= i; j++) sum += closes[j];
+      prevEma = sum / period;
+    } else {
+      prevEma = closes[i] * k + prevEma * (1 - k);
+    }
+    out.push(prevEma);
+  }
+  return out;
+}
+function calcBollinger(closes, period = 20, mult = 2) {
+  const sma = calcSMA(closes, period);
+  const upper = [], lower = [];
+  for (let i = 0; i < closes.length; i++) {
+    if (sma[i] === null) { upper.push(null); lower.push(null); continue; }
+    let sumSq = 0;
+    for (let j = i - period + 1; j <= i; j++) sumSq += Math.pow(closes[j] - sma[i], 2);
+    const std = Math.sqrt(sumSq / period);
+    upper.push(sma[i] + mult * std);
+    lower.push(sma[i] - mult * std);
+  }
+  return { mid: sma, upper, lower };
+}
+function calcRSI(closes, period = 14) {
+  const out = new Array(closes.length).fill(null);
+  if (closes.length < period + 1) return out;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = closes[i] - closes[i - 1];
+    if (diff >= 0) gains += diff; else losses -= diff;
+  }
+  let avgGain = gains / period, avgLoss = losses / period;
+  out[period] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
+  for (let i = period + 1; i < closes.length; i++) {
+    const diff = closes[i] - closes[i - 1];
+    const gain = diff > 0 ? diff : 0;
+    const loss = diff < 0 ? -diff : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+    out[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
+  }
+  return out;
+}
+
+function renderIndicators() {
+  // Xóa hết series chỉ báo cũ trước khi vẽ lại (đơn giản, tránh trùng)
+  Object.values(indicatorSeries).forEach(s => { if (s) { try { priceChart.removeSeries(s); } catch(e){} try { rsiChartInstance.removeSeries(s); } catch(e){} } });
+  indicatorSeries = { sma20: null, ema50: null, bbUpper: null, bbMid: null, bbLower: null, rsi: null };
+
+  if (!lastCandles.length) return;
+  const closes = lastCandles.map(c => c.close);
+  const times  = lastCandles.map(c => c.time);
+
+  if (activeIndicators.sma20) {
+    const sma = calcSMA(closes, 20);
+    indicatorSeries.sma20 = priceChart.addLineSeries({ color: CHART_COLORS.sma20, lineWidth: 2, title: 'SMA 20' });
+    indicatorSeries.sma20.setData(zipLine(times, sma));
+  }
+  if (activeIndicators.ema50) {
+    const ema = calcEMA(closes, 50);
+    indicatorSeries.ema50 = priceChart.addLineSeries({ color: CHART_COLORS.ema50, lineWidth: 2, title: 'EMA 50' });
+    indicatorSeries.ema50.setData(zipLine(times, ema));
+  }
+  if (activeIndicators.bb) {
+    const bb = calcBollinger(closes, 20, 2);
+    indicatorSeries.bbUpper = priceChart.addLineSeries({ color: CHART_COLORS.bbLine, lineWidth: 1, title: 'BB Upper' });
+    indicatorSeries.bbMid   = priceChart.addLineSeries({ color: CHART_COLORS.bbLine, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, title: 'BB Mid' });
+    indicatorSeries.bbLower = priceChart.addLineSeries({ color: CHART_COLORS.bbLine, lineWidth: 1, title: 'BB Lower' });
+    indicatorSeries.bbUpper.setData(zipLine(times, bb.upper));
+    indicatorSeries.bbMid.setData(zipLine(times, bb.mid));
+    indicatorSeries.bbLower.setData(zipLine(times, bb.lower));
+  }
+  if (activeIndicators.rsi) {
+    const rsi = calcRSI(closes, 14);
+    indicatorSeries.rsi = rsiChartInstance.addLineSeries({ color: CHART_COLORS.rsi, lineWidth: 2, title: 'RSI 14' });
+    indicatorSeries.rsi.setData(zipLine(times, rsi));
+  }
+}
+
+function zipLine(times, values) {
+  const out = [];
+  for (let i = 0; i < times.length; i++) {
+    if (values[i] !== null && values[i] !== undefined && !isNaN(values[i])) {
+      out.push({ time: times[i], value: values[i] });
+    }
+  }
+  return out;
+}
+
+async function loadChart() {
+  const statusEl = document.getElementById('chartStatus');
+  statusEl.textContent = 'Đang tải...';
+  const data = await fetchAPI(`/api/candles?symbol=${currentSymbol}&timeframe=${currentTimeframe}&limit=300`);
+  if (!data || !data.candles || !data.candles.length) {
+    statusEl.textContent = '⚠️ Không lấy được dữ liệu nến';
+    return;
+  }
+  lastCandles = data.candles;
+  candleSeries.setData(lastCandles);
+  renderIndicators();
+  priceChart.timeScale().fitContent();
+  statusEl.textContent = `Cập nhật: ${new Date().toLocaleTimeString('vi-VN')}`;
 }
 
 // ── API CALLS ───────────────────────────────────────────
@@ -1239,6 +1458,10 @@ Trả lời ngắn gọn dưới 200 từ, tiếng Việt, dùng emoji.`
 // ── INIT ─────────────────────────────────────────────────
 loadSidebar();
 setInterval(loadSidebar, 30000); // Refresh mỗi 30 giây
+
+initCharts();
+loadChart();
+chartRefreshTimer = setInterval(loadChart, 10000); // Làm mới nến mỗi 10 giây
 
 // Prompt nhập API URL nếu chưa có
 function setApiUrl() {

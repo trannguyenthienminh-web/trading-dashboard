@@ -95,6 +95,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 .log-reason{font-size:12px;color:#ccc;line-height:1.6;margin-bottom:6px;}
 .log-action{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
 .log-action strong{color:var(--text);}
+.log-risk{font-size:11px;color:var(--blue);background:rgba(59,158,255,.06);border:1px solid rgba(59,158,255,.15);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.5;}
 .log-confidence{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);}
 .log-meta-row{display:flex;gap:16px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
 
@@ -132,6 +133,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
       kiểm tra này trước khi được gửi. <strong style="color:var(--red)">REJECT</strong> = không gửi,
       <strong style="color:var(--gold)">WARN</strong> = gửi kèm cảnh báo, <strong style="color:var(--green)">APPROVE</strong> = gửi bình thường.
     </div>
+  </div>
+
+  <div class="intro-box" id="live-risk-box" style="border-color:rgba(59,158,255,.25);background:linear-gradient(135deg,rgba(59,158,255,.06),rgba(59,158,255,.02));">
+    <div class="intro-icon">🛡️</div>
+    <div class="intro-text" id="live-risk-text">Đang tải trạng thái Risk hiện tại...</div>
   </div>
 
   <div class="stats-grid" id="stats-grid">
@@ -231,6 +237,7 @@ function renderList(logs) {
       </div>
       <div class="log-reason">${l.reason || 'Không có lý do chi tiết.'}</div>
       <div class="log-action">💡 <strong>Hành động:</strong> ${l.action || '—'}</div>
+      ${l.risk_note ? `<div class="log-risk">🛡️ ${l.risk_note.replace(/\\n/g,' · ')}</div>` : ''}
       <div class="log-meta-row">
         <span>Entry: ${l.entry}</span>
         <span>SL: ${l.stop_loss}</span>
@@ -248,7 +255,25 @@ function filterBy(decision, btn) {
   loadDecisions();
 }
 
+async function loadRiskStatus() {
+  const box = document.getElementById('live-risk-text');
+  try {
+    const res  = await fetch(`${API}/api/risk-status`, {signal: AbortSignal.timeout(10000)});
+    const d    = await res.json();
+    const qualityColor = {highest:'var(--green)', high:'var(--green)', low:'var(--red)'}[d.session.quality] || 'var(--muted)';
+    const newsColor = d.news.risk_score >= 40 ? 'var(--red)' : d.news.risk_score >= 20 ? 'var(--gold)' : 'var(--green)';
+    box.innerHTML = `
+      <strong style="color:${qualityColor}">🕐 Phiên hiện tại: ${d.session.session}</strong> (${d.session.note})<br>
+      <strong style="color:${newsColor}">📰 Risk tin tức: ${d.news.risk_score}/100</strong> — ${d.news_message}<br>
+      <span style="color:var(--muted)">📊 ${d.open_positions_count} lệnh đang mở</span>
+    `;
+  } catch(e) {
+    box.textContent = '⚠️ Không tải được trạng thái Risk hiện tại.';
+  }
+}
+
 loadDecisions();
+loadRiskStatus();
 </script>
 </body>
 </html>

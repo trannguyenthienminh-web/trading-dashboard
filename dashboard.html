@@ -547,7 +547,7 @@
   }
   .history-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 8px;
     margin-bottom: 16px;
   }
@@ -685,6 +685,10 @@
             <div class="s-label">Tổng tín hiệu</div>
             <div class="s-val" id="statTotal">—</div>
           </div>
+          <div class="stat-box" style="grid-column: 1 / -1;">
+            <div class="s-label">R trung bình / lệnh (Expectancy)</div>
+            <div class="s-val gold" id="statAvgR">—</div>
+          </div>
         </div>
       </div>
 
@@ -776,7 +780,7 @@
       <div class="winrate-row">
         <div class="winrate-num" id="wrNum">—%</div>
         <div class="winrate-meta">
-          <p>Win rate tổng thể (<span id="wrClosed">0</span> lệnh đã đóng)</p>
+          <p>Win rate theo R thực nhận (<span id="wrClosed">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng.</p>
           <div class="bar-track"><div class="bar-fill" id="wrBar" style="width:0%"></div></div>
         </div>
       </div>
@@ -784,9 +788,10 @@
 
     <div class="history-stats" id="historyStats">
       <div class="stat-box"><div class="s-label">Tổng lệnh</div><div class="s-val" id="hTotal">—</div></div>
-      <div class="stat-box"><div class="s-label">Thắng</div><div class="s-val green" id="hWin">—</div></div>
-      <div class="stat-box"><div class="s-label">Thua</div><div class="s-val red" id="hLoss">—</div></div>
+      <div class="stat-box"><div class="s-label">Thắng (R dương)</div><div class="s-val green" id="hWin">—</div></div>
+      <div class="stat-box"><div class="s-label">Thua (R âm)</div><div class="s-val red" id="hLoss">—</div></div>
       <div class="stat-box"><div class="s-label">Đang mở</div><div class="s-val gold" id="hOpen">—</div></div>
+      <div class="stat-box"><div class="s-label">R trung bình/lệnh</div><div class="s-val gold" id="hAvgR">—</div></div>
     </div>
 
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
@@ -1188,6 +1193,10 @@ async function loadSidebar() {
   document.getElementById('statWin').textContent   = (data.winrate ?? 0) + '%';
   document.getElementById('statOpen').textContent  = data.open ?? '0';
   document.getElementById('statTotal').textContent = data.total ?? '0';
+  const avgR = data.avg_r ?? 0;
+  const avgREl = document.getElementById('statAvgR');
+  avgREl.textContent = (avgR > 0 ? '+' : '') + avgR + 'R';
+  avgREl.className = 's-val ' + (avgR > 0 ? 'green' : avgR < 0 ? 'red' : 'gold');
 
   // Latest signals
   const wrap = document.getElementById('latestSignals');
@@ -1275,12 +1284,31 @@ async function loadHistory() {
     return;
   }
 
-  // Stats
+  // ── v5.1: Win/Loss tính theo R THỰC NHẬN (pnl_pips), KHÔNG theo tên
+  // trạng thái đóng lệnh. Chỉ báo THIENMINHGOLD là Trend Following với cấu
+  // trúc SL=1R / TP1=1R / TP2=2R / TP3=3R — một lệnh đã chạm TP1 rồi mới bị
+  // kéo về SL (status='SL_AFTER_TP1') vẫn là lệnh THẮNG thực tế (+1R), không
+  // phải thua. Dùng pnl_pips > 0 để xác định đúng bản chất, không phụ thuộc
+  // cách đặt tên trạng thái.
   const closed = data.filter(s => s.status !== 'OPEN');
-  const wins   = closed.filter(s => s.status.includes('TP'));
-  const losses = closed.filter(s => s.status === 'SL_HIT');
+  const wins   = closed.filter(s => (parseFloat(s.pnl_pips) || 0) > 0);
+  const losses = closed.filter(s => (parseFloat(s.pnl_pips) || 0) <= 0);
   const opens  = data.filter(s => s.status === 'OPEN');
   const wr     = closed.length > 0 ? Math.round(wins.length / closed.length * 100) : 0;
+
+  // R trung bình/lệnh (Expectancy) — mỗi lệnh có 1R riêng theo khoảng cách
+  // entry→SL thực tế của chính lệnh đó (ATR-based, khác nhau mỗi lệnh)
+  let rSum = 0, rCount = 0;
+  closed.forEach(s => {
+    const pnl    = parseFloat(s.pnl_pips);
+    const entry  = parseFloat(s.entry);
+    const sl     = parseFloat(s.stop_loss);
+    if (!isNaN(pnl) && !isNaN(entry) && !isNaN(sl) && Math.abs(entry - sl) > 0) {
+      rSum += pnl / Math.abs(entry - sl);
+      rCount++;
+    }
+  });
+  const avgR = rCount > 0 ? (rSum / rCount).toFixed(2) : '0.00';
 
   document.getElementById('wrNum').textContent   = wr + '%';
   document.getElementById('wrClosed').textContent = closed.length;
@@ -1289,6 +1317,9 @@ async function loadHistory() {
   document.getElementById('hWin').textContent    = wins.length;
   document.getElementById('hLoss').textContent   = losses.length;
   document.getElementById('hOpen').textContent   = opens.length;
+  const hAvgREl = document.getElementById('hAvgR');
+  hAvgREl.textContent = (parseFloat(avgR) > 0 ? '+' : '') + avgR + 'R';
+  hAvgREl.className = 's-val ' + (parseFloat(avgR) > 0 ? 'green' : parseFloat(avgR) < 0 ? 'red' : 'gold');
 
   if (data.length === 0) {
     body.innerHTML = '<tr><td colspan="7"><div class="empty">Chưa có dữ liệu.</div></td></tr>';
@@ -1301,6 +1332,8 @@ async function loadHistory() {
     'TP2_HIT': '<span class="sfc-status-badge badge-tp">TP2 ✓</span>',
     'TP3_HIT': '<span class="sfc-status-badge badge-tp">TP3 ✓</span>',
     'SL_HIT':  '<span class="sfc-status-badge badge-sl">SL ✗</span>',
+    'SL_AFTER_TP1': '<span class="sfc-status-badge badge-tp">TP1→SL ✓</span>',
+    'SL_AFTER_TP2': '<span class="sfc-status-badge badge-tp">TP2→SL ✓</span>',
   };
 
   body.innerHTML = data.slice().reverse().map(s => `

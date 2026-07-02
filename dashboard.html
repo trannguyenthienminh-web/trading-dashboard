@@ -632,11 +632,11 @@
 
 <!-- SYMBOL BAR -->
 <div class="sym-bar">
-  <button class="sym-btn active" onclick="changeSymbol(this,'XAUUSD','XAUUSDs')">XAUUSD</button>
-  <button class="sym-btn" onclick="changeSymbol(this,'EURUSD','EURUSDs')">EURUSD</button>
-  <button class="sym-btn" onclick="changeSymbol(this,'GBPUSD','GBPUSDs')">GBPUSD</button>
-  <button class="sym-btn" onclick="changeSymbol(this,'BTCUSD','BTCUSDs')">BTCUSD</button>
-  <button class="sym-btn" onclick="changeSymbol(this,'USDJPY','USDJPYs')">USDJPY</button>
+  <button class="sym-btn active" onclick="changeSymbol(this,'XAUUSD','XAUUSDc')">XAUUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'EURUSD','EURUSDc')">EURUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'GBPUSD','GBPUSDc')">GBPUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'BTCUSD','BTCUSDc')">BTCUSD</button>
+  <button class="sym-btn" onclick="changeSymbol(this,'USDJPY','USDJPYc')">USDJPY</button>
 </div>
 
 <!-- MAIN -->
@@ -728,9 +728,9 @@
   <div class="tab-content" id="tab-market">
     <p class="page-title">🏛 Cấu trúc thị trường</p>
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-      <button class="sym-btn active" onclick="loadMarket('XAUUSDs','XAU/USD',this)">XAU/USD</button>
-      <button class="sym-btn" onclick="loadMarket('EURUSDs','EUR/USD',this)">EUR/USD</button>
-      <button class="sym-btn" onclick="loadMarket('BTCUSDs','BTC/USD',this)">BTC/USD</button>
+      <button class="sym-btn active" onclick="loadMarket('XAUUSDc','XAU/USD',this)">XAU/USD</button>
+      <button class="sym-btn" onclick="loadMarket('EURUSDc','EUR/USD',this)">EUR/USD</button>
+      <button class="sym-btn" onclick="loadMarket('BTCUSDc','BTC/USD',this)">BTC/USD</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
       <div class="stat-box" style="padding:16px;"><div class="s-label">Giá hiện tại</div><div class="s-val gold" id="mkt-price">—</div></div>
@@ -765,9 +765,9 @@
       <p class="page-title">Lịch sử tín hiệu</p>
       <select id="filterSym" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;outline:none;">
         <option value="">Tất cả symbol</option>
-        <option value="XAUUSDs">XAUUSD</option>
-        <option value="EURUSDs">EURUSD</option>
-        <option value="BTCUSDs">BTCUSD</option>
+        <option value="XAUUSDc">XAUUSD</option>
+        <option value="EURUSDc">EURUSD</option>
+        <option value="BTCUSDc">BTCUSD</option>
       </select>
     </div>
 
@@ -968,7 +968,7 @@ function confluenceCard(s) {
 }
 
 // ── SYMBOL CHANGE ───────────────────────────────────────
-let currentSymbol = 'XAUUSDs';
+let currentSymbol = 'XAUUSDc';
 function changeSymbol(btn, tvSym, apiSym) {
   document.querySelectorAll('.sym-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1316,7 +1316,7 @@ async function loadHistory() {
 }
 
 // ── MARKET STRUCTURE ─────────────────────────────────────
-let currentMktSymbol = 'XAUUSDs';
+let currentMktSymbol = 'XAUUSDc';
 let currentMktLabel  = 'XAU/USD';
 
 async function loadMarket(symbol, label, btn) {
@@ -1340,18 +1340,18 @@ async function loadMarket(symbol, label, btn) {
   try {
     const res    = await fetch(API_BASE + '/prices');
     const prices = await res.json();
-    const keyMap = { 'XAUUSDs':'xauusd', 'EURUSDs':'eurusd', 'BTCUSDs':'btcusd' };
+    const keyMap = { 'XAUUSDc':'xauusd', 'EURUSDc':'eurusd', 'BTCUSDc':'btcusd' };
     const key    = keyMap[symbol];
     if (prices[key]) {
       const price = Number(prices[key]);
-      document.getElementById('mkt-price').textContent = price.toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+      document.getElementById('mkt-price').textContent = price.toFixed(symbol === 'BTCUSDc' ? 0 : 2);
 
       // Tính key levels đơn giản
-      const step = symbol === 'XAUUSDs' ? 20 : symbol === 'BTCUSDs' ? 1000 : 0.005;
-      const r1 = (Math.ceil(price / step) * step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
-      const r2 = (Math.ceil(price / step) * step + step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
-      const s1 = (Math.floor(price / step) * step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
-      const s2 = (Math.floor(price / step) * step - step).toFixed(symbol === 'BTCUSDs' ? 0 : 2);
+      const step = symbol === 'XAUUSDc' ? 20 : symbol === 'BTCUSDc' ? 1000 : 0.005;
+      const r1 = (Math.ceil(price / step) * step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
+      const r2 = (Math.ceil(price / step) * step + step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
+      const s1 = (Math.floor(price / step) * step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
+      const s2 = (Math.floor(price / step) * step - step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
 
       document.getElementById('mkt-levels').innerHTML = `
         <div style="display:flex;flex-direction:column;gap:8px;">
@@ -1365,7 +1365,7 @@ async function loadMarket(symbol, label, btn) {
           </div>
           <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.3);border-radius:6px;">
             <span style="font-size:12px;color:var(--gold);font-weight:600;">● Giá hiện tại</span>
-            <span style="font-family:monospace;color:var(--gold);font-weight:700;">${price.toFixed(symbol==='BTCUSDs'?0:2)}</span>
+            <span style="font-family:monospace;color:var(--gold);font-weight:700;">${price.toFixed(symbol==='BTCUSDc'?0:2)}</span>
           </div>
           <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.15);border-radius:6px;">
             <span style="font-size:12px;color:var(--muted);">Support 1</span>
@@ -1426,7 +1426,7 @@ async function refreshMarketAI() {
   try {
     const pricesRes = await fetch(API_BASE + '/prices');
     const prices    = await pricesRes.json();
-    const keyMap    = { 'XAUUSDs':'xauusd', 'EURUSDs':'eurusd', 'BTCUSDs':'btcusd' };
+    const keyMap    = { 'XAUUSDc':'xauusd', 'EURUSDc':'eurusd', 'BTCUSDc':'btcusd' };
     const price     = prices[keyMap[currentMktSymbol]] ?? 'N/A';
 
     const res  = await fetch(API_BASE + '/chat', {

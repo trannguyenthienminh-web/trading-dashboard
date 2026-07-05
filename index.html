@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
 <title>Trading AI — Đăng nhập</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -165,9 +167,60 @@
   .tick-label { color: var(--muted); font-size: 0.75rem; }
   .tick-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
   .tick-val.up { color: #2ecc71; }
+
+  /* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
+  .lang-switcher-fixed { position: fixed; top: 16px; right: 16px; z-index: 300; }
+  .lang-switcher { position: relative; display: inline-block; }
+  .lang-switcher__toggle {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer; font-size: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: background 0.15s ease;
+  }
+  .lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+  .lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+  .lang-switcher__menu {
+    position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 150px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 200;
+  }
+  .lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .lang-switcher__option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 9px; border-radius: 5px;
+    color: var(--text); font-size: 12px;
+    transition: background 0.12s ease;
+  }
+  .lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+  .lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
 </style>
 </head>
 <body>
+
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switcher-fixed">
+  <div class="lang-switcher">
+    <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+      <span class="lang-switcher__code" id="currentCode">VI</span>
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <div class="lang-switcher__menu" id="langMenu">
+      <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+      <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+    </div>
+  </div>
+</div>
 
 <div class="login-wrap">
 
@@ -195,31 +248,61 @@
 
   <!-- Login card -->
   <div class="login-card">
-    <h2>Đăng nhập</h2>
-    <p>Nhập thông tin tài khoản được cấp để tiếp tục.</p>
+    <h2 data-i18n="login.title">Đăng nhập</h2>
+    <p data-i18n="login.subtitle">Nhập thông tin tài khoản được cấp để tiếp tục.</p>
 
-    <div class="error-msg" id="errMsg">Sai tên đăng nhập hoặc mật khẩu!</div>
+    <div class="error-msg" id="errMsg" data-i18n="login.error_wrong">Sai tên đăng nhập hoặc mật khẩu!</div>
 
     <div class="field">
-      <label>Tên đăng nhập</label>
+      <label data-i18n="login.label_username">Tên đăng nhập</label>
       <input type="text" id="username" placeholder="username" autocomplete="username" />
     </div>
     <div class="field">
-      <label>Mật khẩu</label>
+      <label data-i18n="login.label_password">Mật khẩu</label>
       <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"
         onkeydown="if(event.key==='Enter') doLogin()" />
     </div>
 
-    <button class="btn-login" onclick="doLogin()">Đăng nhập</button>
+    <button class="btn-login" onclick="doLogin()" data-i18n="login.btn_login">Đăng nhập</button>
   </div>
 
   <div class="login-footer">
-    Hệ thống dành riêng cho thành viên · © 2026 Trading AI<br/>
-    <a href="https://trading-landing-lac.vercel.app" target="_blank">← Về trang giới thiệu</a>
+    <span data-i18n="login.footer_line1">Hệ thống dành riêng cho thành viên · © 2026 Trading AI</span><br/>
+    <a href="https://trading-landing-lac.vercel.app" target="_blank" data-i18n="login.footer_back">← Về trang giới thiệu</a>
   </div>
 
 </div>
 
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ (đồng bộ với dashboard.html)
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(syncToggleDisplay, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+</script>
 <script>
   // ── TÀI KHOẢN (thêm/sửa ở đây) ──────────────────────────
   const ACCOUNTS = {

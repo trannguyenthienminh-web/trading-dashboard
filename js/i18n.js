@@ -8,6 +8,10 @@
  *   <span data-i18n="dashboard.win_rate"></span>
  *   <input data-i18n-placeholder="post.title_placeholder">
  *   <img data-i18n-alt="nav.logo_alt">
+ *   <div data-i18n-html="register.plan_info_ib"></div>   ← MỚI: cho phép chứa
+ *        HTML lồng bên trong (vd <strong>, <code>, <a>, <br>) — dùng innerHTML
+ *        thay vì textContent. Chỉ dùng khi nội dung dịch THỰC SỰ cần thẻ HTML;
+ *        mặc định vẫn ưu tiên data-i18n (an toàn hơn, tránh rủi ro injection).
  *
  * NHÚNG VÀO dashboard.html / index.html (trading-landing):
  *   <script src="/js/i18n.js" defer></script>
@@ -53,6 +57,16 @@
       const key = el.getAttribute("data-i18n");
       const value = resolveKey(translations, key);
       if (value !== null) el.textContent = value;
+    });
+
+    // MỚI — data-i18n-html: dùng khi bản dịch cần chứa thẻ HTML lồng bên
+    // trong (vd <strong>, <code>, <a>, <br>). Nội dung trong locales/*.json
+    // là do chính đội ngũ viết (không phải input từ người dùng ngoài), nên
+    // dùng innerHTML ở đây an toàn trong phạm vi dự án nội bộ này.
+    document.querySelectorAll("[data-i18n-html]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-html");
+      const value = resolveKey(translations, key);
+      if (value !== null) el.innerHTML = value;
     });
 
     document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {

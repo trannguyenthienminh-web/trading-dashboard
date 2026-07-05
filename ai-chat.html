@@ -135,10 +135,56 @@
     .msg-bubble p { margin-bottom: 8px; }
     .msg-bubble p:last-child { margin-bottom: 0; }
     .msg-bubble strong { color: var(--gold); }
+
+    /* ─── MỚI: khối bản dịch EN on-demand (additive) ───────── */
+    .msg-translation {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      color: #cfcfcf;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+    .msg-translation p { margin-bottom: 8px; }
+    .msg-translation p:last-child { margin-bottom: 0; }
+    .msg-translation strong { color: var(--gold); }
+    .msg-translation::before {
+      content: "🌐 English translation";
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .msg-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 4px;
+    }
+    .msg.user .msg-meta-row { justify-content: flex-end; }
     .msg-time {
       font-size: 0.65rem; color: var(--muted);
-      padding: 0 4px; align-self: flex-end;
     }
+
+    /* ─── MỚI: nút dịch on-demand (additive) ───────────────── */
+    .translate-btn {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 9px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .translate-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+    .translate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* Typing indicator */
     .typing-indicator .msg-bubble {
@@ -375,7 +421,9 @@
     // ─── CONFIG ────────────────────────────────────────────
     const PROXY_URL = "https://trading-proxy.trannguyenthienminh.workers.dev";
     // Endpoint chat: POST /chat qua Cloudflare proxy
-    const CHAT_URL  = `${PROXY_URL}/chat`;
+    const CHAT_URL      = `${PROXY_URL}/chat`;
+    // MỚI — endpoint dịch on-demand VI→EN (additive, không lưu DB)
+    const TRANSLATE_URL = `${PROXY_URL}/api/translate`;
 
     let conversationHistory = [];
     let isTyping = false;
@@ -515,6 +563,51 @@
       sendMessage(btn.textContent.trim());
     }
 
+    // ─── MỚI: DỊCH ON-DEMAND (additive) ────────────────────
+    // Gọi /api/translate mỗi lần bấm lần đầu (KHÔNG cache phía server —
+    // đúng yêu cầu "chỉ dịch tạm thời, không lưu"). Sau lần đầu, client giữ
+    // kết quả trong bộ nhớ của chính khối tin nhắn đó để bấm ẩn/hiện lại
+    // không cần gọi API thêm lần nữa trong cùng phiên chat (không lưu DB,
+    // mất khi tải lại trang — đúng tinh thần "tạm thời").
+    async function toggleTranslate(btn, block, originalText) {
+      // Đã dịch rồi → chỉ ẩn/hiện lại, không gọi API lại
+      if (block.dataset.loaded === "true") {
+        const showing = block.style.display !== "none";
+        block.style.display = showing ? "none" : "block";
+        btn.textContent = showing ? "🌐 EN" : "🇻🇳 Ẩn bản dịch";
+        return;
+      }
+
+      btn.disabled = true;
+      const originalLabel = btn.textContent;
+      btn.textContent = "⏳ Đang dịch...";
+
+      try {
+        const res = await fetch(TRANSLATE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: originalText }),
+          signal: AbortSignal.timeout(15000),
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+
+        block.innerHTML = formatText(data.translated || "(không có nội dung dịch)");
+        block.dataset.loaded = "true";
+        block.style.display = "block";
+        btn.textContent = "🇻🇳 Ẩn bản dịch";
+      } catch (err) {
+        console.warn("Translate error:", err.message);
+        btn.textContent = "⚠️ Lỗi, thử lại";
+        setTimeout(() => { btn.textContent = originalLabel; }, 2500);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
     // ─── DOM HELPERS ───────────────────────────────────────
     function appendMessage(role, text, isError = false, imageDataUrl = null) {
       const container = document.getElementById("messages");
@@ -543,11 +636,35 @@
       bubbleHtml += formatText(text);
       bubble.innerHTML = bubbleHtml;
 
+      // MỚI — khối chứa bản dịch EN, ẩn mặc định, chỉ cho tin nhắn AI hợp lệ
+      let translationBlock = null;
+      if (role === "ai" && !isError) {
+        translationBlock = document.createElement("div");
+        translationBlock.className = "msg-translation";
+        translationBlock.style.display = "none";
+        bubble.appendChild(translationBlock);
+      }
+
+      const metaRow = document.createElement("div");
+      metaRow.className = "msg-meta-row";
+
       const time    = document.createElement("div");
       time.className = "msg-time";
       time.textContent = now();
 
-      body.append(name, bubble, time);
+      if (role === "ai" && !isError) {
+        const translateBtn = document.createElement("button");
+        translateBtn.className = "translate-btn";
+        translateBtn.textContent = "🌐 EN";
+        translateBtn.title = "Dịch câu trả lời này sang tiếng Anh";
+        translateBtn.onclick = () => toggleTranslate(translateBtn, translationBlock, text);
+        metaRow.appendChild(time);
+        metaRow.appendChild(translateBtn);
+      } else {
+        metaRow.appendChild(time);
+      }
+
+      body.append(name, bubble, metaRow);
       if (role === "user") {
         msgEl.append(body, avatar);
       } else {

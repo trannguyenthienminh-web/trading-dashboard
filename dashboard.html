@@ -631,17 +631,12 @@
     <!-- LANGUAGE SWITCHER -->
     <div class="lang-switcher">
       <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
-        <span class="lang-switcher__flag" id="currentFlag">🇻🇳</span>
         <span class="lang-switcher__code" id="currentCode">VI</span>
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
       <div class="lang-switcher__menu" id="langMenu">
-        <a href="#" class="lang-switcher__option" data-lang-option="vi">
-          <span class="lang-switcher__flag">🇻🇳</span> Tiếng Việt
-        </a>
-        <a href="#" class="lang-switcher__option" data-lang-option="en">
-          <span class="lang-switcher__flag">🇺🇸</span> English
-        </a>
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
       </div>
     </div>
 
@@ -887,14 +882,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       const toggle = document.getElementById('langToggle');
       const menu = document.getElementById('langMenu');
-      const flagEl = document.getElementById('currentFlag');
       const codeEl = document.getElementById('currentCode');
-      const FLAGS = { vi: '🇻🇳', en: '🇺🇸' };
       const CODES = { vi: 'VI', en: 'EN' };
 
       function syncToggleDisplay() {
         const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
-        flagEl.textContent = FLAGS[lang];
         codeEl.textContent = CODES[lang];
       }
 

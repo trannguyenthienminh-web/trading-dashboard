@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
 <title>Performance Analytics — Trading AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -138,6 +140,42 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 .insight-text{font-size:11px;color:var(--muted);line-height:1.55;}
 .insight-val{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;}
 
+/* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
+.lang-switcher { position: relative; display: inline-block; }
+.lang-switcher__toggle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer; font-size: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background 0.15s ease;
+}
+.lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+.lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+.lang-switcher__menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  min-width: 150px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 200;
+}
+.lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-switcher__option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 5px;
+  color: var(--text); font-size: 12px;
+  transition: background 0.12s ease;
+}
+.lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+.lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
+
 @media(max-width:900px){
   .ov-grid{grid-template-columns:repeat(3,1fr);}
   .grid-2,.grid-3{grid-template-columns:1fr;}
@@ -153,10 +191,20 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 <body>
 
 <nav>
-  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">Performance Analytics</span></div>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;" data-i18n="analytics.page_title">Performance Analytics</span></div>
   <div class="nav-right">
     <span id="last-update"></span>
     <button class="btn-refresh" onclick="loadAnalytics()">↺ Refresh</button>
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+      </div>
+    </div>
     <a href="dashboard.html" class="nav-back">← Dashboard</a>
   </div>
 </nav>
@@ -165,9 +213,91 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
   <div class="loading"><span class="spinner"></span>Đang tải dữ liệu analytics...</div>
 </div>
 
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ (đồng bộ với dashboard.html)
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(() => {
+            syncToggleDisplay();
+            if (DATA) render(DATA); // vẽ lại để áp dụng section-title/table-header theo ngôn ngữ mới
+          }, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+
+  function curLang() {
+    return (window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : null)
+      || localStorage.getItem('thienminhgold_lang') || 'vi';
+  }
+</script>
 <script>
 const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
 let DATA = null;
+
+// ─── i18n labels cho phần table/section title (JS-rendered) ──────────
+function L() {
+  const en = curLang() === 'en';
+  return {
+    winrate: 'Win Rate',
+    totalPip: en ? 'Total Pip' : 'Tổng Pip',
+    avgRR: 'Avg R:R',
+    tp3Rate: 'TP3 Hit Rate',
+    bestStreak: 'Best Streak',
+    winCount: en ? 'wins' : 'thắng',
+    closedCount: en ? 'closed trades' : 'lệnh đóng',
+    fullTargetCount: en ? 'full target trades' : 'lệnh full target',
+    consecutiveWins: en ? 'consecutive wins' : 'lệnh thắng liên tiếp',
+    equityTitle: en ? '📈 Pip Growth Curve (Equity Curve)' : '📈 Đường tăng trưởng Pip (Equity Curve)',
+    tSymbol: en ? '🏆 Win Rate by Symbol' : '🏆 Winrate theo Symbol',
+    tTf: en ? '⏱ Win Rate by Timeframe' : '⏱ Winrate theo Timeframe',
+    tSession: en ? '🕐 Win Rate by Trading Session' : '🕐 Winrate theo Phiên giao dịch',
+    tWeekday: en ? '📅 Win Rate by Weekday' : '📅 Winrate theo Ngày trong tuần',
+    tDir: en ? '↕ Win Rate by Direction' : '↕ Winrate theo Chiều lệnh',
+    tType: en ? '🎯 Win Rate by Signal Type' : '🎯 Winrate theo Loại tín hiệu',
+    tRR: en ? '📊 Win Rate by R:R Ratio' : '📊 Winrate theo R:R Ratio',
+    tScore: en ? '⭐ Win Rate by AI Confluence Score' : '⭐ Winrate theo AI Confluence Score',
+    tMonth: en ? '📆 Performance by Month' : '📆 Hiệu suất theo Tháng',
+    learnTitle: en ? '🧠 AI Learning Patterns (Module 3) — Historical evidence AI uses to decide' : '🧠 AI Learning Patterns (Module 3) — Bằng chứng lịch sử AI dùng để quyết định',
+    recentTitle: en ? '📋 Last 20 Trades' : '📋 20 Lệnh gần nhất',
+    colGroup: en ? 'Group' : 'Nhóm',
+    colTrades: en ? 'Trades' : 'Lệnh',
+    colWinrate: 'Win Rate',
+    colPip: 'Pip',
+    colTime: en ? 'Time' : 'Thời gian',
+    colSymbol: 'Symbol',
+    colDir: en ? 'Direction' : 'Chiều',
+    colType: en ? 'Type' : 'Loại',
+    colEntry: 'Entry',
+    colScore: 'AI Score',
+    colResult: en ? 'Result' : 'Kết quả',
+    noData: en ? 'No data yet' : 'Chưa có data',
+    learnEmpty: en
+      ? 'No pattern has enough data yet (needs ≥5 historical trades per Symbol × Session × Signal Type combo).<br>Patterns will appear automatically as the system accumulates more data.'
+      : 'Chưa có pattern nào đủ dữ liệu (cần ≥5 lệnh lịch sử cho mỗi combo Symbol × Phiên × Loại tín hiệu).<br>Patterns sẽ tự xuất hiện khi hệ thống tích lũy thêm dữ liệu.',
+    learnedBadge: en ? 'AI Learned' : 'AI đã học',
+  };
+}
 
 // ─── LOAD ──────────────────────────────────────────────────
 async function loadAnalytics() {
@@ -194,34 +324,35 @@ async function loadAnalytics() {
 // ─── RENDER ────────────────────────────────────────────────
 function render(d) {
   const ov = d.overview;
+  const t = L();
   const html = `
 
   <!-- OVERVIEW -->
   <div class="ov-grid">
     <div class="ov-card c-gold">
-      <div class="ov-label">Win Rate</div>
+      <div class="ov-label">${t.winrate}</div>
       <div class="ov-val c-gold">${ov.winrate}%</div>
-      <div class="ov-sub">${ov.wins} thắng / ${ov.total} lệnh đóng</div>
+      <div class="ov-sub">${ov.wins} ${t.winCount} / ${ov.total} ${t.closedCount}</div>
     </div>
     <div class="ov-card c-green">
-      <div class="ov-label">Tổng Pip</div>
+      <div class="ov-label">${t.totalPip}</div>
       <div class="ov-val c-green">${ov.total_pnl > 0 ? '+' : ''}${ov.total_pnl}</div>
-      <div class="ov-sub">Tích lũy tất cả lệnh</div>
+      <div class="ov-sub">${curLang()==='en'?'Cumulative all trades':'Tích lũy tất cả lệnh'}</div>
     </div>
     <div class="ov-card c-blue">
-      <div class="ov-label">Avg R:R</div>
+      <div class="ov-label">${t.avgRR}</div>
       <div class="ov-val c-blue">1:${ov.avg_rr}</div>
-      <div class="ov-sub">Tỷ lệ Risk:Reward TB</div>
+      <div class="ov-sub">${curLang()==='en'?'Avg Risk:Reward ratio':'Tỷ lệ Risk:Reward TB'}</div>
     </div>
     <div class="ov-card c-gold">
-      <div class="ov-label">TP3 Hit Rate</div>
+      <div class="ov-label">${t.tp3Rate}</div>
       <div class="ov-val c-gold">${ov.total ? Math.round(ov.tp3_hit/ov.total*100) : 0}%</div>
-      <div class="ov-sub">${ov.tp3_hit} lệnh full target</div>
+      <div class="ov-sub">${ov.tp3_hit} ${t.fullTargetCount}</div>
     </div>
     <div class="ov-card c-green">
-      <div class="ov-label">Best Streak</div>
+      <div class="ov-label">${t.bestStreak}</div>
       <div class="ov-val c-green">${ov.best_streak}</div>
-      <div class="ov-sub">Lệnh thắng liên tiếp</div>
+      <div class="ov-sub">${t.consecutiveWins}</div>
     </div>
   </div>
 
@@ -230,37 +361,37 @@ function render(d) {
 
   <!-- EQUITY CURVE -->
   <div class="equity-wrap" style="margin-bottom:20px;">
-    <div class="panel-title">📈 Đường tăng trưởng Pip (Equity Curve)</div>
+    <div class="panel-title">${t.equityTitle}</div>
     <canvas id="equity-canvas" height="200"></canvas>
   </div>
 
   <!-- ROW 1: Symbol + Timeframe -->
   <div class="grid-2">
-    ${renderGroupTable('🏆 Winrate theo Symbol', d.by_symbol, 'symbol')}
-    ${renderGroupTable('⏱ Winrate theo Timeframe', d.by_timeframe, 'tf')}
+    ${renderGroupTable(t.tSymbol, d.by_symbol, 'symbol')}
+    ${renderGroupTable(t.tTf, d.by_timeframe, 'tf')}
   </div>
 
   <!-- ROW 2: Session + Weekday -->
   <div class="grid-2">
-    ${renderGroupTable('🕐 Winrate theo Phiên giao dịch', d.by_session, 'session')}
-    ${renderGroupTable('📅 Winrate theo Ngày trong tuần', d.by_weekday, 'weekday')}
+    ${renderGroupTable(t.tSession, d.by_session, 'session')}
+    ${renderGroupTable(t.tWeekday, d.by_weekday, 'weekday')}
   </div>
 
   <!-- ROW 3: Direction + Type -->
   <div class="grid-2">
-    ${renderGroupTable('↕ Winrate theo Chiều lệnh', d.by_direction, 'dir')}
-    ${renderGroupTable('🎯 Winrate theo Loại tín hiệu', d.by_type, 'type')}
+    ${renderGroupTable(t.tDir, d.by_direction, 'dir')}
+    ${renderGroupTable(t.tType, d.by_type, 'type')}
   </div>
 
   <!-- ROW 4: RR + Score -->
   <div class="grid-2">
-    ${renderGroupTable('📊 Winrate theo R:R Ratio', d.by_rr, 'rr')}
-    ${renderGroupTable('⭐ Winrate theo AI Confluence Score', d.by_score, 'score')}
+    ${renderGroupTable(t.tRR, d.by_rr, 'rr')}
+    ${renderGroupTable(t.tScore, d.by_score, 'score')}
   </div>
 
   <!-- ROW 5: Monthly -->
   <div style="margin-bottom:16px;">
-    ${renderGroupTable('📆 Hiệu suất theo Tháng', d.by_month, 'month')}
+    ${renderGroupTable(t.tMonth, d.by_month, 'month')}
   </div>
 
   <!-- LEARNING PATTERNS (Module 3) -->
@@ -277,27 +408,28 @@ function render(d) {
 
 // ─── INSIGHTS ──────────────────────────────────────────────
 function renderInsights(d) {
+  const en = curLang() === 'en';
   const insights = [];
 
   // Best symbol
   const syms = Object.entries(d.by_symbol).sort((a,b)=>b[1].winrate-a[1].winrate);
   if (syms.length) {
     const [sym, st] = syms[0];
-    insights.push({icon:'🥇', title:'Symbol mạnh nhất', val:`${sym}`, text:`Win rate ${st.winrate}% (${st.total} lệnh)`});
+    insights.push({icon:'🥇', title: en?'Strongest Symbol':'Symbol mạnh nhất', val:`${sym}`, text: en? `Win rate ${st.winrate}% (${st.total} trades)` : `Win rate ${st.winrate}% (${st.total} lệnh)`});
   }
 
   // Best session
   const sess = Object.entries(d.by_session).sort((a,b)=>b[1].winrate-a[1].winrate);
   if (sess.length) {
     const [s, st] = sess[0];
-    insights.push({icon:'⏰', title:'Phiên tốt nhất', val:s, text:`Win rate ${st.winrate}% — nên tập trung vào khung giờ này`});
+    insights.push({icon:'⏰', title: en?'Best Session':'Phiên tốt nhất', val:s, text: en? `Win rate ${st.winrate}% — focus on this time window` : `Win rate ${st.winrate}% — nên tập trung vào khung giờ này`});
   }
 
   // Best weekday
   const days = Object.entries(d.by_weekday).sort((a,b)=>b[1].winrate-a[1].winrate);
   if (days.length) {
     const [day, st] = days[0];
-    insights.push({icon:'📅', title:'Ngày tốt nhất', val:day, text:`Win rate ${st.winrate}% — ưu tiên giao dịch vào ngày này`});
+    insights.push({icon:'📅', title: en?'Best Day':'Ngày tốt nhất', val:day, text: en? `Win rate ${st.winrate}% — prioritize trading this day` : `Win rate ${st.winrate}% — ưu tiên giao dịch vào ngày này`});
   }
 
   // Score validation
@@ -306,7 +438,7 @@ function renderInsights(d) {
   const good = scoreData['75-84 (Good)'];
   if (exc && good) {
     const diff = (exc.winrate - good.winrate).toFixed(1);
-    insights.push({icon:'🧠', title:'Hiệu quả Confluence AI', val:`+${diff}%`, text:`Lệnh Excellent cao hơn Good ${diff}% win rate — AI filter đang hoạt động tốt`});
+    insights.push({icon:'🧠', title: en?'Confluence AI Effectiveness':'Hiệu quả Confluence AI', val:`+${diff}%`, text: en? `Excellent trades outperform Good by ${diff}% win rate — AI filter is working well` : `Lệnh Excellent cao hơn Good ${diff}% win rate — AI filter đang hoạt động tốt`});
   }
 
   // Best direction
@@ -315,14 +447,14 @@ function renderInsights(d) {
   if (buy && sell) {
     const better = buy.winrate >= sell.winrate ? 'BUY' : 'SELL';
     const wr = Math.max(buy.winrate, sell.winrate);
-    insights.push({icon:'↕', title:'Chiều mạnh hơn', val:better, text:`${better} win rate ${wr}% — tập trung vào chiều này`});
+    insights.push({icon:'↕', title: en?'Stronger Direction':'Chiều mạnh hơn', val:better, text: en? `${better} win rate ${wr}% — focus on this direction` : `${better} win rate ${wr}% — tập trung vào chiều này`});
   }
 
   // Worst symbol (cảnh báo)
   if (syms.length > 1) {
     const [worst, wst] = syms[syms.length-1];
     if (wst.winrate < 50 && wst.total >= 5) {
-      insights.push({icon:'⚠️', title:'Cần xem lại', val:worst, text:`Win rate chỉ ${wst.winrate}% (${wst.total} lệnh) — cân nhắc tăng filter cho symbol này`});
+      insights.push({icon:'⚠️', title: en?'Needs Review':'Cần xem lại', val:worst, text: en? `Only ${wst.winrate}% win rate (${wst.total} trades) — consider tightening the filter for this symbol` : `Win rate chỉ ${wst.winrate}% (${wst.total} lệnh) — cân nhắc tăng filter cho symbol này`});
     }
   }
 
@@ -342,8 +474,9 @@ function renderInsights(d) {
 
 // ─── GROUP TABLE ───────────────────────────────────────────
 function renderGroupTable(title, data, type) {
+  const t = L();
   const entries = Object.entries(data).sort((a,b)=>b[1].total-a[1].total);
-  if (!entries.length) return `<div class="stat-panel"><div class="stat-panel-header">${title}</div><div class="empty" style="padding:20px">Chưa có data</div></div>`;
+  if (!entries.length) return `<div class="stat-panel"><div class="stat-panel-header">${title}</div><div class="empty" style="padding:20px">${t.noData}</div></div>`;
 
   const rows = entries.map(([key, st], i) => {
     const wr    = st.winrate;
@@ -369,7 +502,7 @@ function renderGroupTable(title, data, type) {
   <div class="stat-panel">
     <div class="stat-panel-header">${title}</div>
     <table class="stat-table">
-      <thead><tr><th>Nhóm</th><th style="text-align:center">Lệnh</th><th>Win Rate</th><th style="text-align:right">Pip</th></tr></thead>
+      <thead><tr><th>${t.colGroup}</th><th style="text-align:center">${t.colTrades}</th><th>${t.colWinrate}</th><th style="text-align:right">${t.colPip}</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
   </div>`;
@@ -377,6 +510,7 @@ function renderGroupTable(title, data, type) {
 
 // ─── RECENT ────────────────────────────────────────────────
 function renderRecent(recent) {
+  const t = L();
   if (!recent || !recent.length) return '';
   const statusMap = {
     TP3_HIT:'<span style="background:rgba(245,200,66,.1);color:var(--gold);border:1px solid rgba(245,200,66,.25);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;">TP3 🏆</span>',
@@ -408,13 +542,13 @@ function renderRecent(recent) {
 
   return `
   <div class="stat-panel" style="margin-bottom:20px;">
-    <div class="stat-panel-header">📋 20 Lệnh gần nhất</div>
+    <div class="stat-panel-header">${t.recentTitle}</div>
     <div style="overflow-x:auto">
     <table class="stat-table" style="min-width:700px">
       <thead><tr>
-        <th>Thời gian</th><th>Symbol</th><th>Chiều</th><th>Loại</th>
-        <th>Entry</th><th style="text-align:center">AI Score</th>
-        <th>Pip</th><th>Kết quả</th>
+        <th>${t.colTime}</th><th>${t.colSymbol}</th><th>${t.colDir}</th><th>${t.colType}</th>
+        <th>${t.colEntry}</th><th style="text-align:center">${t.colScore}</th>
+        <th>${t.colPip}</th><th>${t.colResult}</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -436,14 +570,14 @@ async function loadLearningPatterns() {
 }
 
 function renderLearningPatterns(patterns) {
+  const t = L();
   const wrap = document.getElementById('learning-panel-wrap');
   if (!patterns.length) {
     wrap.innerHTML = `
     <div class="stat-panel">
-      <div class="stat-panel-header">🧠 AI Learning Patterns (Module 3)</div>
+      <div class="stat-panel-header">${t.learnTitle}</div>
       <div class="empty" style="padding:24px">
-        Chưa có pattern nào đủ dữ liệu (cần ≥5 lệnh lịch sử cho mỗi combo Symbol × Phiên × Loại tín hiệu).<br>
-        Patterns sẽ tự xuất hiện khi hệ thống tích lũy thêm dữ liệu.
+        ${t.learnEmpty}
       </div>
     </div>`;
     return;
@@ -462,15 +596,15 @@ function renderLearningPatterns(patterns) {
           <span class="wr-text" style="color:${color}">${p.winrate}%</span>
         </div>
       </td>
-      <td><span class="learn-badge">AI đã học</span></td>
+      <td><span class="learn-badge">${t.learnedBadge}</span></td>
     </tr>`;
   }).join('');
 
   wrap.innerHTML = `
   <div class="stat-panel">
-    <div class="stat-panel-header">🧠 AI Learning Patterns (Module 3) — Bằng chứng lịch sử AI dùng để quyết định</div>
+    <div class="stat-panel-header">${t.learnTitle}</div>
     <table class="stat-table">
-      <thead><tr><th>Symbol</th><th>Phiên</th><th>Loại</th><th style="text-align:center">Lệnh</th><th>Win Rate</th><th></th></tr></thead>
+      <thead><tr><th>Symbol</th><th>${curLang()==='en'?'Session':'Phiên'}</th><th>${curLang()==='en'?'Type':'Loại'}</th><th style="text-align:center">${t.colTrades}</th><th>${t.colWinrate}</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
   </div>`;

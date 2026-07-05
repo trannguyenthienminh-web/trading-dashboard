@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
 <title>Đăng ký EA SmartGold — Trading AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -22,6 +24,7 @@
   }
   .logo { font-weight: 700; font-size: 1rem; }
   .logo span { color: var(--gold); }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
 
   .hero {
     text-align: center; padding: 60px 20px 40px;
@@ -218,6 +221,42 @@
   }
   .err-msg.show { display: block; }
 
+  /* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
+  .lang-switcher { position: relative; display: inline-block; }
+  .lang-switcher__toggle {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--white);
+    cursor: pointer; font-size: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: background 0.15s ease;
+  }
+  .lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+  .lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+  .lang-switcher__menu {
+    position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 150px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 200;
+  }
+  .lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .lang-switcher__option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 9px; border-radius: 5px;
+    color: var(--white); font-size: 12px;
+    transition: background 0.12s ease;
+  }
+  .lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+  .lang-switcher__option.active { background: rgba(201,168,76,0.1); color: var(--gold); font-weight: 600; }
+
   @media(max-width:600px) {
     .plans { grid-template-columns: 1fr; }
     .form-card { padding: 20px; }
@@ -229,37 +268,49 @@
 
 <nav>
   <div class="logo">Trading<span>AI</span></div>
-  <a href="/" style="font-size:.875rem;color:var(--muted);">← Trang chủ</a>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+      </div>
+    </div>
+    <a href="/" style="font-size:.875rem;color:var(--muted);" data-i18n="register.nav_home">← Trang chủ</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <h1>Đăng ký <span>SmartGold EA</span></h1>
-  <p>EA giao dịch Vàng tự động — Recovery + Hedge thông minh. Chọn gói phù hợp với bạn.</p>
+  <h1><span data-i18n="register.hero_h1_1">Đăng ký</span> <span data-i18n="register.hero_h1_2">SmartGold EA</span></h1>
+  <p data-i18n="register.hero_sub">EA giao dịch Vàng tự động — Recovery + Hedge thông minh. Chọn gói phù hợp với bạn.</p>
 
   <!-- PLANS -->
   <div class="plans">
     <div class="plan-card selected" onclick="selectPlan('ib', this)" id="plan-ib">
-      <div class="plan-badge">⭐ KHUYẾN NGHỊ</div>
-      <div class="plan-name">IB Free</div>
-      <div class="plan-price">Miễn phí <span>/ mãi mãi</span></div>
-      <div class="plan-desc">Đăng ký tài khoản môi giới qua link IB của chúng tôi</div>
+      <div class="plan-badge" data-i18n="register.plan_ib_badge">⭐ KHUYẾN NGHỊ</div>
+      <div class="plan-name" data-i18n="register.plan_ib_name">IB Free</div>
+      <div class="plan-price"><span data-i18n="register.plan_ib_price">Miễn phí</span> <span data-i18n="register.plan_ib_price_unit">/ mãi mãi</span></div>
+      <div class="plan-desc" data-i18n="register.plan_ib_desc">Đăng ký tài khoản môi giới qua link IB của chúng tôi</div>
       <div class="plan-features">
-        <div class="plan-feat">Toàn bộ tính năng EA</div>
-        <div class="plan-feat">Cập nhật miễn phí vĩnh viễn</div>
-        <div class="plan-feat">Hỗ trợ qua Telegram</div>
-        <div class="plan-feat">Yêu cầu: mở tài khoản qua link IB</div>
+        <div class="plan-feat" data-i18n="register.plan_ib_feat1">Toàn bộ tính năng EA</div>
+        <div class="plan-feat" data-i18n="register.plan_ib_feat2">Cập nhật miễn phí vĩnh viễn</div>
+        <div class="plan-feat" data-i18n="register.plan_ib_feat3">Hỗ trợ qua Telegram</div>
+        <div class="plan-feat" data-i18n="register.plan_ib_feat4">Yêu cầu: mở tài khoản qua link IB</div>
       </div>
     </div>
     <div class="plan-card" onclick="selectPlan('rental', this)" id="plan-rental">
-      <div class="plan-name">Thuê EA</div>
-      <div class="plan-price">$30 <span>/ tháng</span></div>
-      <div class="plan-desc">Dùng tài khoản bất kỳ, trả phí hàng tháng</div>
+      <div class="plan-name" data-i18n="register.plan_rental_name">Thuê EA</div>
+      <div class="plan-price"><span data-i18n="register.plan_rental_price">$30</span> <span data-i18n="register.plan_rental_price_unit">/ tháng</span></div>
+      <div class="plan-desc" data-i18n="register.plan_rental_desc">Dùng tài khoản bất kỳ, trả phí hàng tháng</div>
       <div class="plan-features">
-        <div class="plan-feat">Toàn bộ tính năng EA</div>
-        <div class="plan-feat">Cập nhật trong thời gian thuê</div>
-        <div class="plan-feat">Hỗ trợ qua Telegram</div>
-        <div class="plan-feat">Gia hạn hàng tháng</div>
+        <div class="plan-feat" data-i18n="register.plan_rental_feat1">Toàn bộ tính năng EA</div>
+        <div class="plan-feat" data-i18n="register.plan_rental_feat2">Cập nhật trong thời gian thuê</div>
+        <div class="plan-feat" data-i18n="register.plan_rental_feat3">Hỗ trợ qua Telegram</div>
+        <div class="plan-feat" data-i18n="register.plan_rental_feat4">Gia hạn hàng tháng</div>
       </div>
     </div>
   </div>
@@ -268,30 +319,30 @@
 <!-- FORM -->
 <div class="form-wrap">
   <div class="form-card">
-    <div class="form-title">📝 Thông tin đăng ký</div>
+    <div class="form-title" data-i18n="register.form_title">📝 Thông tin đăng ký</div>
 
-    <div class="plan-selected-info" id="plan-info">
+    <div class="plan-selected-info" id="plan-info" data-i18n-html="register.plan_info_ib">
       ✅ Bạn đang đăng ký gói <strong>IB Free</strong> — miễn phí khi mở tài khoản qua link IB
     </div>
 
     <div class="err-msg" id="err-msg"></div>
 
     <div class="field">
-      <label>Họ và tên</label>
+      <label data-i18n="register.label_name">Họ và tên</label>
       <input type="text" id="f-name" placeholder="Nguyễn Văn A" />
     </div>
     <div class="field">
-      <label>Telegram username</label>
+      <label data-i18n="register.label_telegram">Telegram username</label>
       <input type="text" id="f-telegram" placeholder="@username" />
-      <div class="field-hint">Mình sẽ liên hệ qua Telegram để gửi key</div>
+      <div class="field-hint" data-i18n="register.telegram_hint">Mình sẽ liên hệ qua Telegram để gửi key</div>
     </div>
     <div class="field">
-      <label>Số tài khoản MT5</label>
+      <label data-i18n="register.label_account">Số tài khoản MT5</label>
       <input type="number" id="f-account" placeholder="700332" />
-      <div class="field-hint">Key sẽ được gắn với số tài khoản này</div>
+      <div class="field-hint" data-i18n="register.account_hint">Key sẽ được gắn với số tài khoản này</div>
     </div>
     <div class="field">
-      <label>Broker</label>
+      <label data-i18n="register.label_broker">Broker</label>
       <select id="f-broker">
         <option value="CXM Direct">CXM Direct LLC</option>
         <option value="Exness">Exness</option>
@@ -305,16 +356,16 @@
     <!-- IB fields -->
     <div id="ib-fields">
       <div class="field">
-        <label>Link IB bạn đã dùng để mở tài khoản</label>
+        <label data-i18n="register.label_iblink">Link IB bạn đã dùng để mở tài khoản</label>
         <input type="text" id="f-ib-link" placeholder="https://..." />
-        <div class="field-hint">Copy link từ email xác nhận của broker, hoặc hỏi admin</div>
+        <div class="field-hint" data-i18n="register.iblink_hint">Copy link từ email xác nhận của broker, hoặc hỏi admin</div>
       </div>
     </div>
 
     <!-- Rental fields (hidden initially) -->
     <div id="rental-fields" style="display:none"></div>
 
-    <button class="btn-submit" onclick="submitForm()" id="btn-submit">
+    <button class="btn-submit" onclick="submitForm()" id="btn-submit" data-i18n="register.btn_submit">
       Gửi đăng ký →
     </button>
 
@@ -323,8 +374,8 @@
       <div class="payment-card">
 
         <div class="payment-header">
-          <h3>💳 Thanh toán để kích hoạt License</h3>
-          <p>Quét mã QR hoặc chuyển khoản theo thông tin bên dưới</p>
+          <h3 data-i18n="register.payment_title">💳 Thanh toán để kích hoạt License</h3>
+          <p data-i18n="register.payment_sub">Quét mã QR hoặc chuyển khoản theo thông tin bên dưới</p>
         </div>
 
         <div class="payment-body">
@@ -340,7 +391,7 @@
                    onload="document.getElementById('qr-loading').style.display='none'; this.style.display='block';"
                    onerror="document.getElementById('qr-loading').innerHTML='<p style=color:#f87171>Lỗi tải QR.<br>Dùng thông tin bên dưới</p>';" />
             </div>
-            <p style="font-size:0.75rem;color:var(--muted);text-align:center;">
+            <p style="font-size:0.75rem;color:var(--muted);text-align:center;" data-i18n="register.qr_instructions">
               📱 Mở app ngân hàng → Quét mã → Kiểm tra thông tin → Chuyển
             </p>
           </div>
@@ -348,26 +399,26 @@
           <!-- Bank info -->
           <div class="bank-info" style="margin-bottom:16px;">
             <div class="bank-row">
-              <span class="bank-row-label">Ngân hàng</span>
+              <span class="bank-row-label" data-i18n="register.bank_name_label">Ngân hàng</span>
               <span class="bank-row-value">🏦 VPBank</span>
             </div>
             <div class="bank-row">
-              <span class="bank-row-label">Số tài khoản</span>
+              <span class="bank-row-label" data-i18n="register.bank_account_label">Số tài khoản</span>
               <div style="display:flex;align-items:center;">
                 <span class="bank-row-value gold">138490319</span>
                 <button class="copy-btn" onclick="copyText('138490319', this)">Copy</button>
               </div>
             </div>
             <div class="bank-row">
-              <span class="bank-row-label">Chủ tài khoản</span>
+              <span class="bank-row-label" data-i18n="register.bank_holder_label">Chủ tài khoản</span>
               <span class="bank-row-value">TRAN NGUYEN THIEN MINH</span>
             </div>
             <div class="bank-row">
-              <span class="bank-row-label">Số tiền</span>
+              <span class="bank-row-label" data-i18n="register.amount_label">Số tiền</span>
               <span class="bank-row-value green" id="display-amount">750.000 đ</span>
             </div>
             <div class="bank-row">
-              <span class="bank-row-label">Nội dung CK</span>
+              <span class="bank-row-label" data-i18n="register.transfer_content_label">Nội dung CK</span>
               <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
                 <span class="bank-row-value gold" id="transfer-content" style="font-size:0.8rem;"></span>
                 <button class="copy-btn" onclick="copyTransferContent(this)">Copy</button>
@@ -376,19 +427,19 @@
           </div>
 
           <!-- Note -->
-          <div class="transfer-note-box">
+          <div class="transfer-note-box" data-i18n-html="register.important_note">
             ⚠️ <strong>Quan trọng:</strong> Vui lòng ghi đúng nội dung chuyển khoản để admin xác nhận nhanh nhất.<br>
             Sau khi chuyển, nhập mã giao dịch bên dưới và bấm <strong>"Xác nhận đã chuyển khoản"</strong>.
           </div>
 
           <!-- Transaction ID input -->
           <div class="payment-field">
-            <label>Mã giao dịch / Biên lai</label>
+            <label data-i18n="register.txn_label">Mã giao dịch / Biên lai</label>
             <input type="text" id="f-txn" placeholder="VD: FT2506281234ABCD" />
-            <div class="field-hint">Copy mã giao dịch từ app ngân hàng sau khi chuyển thành công</div>
+            <div class="field-hint" data-i18n="register.txn_hint">Copy mã giao dịch từ app ngân hàng sau khi chuyển thành công</div>
           </div>
 
-          <button class="btn-paid" onclick="confirmPayment()" id="btn-paid">
+          <button class="btn-paid" onclick="confirmPayment()" id="btn-paid" data-i18n="register.btn_paid">
             ✅ Xác nhận đã chuyển khoản
           </button>
 
@@ -398,33 +449,65 @@
     <!-- END PAYMENT SECTION -->
 
     <div class="success-msg" id="success-msg">
-      <h3>✅ Đăng ký thành công!</h3>
-      <p>Chúng tôi đã nhận được yêu cầu của bạn.<br>
+      <h3 data-i18n="register.success_title">✅ Đăng ký thành công!</h3>
+      <p data-i18n-html="register.success_text">Chúng tôi đã nhận được yêu cầu của bạn.<br>
       License Key sẽ được gửi tự động qua <strong>Telegram</strong> sau khi xác nhận thanh toán.</p>
 
       <div style="margin:20px 0;padding:16px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:10px;text-align:left;">
-        <p style="font-size:0.9rem;font-weight:700;color:var(--gold);margin-bottom:10px;">⚠️ Bước quan trọng — Làm NGAY bây giờ:</p>
-        <p style="font-size:0.875rem;color:var(--white);line-height:1.8;">
+        <p style="font-size:0.9rem;font-weight:700;color:var(--gold);margin-bottom:10px;" data-i18n="register.important_step_title">⚠️ Bước quan trọng — Làm NGAY bây giờ:</p>
+        <p style="font-size:0.875rem;color:var(--white);line-height:1.8;" data-i18n-html="register.important_step_text">
           Để nhận được License Key tự động, bạn phải <strong>nhắn tin cho bot</strong> trước:<br><br>
           1. Click vào nút bên dưới<br>
           2. Bấm <strong>"Start"</strong> hoặc gõ <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">/start</code><br>
           3. Chờ nhận key trong vài phút sau khi thanh toán xác nhận ✅
         </p>
         <a href="https://t.me/mygroup_signal_bot" target="_blank"
-           style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;font-size:0.9rem;">
+           style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;font-size:0.9rem;"
+           data-i18n="register.btn_start_bot">
           ✈ Nhắn /start cho Bot ngay
         </a>
       </div>
 
-      <p style="font-size:0.8125rem;color:var(--muted);">Sau khi bấm Start, bạn có thể tham gia group để theo dõi tín hiệu!</p>
+      <p style="font-size:0.8125rem;color:var(--muted);" data-i18n="register.join_group_text">Sau khi bấm Start, bạn có thể tham gia group để theo dõi tín hiệu!</p>
       <a href="https://t.me/+vdcG8r9hoxc3ZmQ9" target="_blank"
-         style="display:inline-block;margin-top:12px;padding:10px 24px;background:transparent;color:var(--gold);border:1px solid rgba(201,168,76,0.4);border-radius:8px;font-weight:700;font-size:0.875rem;">
+         style="display:inline-block;margin-top:12px;padding:10px 24px;background:transparent;color:var(--gold);border:1px solid rgba(201,168,76,0.4);border-radius:8px;font-weight:700;font-size:0.875rem;"
+         data-i18n="register.btn_join_group">
         📢 Vào Telegram Group
       </a>
     </div>
   </div>
 </div>
 
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ (đồng bộ với dashboard.html)
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(syncToggleDisplay, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+</script>
 <script>
   /* ── CONFIG ── */
   const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';

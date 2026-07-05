@@ -541,10 +541,11 @@
 
         const data = await res.json();
         const reply = data.reply || "Không có phản hồi từ AI.";
+        const replyLang = data.lang || "vi"; // MỚI — 'en' nếu AI đã trả lời tiếng Anh sẵn
 
         typingEl.remove();
         conversationHistory.push({ role: "assistant", content: reply });
-        appendMessage("ai", reply);
+        appendMessage("ai", reply, false, null, replyLang);
 
       } catch (err) {
         typingEl.remove();
@@ -609,7 +610,7 @@
     }
 
     // ─── DOM HELPERS ───────────────────────────────────────
-    function appendMessage(role, text, isError = false, imageDataUrl = null) {
+    function appendMessage(role, text, isError = false, imageDataUrl = null, replyLang = "vi") {
       const container = document.getElementById("messages");
 
       const msgEl = document.createElement("div");
@@ -636,9 +637,13 @@
       bubbleHtml += formatText(text);
       bubble.innerHTML = bubbleHtml;
 
-      // MỚI — khối chứa bản dịch EN, ẩn mặc định, chỉ cho tin nhắn AI hợp lệ
+      // MỚI — chỉ hiện nút dịch khi AI trả lời KHÔNG PHẢI tiếng Anh sẵn
+      // (nếu khách hỏi tiếng Anh, AI đã trả lời thẳng bằng tiếng Anh rồi,
+      // nút dịch lúc này thừa thãi nên ẩn đi)
+      const showTranslate = role === "ai" && !isError && replyLang !== "en";
+
       let translationBlock = null;
-      if (role === "ai" && !isError) {
+      if (showTranslate) {
         translationBlock = document.createElement("div");
         translationBlock.className = "msg-translation";
         translationBlock.style.display = "none";
@@ -652,7 +657,7 @@
       time.className = "msg-time";
       time.textContent = now();
 
-      if (role === "ai" && !isError) {
+      if (showTranslate) {
         const translateBtn = document.createElement("button");
         translateBtn.className = "translate-btn";
         translateBtn.textContent = "🌐 EN";

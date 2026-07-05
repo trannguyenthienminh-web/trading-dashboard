@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
 <title>Trading AI — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -612,21 +614,39 @@
     Trading AI
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="switchTab('chart')">📈 Biểu đồ</button>
-    <button class="nav-tab" onclick="switchTab('signals')">🔔 Tín hiệu</button>
-    <button class="nav-tab" onclick="switchTab('confluence')">⭐ Confluence</button>
-    <button class="nav-tab" onclick="switchTab('market')">🏛 Thị trường</button>
-    <button class="nav-tab" onclick="switchTab('history')">📋 Lịch sử</button>
-    <a class="nav-tab" href="analytics.html">📊 Analytics</a>
-    <a class="nav-tab" href="journal.html">📖 Journal</a>
-    <a class="nav-tab" href="ai-decisions.html">⚖️ AI Decisions</a>
-    <a class="nav-tab" href="member-portal.html">🔐 Cổng TV</a>
-    <a class="nav-tab" href="ai-chat.html">🤖 AI Chat</a>
-    <button class="nav-tab" onclick="switchTab('news')">📰 Market Intel</button>
+    <button class="nav-tab active" onclick="switchTab('chart')" data-i18n="dashboard.nav_chart">📈 Biểu đồ</button>
+    <button class="nav-tab" onclick="switchTab('signals')" data-i18n="dashboard.nav_signals">🔔 Tín hiệu</button>
+    <button class="nav-tab" onclick="switchTab('confluence')" data-i18n="dashboard.nav_confluence">⭐ Confluence</button>
+    <button class="nav-tab" onclick="switchTab('market')" data-i18n="dashboard.nav_market">🏛 Thị trường</button>
+    <button class="nav-tab" onclick="switchTab('history')" data-i18n="dashboard.nav_history">📋 Lịch sử</button>
+    <a class="nav-tab" href="analytics.html" data-i18n="dashboard.nav_analytics">📊 Analytics</a>
+    <a class="nav-tab" href="journal.html" data-i18n="dashboard.nav_journal">📖 Journal</a>
+    <a class="nav-tab" href="ai-decisions.html" data-i18n="dashboard.nav_ai_decisions">⚖️ AI Decisions</a>
+    <a class="nav-tab" href="member-portal.html" data-i18n="dashboard.nav_member_portal">🔐 Cổng TV</a>
+    <a class="nav-tab" href="ai-chat.html" data-i18n="dashboard.nav_ai_chat">🤖 AI Chat</a>
+    <button class="nav-tab" onclick="switchTab('news')" data-i18n="dashboard.nav_news">📰 Market Intel</button>
   <div class="nav-right">
-    <a href="register.html" target="_blank" class="btn-ea">🤖 Đăng ký EA</a>
+    <a href="register.html" target="_blank" class="btn-ea" data-i18n="dashboard.nav_register_ea">🤖 Đăng ký EA</a>
+
+    <!-- LANGUAGE SWITCHER -->
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__flag" id="currentFlag">🇻🇳</span>
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">
+          <span class="lang-switcher__flag">🇻🇳</span> Tiếng Việt
+        </a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">
+          <span class="lang-switcher__flag">🇺🇸</span> English
+        </a>
+      </div>
+    </div>
+
     <span class="nav-user" id="navUser"></span>
-    <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+    <button class="btn-logout" onclick="logout()" data-i18n="dashboard.nav_logout">Đăng xuất</button>
   </div>
 </nav>
 
@@ -656,7 +676,7 @@
           <button class="ind-btn" data-ind="ema50" onclick="toggleIndicator('ema50',this)">EMA 50</button>
           <button class="ind-btn" data-ind="bb"    onclick="toggleIndicator('bb',this)">Bollinger</button>
           <button class="ind-btn" data-ind="rsi"   onclick="toggleIndicator('rsi',this)">RSI 14</button>
-          <span class="chart-status" id="chartStatus">Đang tải...</span>
+          <span class="chart-status" id="chartStatus" data-i18n="dashboard.loading">Đang tải...</span>
         </div>
         <div id="priceChart"></div>
         <div id="rsiChart" class="hidden"></div>
@@ -667,26 +687,26 @@
     <div class="sidebar">
       <!-- Stats -->
       <div class="sidebar-section">
-        <h3>Tổng quan</h3>
+        <h3 data-i18n="dashboard.overview">Tổng quan</h3>
         <div class="stats-row">
           <div class="stat-box">
-            <div class="s-label">Tín hiệu hôm nay</div>
+            <div class="s-label" data-i18n="dashboard.stat_today">Tín hiệu hôm nay</div>
             <div class="s-val gold" id="statToday">—</div>
           </div>
           <div class="stat-box">
-            <div class="s-label">Win rate</div>
+            <div class="s-label" data-i18n="dashboard.stat_winrate">Win rate</div>
             <div class="s-val green" id="statWin">—</div>
           </div>
           <div class="stat-box">
-            <div class="s-label">Đang mở</div>
+            <div class="s-label" data-i18n="dashboard.stat_open">Đang mở</div>
             <div class="s-val" id="statOpen">—</div>
           </div>
           <div class="stat-box">
-            <div class="s-label">Tổng tín hiệu</div>
+            <div class="s-label" data-i18n="dashboard.stat_total">Tổng tín hiệu</div>
             <div class="s-val" id="statTotal">—</div>
           </div>
           <div class="stat-box" style="grid-column: 1 / -1;">
-            <div class="s-label">R trung bình / lệnh (Expectancy)</div>
+            <div class="s-label" data-i18n="dashboard.stat_avgr">R trung bình / lệnh (Expectancy)</div>
             <div class="s-val gold" id="statAvgR">—</div>
           </div>
         </div>
@@ -694,9 +714,9 @@
 
       <!-- Latest signals -->
       <div class="sidebar-section" style="flex:1">
-        <h3>Tín hiệu mới nhất</h3>
+        <h3 data-i18n="dashboard.latest_signals">Tín hiệu mới nhất</h3>
         <div id="latestSignals">
-          <div class="loading"><div class="spinner"></div> Đang tải...</div>
+          <div class="loading"><div class="spinner"></div> <span data-i18n="dashboard.loading">Đang tải...</span></div>
         </div>
       </div>
     </div>
@@ -704,61 +724,61 @@
 
   <!-- TAB: SIGNALS -->
   <div class="tab-content" id="tab-signals">
-    <p class="page-title">Tín hiệu đang mở</p>
+    <p class="page-title" data-i18n="dashboard.page_title_signals">Tín hiệu đang mở</p>
     <div class="signals-grid" id="openSignalsGrid">
-      <div class="loading"><div class="spinner"></div> Đang tải...</div>
+      <div class="loading"><div class="spinner"></div> <span data-i18n="dashboard.loading">Đang tải...</span></div>
     </div>
   </div>
 
   <!-- TAB: CONFLUENCE -->
   <div class="tab-content" id="tab-confluence">
     <div class="cf-header">
-      <p class="page-title">⭐ Tín hiệu AI Confluence</p>
-      <button onclick="loadConfluence()" style="padding:6px 16px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);border-radius:7px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 Làm mới</button>
+      <p class="page-title" data-i18n="dashboard.page_title_confluence">⭐ Tín hiệu AI Confluence</p>
+      <button onclick="loadConfluence()" data-i18n="dashboard.btn_refresh" style="padding:6px 16px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);border-radius:7px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 Làm mới</button>
     </div>
     <div class="cf-intro">
       <div class="cf-intro-icon">🧠</div>
       <div class="cf-intro-text">
-        <strong>AI Confluence Filter</strong> — Chỉ hiển thị những tín hiệu được AI chấm <strong>≥ 75/100 điểm</strong>.
-        Telegram nhận tất cả tín hiệu, Dashboard chỉ hiển thị những setup <strong>chất lượng cao nhất</strong> đã qua bộ lọc R:R, SMC context, ATR và risk management.
+        <strong data-i18n="dashboard.confluence_intro_strong">AI Confluence Filter</strong><span data-i18n="dashboard.confluence_intro_text"> — Chỉ hiển thị những tín hiệu được AI chấm ≥ 75/100 điểm.
+        Telegram nhận tất cả tín hiệu, Dashboard chỉ hiển thị những setup chất lượng cao nhất đã qua bộ lọc R:R, SMC context, ATR và risk management.</span>
       </div>
     </div>
     <div class="cf-grid" id="confluenceGrid">
-      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Đang tải tín hiệu Confluence...</div>
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> <span data-i18n="dashboard.loading">Đang tải tín hiệu Confluence...</span></div>
     </div>
   </div>
 
   <!-- TAB: MARKET STRUCTURE -->
   <div class="tab-content" id="tab-market">
-    <p class="page-title">🏛 Cấu trúc thị trường</p>
+    <p class="page-title" data-i18n="dashboard.page_title_market">🏛 Cấu trúc thị trường</p>
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
       <button class="sym-btn active" onclick="loadMarket('XAUUSDc','XAU/USD',this)">XAU/USD</button>
       <button class="sym-btn" onclick="loadMarket('EURUSDc','EUR/USD',this)">EUR/USD</button>
       <button class="sym-btn" onclick="loadMarket('BTCUSDc','BTC/USD',this)">BTC/USD</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-      <div class="stat-box" style="padding:16px;"><div class="s-label">Giá hiện tại</div><div class="s-val gold" id="mkt-price">—</div></div>
-      <div class="stat-box" style="padding:16px;"><div class="s-label">Xu hướng</div><div class="s-val" id="mkt-trend">—</div></div>
-      <div class="stat-box" style="padding:16px;"><div class="s-label">Spread</div><div class="s-val" id="mkt-spread">—</div></div>
-      <div class="stat-box" style="padding:16px;"><div class="s-label">Biến động</div><div class="s-val" id="mkt-vol">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label" data-i18n="dashboard.mkt_price">Giá hiện tại</div><div class="s-val gold" id="mkt-price">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label" data-i18n="dashboard.mkt_trend">Xu hướng</div><div class="s-val" id="mkt-trend">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label" data-i18n="dashboard.mkt_spread">Spread</div><div class="s-val" id="mkt-spread">—</div></div>
+      <div class="stat-box" style="padding:16px;"><div class="s-label" data-i18n="dashboard.mkt_vol">Biến động</div><div class="s-val" id="mkt-vol">—</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">📍 Vùng giá quan trọng</div>
-        <div id="mkt-levels"><div class="loading"><div class="spinner"></div>Đang tải...</div></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;" data-i18n="dashboard.mkt_levels_title">📍 Vùng giá quan trọng</div>
+        <div id="mkt-levels"><div class="loading"><div class="spinner"></div><span data-i18n="dashboard.loading">Đang tải...</span></div></div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">🕐 Phiên giao dịch</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;" data-i18n="dashboard.mkt_session_title">🕐 Phiên giao dịch</div>
         <div id="mkt-session"></div>
       </div>
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);">
-        <div style="font-size:14px;font-weight:700;">⚡ Phân tích AI — Cấu trúc thị trường</div>
-        <button onclick="refreshMarketAI()" style="padding:5px 14px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);border-radius:6px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 Phân tích lại</button>
+        <div style="font-size:14px;font-weight:700;" data-i18n="dashboard.mkt_ai_title">⚡ Phân tích AI — Cấu trúc thị trường</div>
+        <button onclick="refreshMarketAI()" data-i18n="dashboard.btn_reanalyze" style="padding:5px 14px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);border-radius:6px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 Phân tích lại</button>
       </div>
       <div id="mkt-ai" style="padding:20px;font-size:14px;line-height:1.75;color:#ccc;min-height:100px;">
-        <div class="loading"><div class="spinner"></div>Đang tải phân tích AI...</div>
+        <div class="loading"><div class="spinner"></div><span data-i18n="dashboard.loading">Đang tải phân tích AI...</span></div>
       </div>
     </div>
   </div>
@@ -766,9 +786,9 @@
   <!-- TAB: HISTORY -->
   <div class="tab-content" id="tab-history">
     <div class="history-header">
-      <p class="page-title">Lịch sử tín hiệu</p>
+      <p class="page-title" data-i18n="dashboard.page_title_history">Lịch sử tín hiệu</p>
       <select id="filterSym" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;outline:none;">
-        <option value="">Tất cả symbol</option>
+        <option value="" data-i18n="dashboard.filter_all_symbols">Tất cả symbol</option>
         <option value="XAUUSDc">XAUUSD</option>
         <option value="EURUSDc">EURUSD</option>
         <option value="BTCUSDc">BTCUSD</option>
@@ -787,28 +807,28 @@
     </div>
 
     <div class="history-stats" id="historyStats">
-      <div class="stat-box"><div class="s-label">Tổng lệnh</div><div class="s-val" id="hTotal">—</div></div>
-      <div class="stat-box"><div class="s-label">Thắng (R dương)</div><div class="s-val green" id="hWin">—</div></div>
-      <div class="stat-box"><div class="s-label">Thua (R âm)</div><div class="s-val red" id="hLoss">—</div></div>
-      <div class="stat-box"><div class="s-label">Đang mở</div><div class="s-val gold" id="hOpen">—</div></div>
-      <div class="stat-box"><div class="s-label">R trung bình/lệnh</div><div class="s-val gold" id="hAvgR">—</div></div>
+      <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_total">Tổng lệnh</div><div class="s-val" id="hTotal">—</div></div>
+      <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_win">Thắng (R dương)</div><div class="s-val green" id="hWin">—</div></div>
+      <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_loss">Thua (R âm)</div><div class="s-val red" id="hLoss">—</div></div>
+      <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_open">Đang mở</div><div class="s-val gold" id="hOpen">—</div></div>
+      <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_avgr">R trung bình/lệnh</div><div class="s-val gold" id="hAvgR">—</div></div>
     </div>
 
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
       <table>
         <thead>
           <tr>
-            <th>Thời gian</th>
-            <th>Symbol</th>
-            <th>Chiều</th>
-            <th>Entry</th>
-            <th>SL</th>
-            <th>TP1</th>
-            <th>Trạng thái</th>
+            <th data-i18n="dashboard.th_time">Thời gian</th>
+            <th data-i18n="dashboard.th_symbol">Symbol</th>
+            <th data-i18n="dashboard.th_direction">Chiều</th>
+            <th data-i18n="dashboard.th_entry">Entry</th>
+            <th data-i18n="dashboard.th_sl">SL</th>
+            <th data-i18n="dashboard.th_tp1">TP1</th>
+            <th data-i18n="dashboard.th_status">Trạng thái</th>
           </tr>
         </thead>
         <tbody id="historyBody">
-          <tr><td colspan="7"><div class="loading"><div class="spinner"></div> Đang tải...</div></td></tr>
+          <tr><td colspan="7"><div class="loading"><div class="spinner"></div> <span data-i18n="dashboard.loading">Đang tải...</span></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -821,7 +841,78 @@
 
 </div><!-- /main -->
 
+<style>
+  .lang-switcher { position: relative; display: inline-block; }
+  .lang-switcher__toggle {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer; font-size: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: background 0.15s ease;
+  }
+  .lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+  .lang-switcher__flag { font-size: 14px; line-height: 1; }
+  .lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+  .lang-switcher__menu {
+    position: absolute; top: calc(100% + 6px); right: 0;
+    min-width: 150px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 200;
+  }
+  .lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .lang-switcher__option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 9px; border-radius: 5px;
+    color: var(--text); font-size: 12px;
+    transition: background 0.12s ease;
+  }
+  .lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+  .lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ + đồng bộ hiển thị cờ/mã ngôn ngữ trên nút chính
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const flagEl = document.getElementById('currentFlag');
+      const codeEl = document.getElementById('currentCode');
+      const FLAGS = { vi: '🇻🇳', en: '🇺🇸' };
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        flagEl.textContent = FLAGS[lang];
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(syncToggleDisplay, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+</script>
 <script>
 // ── CONFIG ──────────────────────────────────────────────
 // Thay URL này sau khi chạy ngrok

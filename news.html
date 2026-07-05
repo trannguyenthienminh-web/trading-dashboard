@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google" content="notranslate">
+  <meta http-equiv="Content-Language" content="vi">
   <title>Market Intelligence — Trading AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -32,6 +34,7 @@
     .hdr-nav a { font-size: 0.8125rem; color: var(--muted); padding: 6px 12px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
     .hdr-nav a:hover { color: var(--white); background: rgba(255,255,255,0.05); }
     .hdr-nav a.active { color: var(--gold); background: var(--gold-bg); }
+    .hdr-right { display: flex; align-items: center; gap: 12px; }
     .hdr-back { font-size: 0.8125rem; color: var(--muted); transition: color 0.2s; }
     .hdr-back:hover { color: var(--white); }
 
@@ -181,6 +184,42 @@
     .vol-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-top: 6px; }
     .vol-fill { height: 100%; border-radius: 3px; background: var(--gold); transition: width 0.5s; }
 
+    /* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
+    .lang-switcher { position: relative; display: inline-block; }
+    .lang-switcher__toggle {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--white);
+      cursor: pointer; font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.15s ease;
+    }
+    .lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+    .lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+    .lang-switcher__menu {
+      position: absolute; top: calc(100% + 6px); right: 0;
+      min-width: 150px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      opacity: 0; visibility: hidden; transform: translateY(-4px);
+      transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+      z-index: 200;
+    }
+    .lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .lang-switcher__option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 9px; border-radius: 5px;
+      color: var(--white); font-size: 12px;
+      transition: background 0.12s ease;
+    }
+    .lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+    .lang-switcher__option.active { background: rgba(201,168,76,0.1); color: var(--gold); font-weight: 600; }
+
     mb-16 { margin-bottom: 16px; }
   </style>
 </head>
@@ -191,19 +230,31 @@
   <div class="hdr-left">
     <div class="hdr-logo">Trading<span>AI</span></div>
     <nav class="hdr-nav">
-      <a href="dashboard.html">📈 Dashboard</a>
-      <a href="ai-chat.html">🤖 AI Chat</a>
-      <a href="news.html" class="active">📰 Market Intel</a>
+      <a href="dashboard.html" data-i18n="news.hdr_dashboard">📈 Dashboard</a>
+      <a href="ai-chat.html" data-i18n="news.hdr_ai_chat">🤖 AI Chat</a>
+      <a href="news.html" class="active" data-i18n="news.hdr_market_intel">📰 Market Intel</a>
     </nav>
   </div>
-  <a href="dashboard.html" class="hdr-back">← Dashboard</a>
+  <div class="hdr-right">
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+      </div>
+    </div>
+    <a href="dashboard.html" class="hdr-back" data-i18n="news.hdr_back">← Dashboard</a>
+  </div>
 </header>
 
 <!-- PAGE TABS -->
 <div class="page-tabs">
-  <button class="ptab active" onclick="switchPTab('news', this)">📰 Tin tức & Radar</button>
-  <button class="ptab" onclick="switchPTab('calendar', this)">📅 Lịch kinh tế</button>
-  <button class="ptab" onclick="switchPTab('market', this)">🏛 Cấu trúc thị trường</button>
+  <button class="ptab active" onclick="switchPTab('news', this)" data-i18n="news.tab_news">📰 Tin tức & Radar</button>
+  <button class="ptab" onclick="switchPTab('calendar', this)" data-i18n="news.tab_calendar">📅 Lịch kinh tế</button>
+  <button class="ptab" onclick="switchPTab('market', this)" data-i18n="news.tab_market">🏛 Cấu trúc thị trường</button>
 </div>
 
 <div class="page">
@@ -222,17 +273,17 @@
 
       <!-- CỘT TRÁI: TIN TỨC -->
       <div>
-        <div class="section-label">📡 Radar tin tức thị trường</div>
+        <div class="section-label" data-i18n="news.section_news_radar">📡 Radar tin tức thị trường</div>
         <div class="card">
           <div class="card-hdr">
-            <div class="card-hdr-title">Forex & Gold News</div>
+            <div class="card-hdr-title" data-i18n="news.card_news_title">Forex & Gold News</div>
             <button class="refresh-btn" onclick="loadNews(this)">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-              Làm mới
+              <span data-i18n="news.btn_refresh">Làm mới</span>
             </button>
           </div>
           <div class="filter-row">
-            <button class="fbtn active" onclick="filterNews('all',this)">Tất cả</button>
+            <button class="fbtn active" onclick="filterNews('all',this)" data-i18n="news.filter_all">Tất cả</button>
             <button class="fbtn" onclick="filterNews('XAU/USD',this)">⭐ XAU/USD</button>
             <button class="fbtn" onclick="filterNews('BTC',this)">₿ BTC</button>
             <button class="fbtn" onclick="filterNews('USD',this)">🇺🇸 USD</button>
@@ -250,12 +301,12 @@
 
         <!-- Market Sentiment -->
         <div>
-          <div class="section-label">🧭 Tâm lý thị trường</div>
+          <div class="section-label" data-i18n="news.section_sentiment">🧭 Tâm lý thị trường</div>
           <div class="grid-2" style="gap:10px;margin-bottom:0;">
             <div class="stat-box">
               <div class="s-label">XAU/USD</div>
               <div class="s-val" id="sent-xau" style="color:var(--green)">Bullish</div>
-              <div class="s-sub" id="sent-xau-sub">Dựa trên tin tức 24h</div>
+              <div class="s-sub" id="sent-xau-sub" data-i18n="news.sentiment_note">Dựa trên tin tức 24h</div>
             </div>
             <div class="stat-box">
               <div class="s-label">BTC/USD</div>
@@ -277,7 +328,7 @@
 
         <!-- Tin tác động cao -->
         <div>
-          <div class="section-label">🔥 Tin tác động cao hôm nay</div>
+          <div class="section-label" data-i18n="news.section_high_impact">🔥 Tin tác động cao hôm nay</div>
           <div class="card">
             <div id="high-impact-news">
               <div class="loading"><div class="spinner"></div>Đang phân tích...</div>
@@ -287,7 +338,7 @@
 
         <!-- Sự kiện tiếp theo -->
         <div>
-          <div class="section-label">⏰ Sự kiện quan trọng tiếp theo</div>
+          <div class="section-label" data-i18n="news.section_next_event">⏰ Sự kiện quan trọng tiếp theo</div>
           <div class="card">
             <div id="next-event-box" style="padding:16px;">
               <div class="loading" style="padding:20px 0;">Đang tải...</div>
@@ -308,19 +359,19 @@
       ⚠️ <strong>Cảnh báo:</strong> <span id="cal-alert-text"></span> — Thận trọng khi giao dịch!
     </div>
 
-    <div class="section-label">📅 Lịch sự kiện kinh tế tuần này</div>
+    <div class="section-label" data-i18n="news.section_calendar">📅 Lịch sự kiện kinh tế tuần này</div>
     <div class="card">
       <div class="card-hdr">
-        <div class="card-hdr-title">Sự kiện tác động thị trường</div>
+        <div class="card-hdr-title" data-i18n="news.card_calendar_title">Sự kiện tác động thị trường</div>
         <button class="refresh-btn" onclick="renderCalendar(currentCalFilter)">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-          Làm mới
+          <span data-i18n="news.btn_refresh">Làm mới</span>
         </button>
       </div>
       <div class="filter-row">
-        <button class="fbtn active" onclick="filterCal('all',this)">Tất cả</button>
-        <button class="fbtn" onclick="filterCal('high',this)">🔴 High Impact</button>
-        <button class="fbtn" onclick="filterCal('med',this)">🟡 Medium</button>
+        <button class="fbtn active" onclick="filterCal('all',this)" data-i18n="news.filter_all">Tất cả</button>
+        <button class="fbtn" onclick="filterCal('high',this)" data-i18n="news.filter_high">🔴 High Impact</button>
+        <button class="fbtn" onclick="filterCal('med',this)" data-i18n="news.filter_med">🟡 Medium</button>
         <button class="fbtn" onclick="filterCal('usd',this)">🇺🇸 USD</button>
         <button class="fbtn" onclick="filterCal('xau',this)">⭐ XAU</button>
       </div>
@@ -346,22 +397,22 @@
     <!-- Stats row -->
     <div class="grid-4" style="margin-bottom:20px;">
       <div class="stat-box">
-        <div class="s-label">Giá hiện tại</div>
+        <div class="s-label" data-i18n="news.s_price">Giá hiện tại</div>
         <div class="s-val gold mono" id="ms-price">—</div>
         <div class="s-sub" id="ms-spread">Spread: —</div>
       </div>
       <div class="stat-box">
-        <div class="s-label">Xu hướng</div>
+        <div class="s-label" data-i18n="news.s_trend">Xu hướng</div>
         <div class="s-val" id="ms-trend">—</div>
         <div class="s-sub" id="ms-trend-sub">Chưa phân tích</div>
       </div>
       <div class="stat-box">
-        <div class="s-label">Biến động</div>
+        <div class="s-label" data-i18n="news.s_vol">Biến động</div>
         <div class="s-val" id="ms-vol">—</div>
         <div class="vol-bar"><div class="vol-fill" id="ms-vol-bar" style="width:0%"></div></div>
       </div>
       <div class="stat-box">
-        <div class="s-label">Session</div>
+        <div class="s-label" data-i18n="news.s_session">Session</div>
         <div class="s-val" id="ms-session">—</div>
         <div class="s-sub" id="ms-session-sub">—</div>
       </div>
@@ -371,26 +422,26 @@
 
       <!-- Key Levels -->
       <div>
-        <div class="section-label">🎯 Key Levels (Price Action)</div>
+        <div class="section-label" data-i18n="news.section_key_levels">🎯 Key Levels (Price Action)</div>
         <div class="card">
           <div class="level-row" style="background:rgba(248,113,113,0.04);">
-            <span class="level-label">Kháng cự mạnh (R2)</span>
+            <span class="level-label" data-i18n="news.level_r2">Kháng cự mạnh (R2)</span>
             <span class="level-val res" id="ms-r2">—</span>
           </div>
           <div class="level-row">
-            <span class="level-label">Kháng cự (R1)</span>
+            <span class="level-label" data-i18n="news.level_r1">Kháng cự (R1)</span>
             <span class="level-val res" id="ms-r1">—</span>
           </div>
           <div class="level-row" style="background:rgba(201,168,76,0.04);">
-            <span class="level-label">Giá hiện tại</span>
+            <span class="level-label" data-i18n="news.level_cur">Giá hiện tại</span>
             <span class="level-val cur" id="ms-cur">—</span>
           </div>
           <div class="level-row">
-            <span class="level-label">Hỗ trợ (S1)</span>
+            <span class="level-label" data-i18n="news.level_s1">Hỗ trợ (S1)</span>
             <span class="level-val sup" id="ms-s1">—</span>
           </div>
           <div class="level-row" style="background:rgba(52,211,153,0.04);">
-            <span class="level-label">Hỗ trợ mạnh (S2)</span>
+            <span class="level-label" data-i18n="news.level_s2">Hỗ trợ mạnh (S2)</span>
             <span class="level-val sup" id="ms-s2">—</span>
           </div>
         </div>
@@ -398,7 +449,7 @@
 
       <!-- Trading Sessions -->
       <div>
-        <div class="section-label">🌏 Phiên giao dịch & Thanh khoản</div>
+        <div class="section-label" data-i18n="news.section_sessions">🌏 Phiên giao dịch & Thanh khoản</div>
         <div class="card" style="margin-bottom:14px;">
           <div class="session-row">
             <div style="display:flex;align-items:center;gap:10px;">
@@ -435,18 +486,18 @@
         </div>
 
         <!-- SMC Bias -->
-        <div class="section-label">⚡ SMC Bias</div>
+        <div class="section-label" data-i18n="news.section_smc_bias">⚡ SMC Bias</div>
         <div class="grid-3" style="gap:10px;">
           <div class="stat-box" style="padding:12px;text-align:center;">
-            <div class="s-label">HTF Bias</div>
+            <div class="s-label" data-i18n="news.htf_bias">HTF Bias</div>
             <div class="s-val" id="ms-htf" style="font-size:1rem;">—</div>
           </div>
           <div class="stat-box" style="padding:12px;text-align:center;">
-            <div class="s-label">Structure</div>
+            <div class="s-label" data-i18n="news.structure">Structure</div>
             <div class="s-val" id="ms-struct" style="font-size:1rem;">—</div>
           </div>
           <div class="stat-box" style="padding:12px;text-align:center;">
-            <div class="s-label">Liquidity</div>
+            <div class="s-label" data-i18n="news.liquidity">Liquidity</div>
             <div class="s-val" id="ms-liq" style="font-size:1rem;">—</div>
           </div>
         </div>
@@ -454,17 +505,47 @@
     </div>
 
     <!-- AI Analysis -->
-    <div class="section-label">🤖 Phân tích AI — Cấu trúc thị trường</div>
+    <div class="section-label" data-i18n="news.section_ai_analysis">🤖 Phân tích AI — Cấu trúc thị trường</div>
     <div class="ai-analysis-box" id="ms-ai-box">
       <span class="ai-loading">Chọn symbol và nhấn "Phân tích" để nhận đánh giá từ AI...</span>
     </div>
-    <button class="refresh-btn" onclick="analyzeMarketStructure()" style="margin-top:12px;padding:9px 18px;font-size:0.8125rem;">
+    <button class="refresh-btn" onclick="analyzeMarketStructure()" style="margin-top:12px;padding:9px 18px;font-size:0.8125rem;" data-i18n="news.btn_analyze">
       🤖 Phân tích cấu trúc thị trường
     </button>
 
   </div>
 </div>
 
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ (đồng bộ với dashboard.html)
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(syncToggleDisplay, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+</script>
 <script>
 const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
 let currentNewsFilter = 'all';

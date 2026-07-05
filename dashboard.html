@@ -898,7 +898,13 @@
       document.querySelectorAll('[data-lang-option]').forEach((opt) => {
         opt.addEventListener('click', () => {
           menu.classList.remove('open');
-          setTimeout(syncToggleDisplay, 50);
+          setTimeout(() => {
+            syncToggleDisplay();
+            // Vẽ lại tab đang mở để áp dụng bản dịch cho nội dung động (nếu có)
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab && activeTab.id === 'tab-signals') loadOpenSignals();
+            if (activeTab && activeTab.id === 'tab-chart') loadSidebar();
+          }, 50);
         });
       });
       setTimeout(syncToggleDisplay, 150);
@@ -1332,6 +1338,10 @@ async function loadOpenSignals() {
 function fullSigCard(s) {
   const isBuy = s.direction === 'BUY';
   const badgeCls = s.status === 'OPEN' ? 'badge-open' : s.status.includes('TP') ? 'badge-tp' : 'badge-sl';
+  // v5.3 — Dùng bản dịch EN nếu đang ở tiếng Anh VÀ đã có bản dịch (dịch chạy nền,
+  // có thể chưa kịp xong ngay lúc tín hiệu mới ra) — nếu chưa có, fallback về bản Việt.
+  const curLang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+  const analysisText = (curLang === 'en' && s.analysis_text_en) ? s.analysis_text_en : (s.analysis_text ?? '');
   return `
   <div class="signal-full-card">
     <div class="sfc-header">
@@ -1346,7 +1356,7 @@ function fullSigCard(s) {
       <div class="sfc-lv"><div class="l">TP3</div><div class="v" style="color:var(--green)">${s.tp3}</div></div>
       <div class="sfc-lv"><div class="l">R:R</div><div class="v">${s.rr_ratio ?? '—'}</div></div>
     </div>
-    <div class="sfc-analysis" id="ana_${s.id}">${s.analysis_text ?? ''}</div>
+    <div class="sfc-analysis" id="ana_${s.id}">${analysisText}</div>
     <div class="sfc-footer">
       <span class="sfc-time">${s.created_at?.slice(0,16) ?? ''}</span>
       <span class="sfc-status-badge ${badgeCls}">${s.status}</span>

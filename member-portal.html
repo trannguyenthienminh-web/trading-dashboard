@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
 <title>Cổng Thành Viên — Trading AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -35,6 +37,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 .nav-logo span{color:var(--gold);}
 .nav-back{font-size:13px;color:var(--muted);}
 .nav-back:hover{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:14px;}
 
 /* ══ LOGIN SCREEN ══ */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 54px);padding:20px;background:radial-gradient(ellipse at 50% 0%,rgba(245,200,66,.06) 0%,transparent 60%);}
@@ -125,6 +128,42 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
+.lang-switcher { position: relative; display: inline-block; }
+.lang-switcher__toggle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer; font-size: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background 0.15s ease;
+}
+.lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+.lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+.lang-switcher__menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  min-width: 150px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 200;
+}
+.lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-switcher__option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 5px;
+  color: var(--text); font-size: 12px;
+  transition: background 0.12s ease;
+}
+.lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+.lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
+
 @media(max-width:520px){
   .info-grid,.action-grid{grid-template-columns:1fr;}
   .mh-top{flex-direction:column;align-items:flex-start;}
@@ -135,30 +174,42 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 <body>
 
 <nav>
-  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">Cổng Thành Viên</span></div>
-  <a href="index.html" class="nav-back">← Trang chủ</a>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;" data-i18n="member_portal.nav_title">Cổng Thành Viên</span></div>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+      </div>
+    </div>
+    <a href="index.html" class="nav-back" data-i18n="member_portal.nav_home">← Trang chủ</a>
+  </div>
 </nav>
 
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-icon">🔐</div>
-    <div class="login-title">Đăng nhập Cổng Thành Viên</div>
-    <div class="login-sub">Nhập Account ID và License Key để xem thông tin license, gia hạn, và theo dõi hiệu suất.</div>
+    <div class="login-title" data-i18n="member_portal.login_title">Đăng nhập Cổng Thành Viên</div>
+    <div class="login-sub" data-i18n="member_portal.login_sub">Nhập Account ID và License Key để xem thông tin license, gia hạn, và theo dõi hiệu suất.</div>
 
     <div class="field">
-      <label>Account ID (MT5)</label>
+      <label data-i18n="member_portal.label_account">Account ID (MT5)</label>
       <input type="text" id="l-account" placeholder="Ví dụ: 12345678" inputmode="numeric" onkeydown="if(event.key==='Enter')document.getElementById('l-key').focus()">
     </div>
     <div class="field">
-      <label>License Key</label>
+      <label data-i18n="member_portal.label_key">License Key</label>
       <input type="text" id="l-key" placeholder="SGR-XXXX-XXXX-XXXX" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
 
-    <button class="btn btn-gold" onclick="doLogin()" id="login-btn">🔓 Đăng nhập</button>
+    <button class="btn btn-gold" onclick="doLogin()" id="login-btn" data-i18n="member_portal.btn_login">🔓 Đăng nhập</button>
     <div class="login-err" id="login-err"></div>
 
-    <div class="login-hint">
+    <div class="login-hint" data-i18n-html="member_portal.login_hint">
       Chưa có License Key? <a href="register.html" style="color:var(--gold)">Đăng ký EA SmartGold</a> hoặc key được gửi tự động qua Telegram sau khi thanh toán.
     </div>
   </div>
@@ -173,6 +224,45 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 
 <div id="toast"></div>
 
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ (đồng bộ với dashboard.html)
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(() => {
+            syncToggleDisplay();
+            // Nếu member đã đăng nhập, vẽ lại Portal để áp dụng ngôn ngữ cho nội dung động
+            if (MEMBER) renderPortal();
+          }, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+
+  function curLang() {
+    return (window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : null)
+      || localStorage.getItem('thienminhgold_lang') || 'vi';
+  }
+</script>
 <script>
 const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
 let MEMBER = null;
@@ -236,7 +326,13 @@ function showPortal() {
 }
 
 function statusInfo(status) {
-  const map = {
+  const isEn = curLang() === 'en';
+  const map = isEn ? {
+    active:  {cls:'active',  label:'✅ ACTIVE'},
+    pending: {cls:'pending', label:'⏳ PENDING'},
+    expired: {cls:'expired', label:'⌛ EXPIRED'},
+    revoked: {cls:'revoked', label:'🔒 REVOKED'},
+  } : {
     active:  {cls:'active',  label:'✅ ĐANG HOẠT ĐỘNG'},
     pending: {cls:'pending', label:'⏳ CHỜ DUYỆT'},
     expired: {cls:'expired', label:'⌛ ĐÃ HẾT HẠN'},
@@ -247,6 +343,7 @@ function statusInfo(status) {
 
 function renderPortal() {
   const m = MEMBER;
+  const isEn = curLang() === 'en';
   const st = statusInfo(m.status);
   const isIB = m.plan === 'ib';
 
@@ -256,20 +353,21 @@ function renderPortal() {
     <div class="mh-countdown">
       <div>
         <div class="mh-days-num" style="color:var(--gold)">∞</div>
-        <div class="mh-days-label">License vĩnh viễn (gói IB)</div>
+        <div class="mh-days-label">${isEn ? 'Perpetual license (IB plan)' : 'License vĩnh viễn (gói IB)'}</div>
       </div>
     </div>`;
   } else if (m.days_remaining !== null) {
     const days = m.days_remaining;
     const color = days <= 3 ? 'var(--red)' : days <= 7 ? 'var(--gold)' : 'var(--green)';
+    const daysLabel = days >= 0 ? (isEn ? 'days remaining' : 'ngày còn lại') : (isEn ? 'expired' : 'đã hết hạn');
     daysBlock = `
     <div class="mh-countdown">
       <div>
         <div class="mh-days-num" style="color:${color}">${days >= 0 ? days : 0}</div>
-        <div class="mh-days-label">${days >= 0 ? 'ngày còn lại' : 'đã hết hạn'}</div>
+        <div class="mh-days-label">${daysLabel}</div>
       </div>
       <div class="mh-exp-date">
-        <div class="l">Ngày hết hạn</div>
+        <div class="l">${isEn ? 'Expiry Date' : 'Ngày hết hạn'}</div>
         <div class="v">${m.expires_at}</div>
       </div>
     </div>`;
@@ -279,18 +377,24 @@ function renderPortal() {
 
   const renewSection = (needsRenew && m.status !== 'revoked') ? `
   <div class="renew-box ${m.status==='expired' ? 'urgent' : ''}">
-    <div class="renew-title">${m.status==='expired' ? '🚨' : '⏰'} ${m.status==='expired' ? 'License đã hết hạn' : 'Sắp hết hạn — Gia hạn ngay'}</div>
+    <div class="renew-title">${m.status==='expired' ? '🚨' : '⏰'} ${
+      m.status==='expired'
+        ? (isEn ? 'License Expired' : 'License đã hết hạn')
+        : (isEn ? 'Expiring Soon — Renew Now' : 'Sắp hết hạn — Gia hạn ngay')
+    }</div>
     <div class="renew-text">
-      Chuyển khoản theo thông tin bên dưới, sau đó bấm "Gửi yêu cầu gia hạn" — Admin sẽ xác nhận và kích hoạt trong thời gian sớm nhất.
+      ${isEn
+        ? 'Transfer using the details below, then click "Send Renewal Request" — Admin will confirm and activate as soon as possible.'
+        : 'Chuyển khoản theo thông tin bên dưới, sau đó bấm "Gửi yêu cầu gia hạn" — Admin sẽ xác nhận và kích hoạt trong thời gian sớm nhất.'}
     </div>
     <div class="renew-payment">
-      🏦 Ngân hàng: <strong>VPBank</strong><br>
-      💳 Số TK: <strong>138490319</strong> — Tran Nguyen Thien Minh<br>
-      📝 Nội dung CK: <strong>SGREA ${m.account} 01 thang</strong>
+      🏦 ${isEn ? 'Bank' : 'Ngân hàng'}: <strong>VPBank</strong><br>
+      💳 ${isEn ? 'Account No.' : 'Số TK'}: <strong>138490319</strong> — Tran Nguyen Thien Minh<br>
+      📝 ${isEn ? 'Transfer Note' : 'Nội dung CK'}: <strong>SGREA ${m.account} 01 thang</strong>
     </div>
     <div class="renew-actions">
-      <button class="btn btn-gold" onclick="sendRenewRequest()">📤 Gửi yêu cầu gia hạn</button>
-      <a href="https://t.me/trannguyenthienminh" target="_blank" rel="noopener" class="btn btn-outline">✈ Nhắn Admin trực tiếp</a>
+      <button class="btn btn-gold" onclick="sendRenewRequest()">📤 ${isEn ? 'Send Renewal Request' : 'Gửi yêu cầu gia hạn'}</button>
+      <a href="https://t.me/trannguyenthienminh" target="_blank" rel="noopener" class="btn btn-outline">✈ ${isEn ? 'Message Admin Directly' : 'Nhắn Admin trực tiếp'}</a>
     </div>
   </div>` : '';
 
@@ -298,8 +402,8 @@ function renderPortal() {
     <div class="member-hero">
       <div class="mh-top">
         <div>
-          <div class="mh-name">👋 Xin chào, ${m.name}</div>
-          <div class="mh-sub">${isIB ? '⭐ Gói IB Free' : '💳 Gói Rental'} · Account ${m.account}</div>
+          <div class="mh-name">👋 ${isEn ? 'Hello' : 'Xin chào'}, ${m.name}</div>
+          <div class="mh-sub">${isIB ? (isEn?'⭐ IB Free Plan':'⭐ Gói IB Free') : (isEn?'💳 Rental Plan':'💳 Gói Rental')} · Account ${m.account}</div>
         </div>
         <span class="mh-badge ${st.cls}">${st.label}</span>
       </div>
@@ -310,7 +414,7 @@ function renderPortal() {
 
     <div class="info-grid">
       <div class="info-card">
-        <div class="l">Broker</div>
+        <div class="l">${isEn ? 'Broker' : 'Broker'}</div>
         <div class="v">${m.broker || 'CXM Direct'}</div>
       </div>
       <div class="info-card">
@@ -319,30 +423,30 @@ function renderPortal() {
       </div>
       <div class="info-card" style="grid-column:1/-1">
         <div class="l">License Key</div>
-        <div class="v copyable" onclick="copyKey('${m.license_key}')">🔑 ${m.license_key} <span style="margin-left:auto;font-size:11px;color:var(--muted)">📋 copy</span></div>
+        <div class="v copyable" onclick="copyKey('${m.license_key}')">🔑 ${m.license_key} <span style="margin-left:auto;font-size:11px;color:var(--muted)">📋 ${isEn?'copy':'copy'}</span></div>
       </div>
     </div>
 
     <div class="action-grid">
       <a href="journal.html" class="action-card">
         <div class="action-icon">📖</div>
-        <div class="action-title">Trade Journal</div>
-        <div class="action-desc">Xem lý do AI vào lệnh</div>
+        <div class="action-title">${isEn ? 'Trade Journal' : 'Trade Journal'}</div>
+        <div class="action-desc">${isEn ? 'See why AI entered each trade' : 'Xem lý do AI vào lệnh'}</div>
       </a>
       <a href="analytics.html" class="action-card">
         <div class="action-icon">📊</div>
         <div class="action-title">Performance</div>
-        <div class="action-desc">Thống kê win rate hệ thống</div>
+        <div class="action-desc">${isEn ? 'System win rate statistics' : 'Thống kê win rate hệ thống'}</div>
       </a>
     </div>
 
     <div class="perf-panel" id="perf-panel" style="display:none;">
-      <div class="perf-title">📈 Hiệu suất hệ thống tổng quan</div>
+      <div class="perf-title">📈 ${isEn ? 'Overall System Performance' : 'Hiệu suất hệ thống tổng quan'}</div>
       <div class="perf-row" id="perf-row"></div>
     </div>
 
     <div class="logout-link">
-      <a href="#" onclick="logout();return false;">🚪 Đăng xuất</a>
+      <a href="#" onclick="logout();return false;">🚪 ${isEn ? 'Logout' : 'Đăng xuất'}</a>
     </div>
   `;
 }
@@ -355,7 +459,7 @@ async function loadOverallPerformance() {
     const ov = data.overview;
     document.getElementById('perf-row').innerHTML = `
       <div class="perf-item"><div class="perf-val gold">${ov.winrate}%</div><div class="perf-label">Win Rate</div></div>
-      <div class="perf-item"><div class="perf-val green">${ov.total_pnl>=0?'+':''}${ov.total_pnl}</div><div class="perf-label">Tổng Pip</div></div>
+      <div class="perf-item"><div class="perf-val green">${ov.total_pnl>=0?'+':''}${ov.total_pnl}</div><div class="perf-label">${curLang()==='en'?'Total Pip':'Tổng Pip'}</div></div>
       <div class="perf-item"><div class="perf-val">1:${ov.avg_rr}</div><div class="perf-label">Avg R:R</div></div>
     `;
     document.getElementById('perf-panel').style.display = 'block';
@@ -371,14 +475,14 @@ async function sendRenewRequest() {
         plan: MEMBER.plan, telegram: MEMBER.telegram || ''
       })
     });
-    toast('✅ Đã gửi yêu cầu! Admin sẽ xác nhận sớm.', 'ok');
+    toast(curLang()==='en' ? '✅ Request sent! Admin will confirm soon.' : '✅ Đã gửi yêu cầu! Admin sẽ xác nhận sớm.', 'ok');
   } catch(e) {
-    toast('⚠️ Lỗi gửi yêu cầu, thử nhắn trực tiếp Admin.', 'err');
+    toast(curLang()==='en' ? '⚠️ Error sending request, try messaging Admin directly.' : '⚠️ Lỗi gửi yêu cầu, thử nhắn trực tiếp Admin.', 'err');
   }
 }
 
 function copyKey(key) {
-  navigator.clipboard.writeText(key).then(() => toast('📋 Đã copy License Key!', 'ok'));
+  navigator.clipboard.writeText(key).then(() => toast(curLang()==='en' ? '📋 License Key copied!' : '📋 Đã copy License Key!', 'ok'));
 }
 
 function toast(msg, type) {

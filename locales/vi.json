@@ -13,7 +13,6 @@
     "nav_news": "📰 Market Intel",
     "nav_register_ea": "🤖 Đăng ký EA",
     "nav_logout": "Đăng xuất",
-
     "overview": "Tổng quan",
     "stat_today": "Tín hiệu hôm nay",
     "stat_winrate": "Win rate",
@@ -21,13 +20,11 @@
     "stat_total": "Tổng tín hiệu",
     "stat_avgr": "R trung bình / lệnh (Expectancy)",
     "latest_signals": "Tín hiệu mới nhất",
-
     "page_title_signals": "Tín hiệu đang mở",
     "page_title_confluence": "⭐ Tín hiệu AI Confluence",
     "btn_refresh": "🔄 Làm mới",
     "confluence_intro_strong": "AI Confluence Filter",
     "confluence_intro_text": " — Chỉ hiển thị những tín hiệu được AI chấm ≥ 75/100 điểm. Telegram nhận tất cả tín hiệu, Dashboard chỉ hiển thị những setup chất lượng cao nhất đã qua bộ lọc R:R, SMC context, ATR và risk management.",
-
     "page_title_market": "🏛 Cấu trúc thị trường",
     "mkt_price": "Giá hiện tại",
     "mkt_trend": "Xu hướng",
@@ -37,7 +34,6 @@
     "mkt_session_title": "🕐 Phiên giao dịch",
     "mkt_ai_title": "⚡ Phân tích AI — Cấu trúc thị trường",
     "btn_reanalyze": "🔄 Phân tích lại",
-
     "page_title_history": "Lịch sử tín hiệu",
     "filter_all_symbols": "Tất cả symbol",
     "h_total": "Tổng lệnh",
@@ -52,8 +48,8 @@
     "th_sl": "SL",
     "th_tp1": "TP1",
     "th_status": "Trạng thái",
-
-    "loading": "Đang tải..."
+    "loading": "Đang tải...",
+    "history_winrate_desc": "Win rate theo R thực nhận (<span id=\"wrClosed\">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng."
   },
   "landing": {
     "nav_features": "Tính năng",
@@ -64,7 +60,6 @@
     "nav_rent_ea": "🤖 Thuê EA",
     "nav_member": "🔐 Thành viên",
     "nav_vip": "💎 Kênh VIP",
-
     "hero_eyebrow": "Hệ thống đang hoạt động",
     "hero_h1_line1": "Giao dịch Vàng & Forex",
     "hero_h1_line2": "thông minh hơn với AI",
@@ -75,7 +70,6 @@
     "stat_rr": "Avg R:R",
     "stat_members": "Thành viên",
     "stat_signals_247": "Tín hiệu liên tục",
-
     "features_label": "Tại sao chọn chúng tôi",
     "features_h2_line1": "Hệ thống hoàn chỉnh,",
     "features_h2_line2": "không cần đoán mò",
@@ -86,7 +80,6 @@
     "feature2_desc": "Claude AI phân tích cấu trúc thị trường, Order Block, FVG và cung cấp nhận định tiếng Việt rõ ràng, dưới 150 từ — dễ hiểu cho mọi cấp độ trader.",
     "feature3_title": "Dashboard quản lý",
     "feature3_desc": "Web dashboard realtime với TradingView chart, lịch sử tín hiệu, thống kê win rate và AI Agent hỏi đáp — tất cả trong một giao diện bảo mật.",
-
     "results_label": "Kết quả thực tế",
     "results_h2": "Lệnh gần đây",
     "results_note": "Dữ liệu minh họa — kết quả thực cập nhật tự động từ hệ thống",
@@ -102,7 +95,6 @@
     "th_rr": "R:R",
     "th_result": "Kết quả",
     "th_time": "Thời gian",
-
     "how_label": "Quy trình",
     "how_h2_line1": "Từ chart đến",
     "how_h2_line2": "tín hiệu trong vài giây",
@@ -115,7 +107,6 @@
     "step3_desc": "Tín hiệu hoàn chỉnh với Entry/SL/TP và phân tích được gửi ngay vào group — dưới 10 giây.",
     "step4_title": "AI Confluence lọc",
     "step4_desc": "AI chấm điểm 0–100 mỗi tín hiệu. Chỉ những setup ≥ 75 điểm mới lên Dashboard — đảm bảo chất lượng cao nhất.",
-
     "confluence_label": "Tính năng độc quyền",
     "confluence_h2": "Bộ lọc AI Confluence chỉ chọn lệnh tốt nhất",
     "confluence_sub": "Telegram nhận tất cả tín hiệu. Dashboard chỉ hiển thị những setup được AI chấm ≥ 75/100 điểm — sau khi kiểm tra R:R, cấu trúc SMC, ATR và risk management.",
@@ -128,12 +119,10 @@
     "pill4_title": "Risk Management",
     "pill4_desc": " — Đánh giá toàn diện trước khi hiển thị trên Dashboard",
     "btn_view_confluence": "⭐ Xem Dashboard Confluence",
-
     "testimonials_label": "Cộng đồng",
     "testimonials_h2_line1": "Trader Việt Nam",
     "testimonials_h2_line2": "nói gì về Trading AI",
     "testimonials_sub": "Hàng trăm trader đang sử dụng hệ thống mỗi ngày để cải thiện kết quả giao dịch.",
-
     "cta_label": "Bắt đầu ngay",
     "cta_h2_line1": "Sẵn sàng giao dịch",
     "cta_h2_line2": "có hệ thống chưa?",
@@ -141,7 +130,6 @@
     "btn_join_vip_now": "💎 Tham gia kênh VIP ngay",
     "btn_register_ea": "🤖 Đăng ký EA SmartGold",
     "btn_view_dashboard": "📊 Xem Dashboard",
-
     "footer_desc": "Hệ thống tín hiệu giao dịch tự động kết hợp Price Action, Smart Money Concept và phân tích AI — dành cho cộng đồng trader Việt Nam.",
     "footer_quicklinks": "Truy cập nhanh",
     "footer_home": "Trang chủ",
@@ -156,7 +144,6 @@
     "footer_copyright": "© 2026 Trading AI · Thien Minh",
     "footer_disclaimer": "⚠️ Cảnh báo rủi ro: Giao dịch ngoại hối và tiền mã hóa có rủi ro cao. Các tín hiệu chỉ mang tính tham khảo, không phải lời khuyên đầu tư. Bạn có thể mất toàn bộ vốn đầu tư."
   },
-
   "login": {
     "title": "Đăng nhập",
     "subtitle": "Nhập thông tin tài khoản được cấp để tiếp tục.",
@@ -167,7 +154,6 @@
     "footer_line1": "Hệ thống dành riêng cho thành viên · © 2026 Trading AI",
     "footer_back": "← Về trang giới thiệu"
   },
-
   "register": {
     "nav_home": "← Trang chủ",
     "hero_h1_1": "Đăng ký",
@@ -219,9 +205,18 @@
     "important_step_text": "Để nhận được License Key tự động, bạn phải <strong>nhắn tin cho bot</strong> trước:<br><br>1. Click vào nút bên dưới<br>2. Bấm <strong>\"Start\"</strong> hoặc gõ <code>/start</code><br>3. Chờ nhận key trong vài phút sau khi thanh toán xác nhận ✅",
     "btn_start_bot": "✈ Nhắn /start cho Bot ngay",
     "join_group_text": "Sau khi bấm Start, bạn có thể tham gia group để theo dõi tín hiệu!",
-    "btn_join_group": "📢 Vào Telegram Group"
+    "btn_join_group": "📢 Vào Telegram Group",
+    "pm_bank": "🏦 Chuyển khoản",
+    "pm_binance": "₿ Binance USDT",
+    "binance_instructions": "📱 Mở app Binance → Gửi → Quét mã hoặc dán địa chỉ ví bên dưới",
+    "binance_network_label": "Mạng lưới",
+    "binance_address_label": "Địa chỉ ví",
+    "binance_warning": "⚠️ <strong>Quan trọng:</strong> Chỉ gửi USDT qua mạng <strong>TRC20 (Tron)</strong>. Gửi nhầm mạng khác (BEP20, ERC20...) có thể làm mất tiền vĩnh viễn.<br>Sau khi chuyển, nhập mã giao dịch (Transaction Hash/ID) bên dưới và bấm <strong>\"Xác nhận đã chuyển khoản\"</strong>.",
+    "pm_paypal": "💰 PayPal",
+    "paypal_instructions": "Bấm nút bên dưới để mở PayPal và gửi thanh toán trực tiếp. Sau khi gửi xong, quay lại đây nhập mã giao dịch PayPal.",
+    "btn_pay_paypal": "Thanh toán qua PayPal",
+    "paypal_warning": "⚠️ <strong>Lưu ý:</strong> PayPal có thể tính thêm phí chuyển đổi ngoại tệ tùy ngân hàng/thẻ của bạn.<br>Sau khi thanh toán, nhập mã giao dịch (Transaction ID) bên dưới và bấm <strong>\"Xác nhận đã chuyển khoản\"</strong>."
   },
-
   "member_portal": {
     "nav_title": "Cổng Thành Viên",
     "nav_home": "← Trang chủ",
@@ -260,7 +255,6 @@
     "avgrr": "Avg R:R",
     "logout": "🚪 Đăng xuất"
   },
-
   "journal": {
     "page_title": "📖 Trade Journal",
     "page_sub": "Mỗi tín hiệu là một bài học — xem lý do AI vào lệnh và đánh giá hậu kiểm sau khi đóng.",
@@ -277,7 +271,6 @@
     "modal_postmortem_title": "📖 AI Đánh giá hậu kiểm (Post-Mortem)",
     "modal_postmortem_waiting": "Đang chờ AI phân tích sau khi đóng lệnh..."
   },
-
   "analytics": {
     "page_title": "Performance Analytics",
     "win_rate": "Win Rate",
@@ -309,7 +302,6 @@
     "col_score": "AI Score",
     "col_result": "Kết quả"
   },
-
   "news": {
     "hdr_dashboard": "📈 Dashboard",
     "hdr_ai_chat": "🤖 AI Chat",
@@ -347,5 +339,30 @@
     "htf_bias": "HTF Bias",
     "structure": "Structure",
     "liquidity": "Liquidity"
+  },
+  "ai_decisions": {
+    "nav_title": "AI Decision Engine",
+    "page_title": "⚖️ AI Decision Engine",
+    "page_sub": "Nhật ký mọi quyết định AI đưa ra trước khi tín hiệu được gửi đi.",
+    "intro_html": "<strong>AI không chỉ chấm điểm — AI quyết định.</strong> Mỗi tín hiệu từ indicator đều đi qua bước kiểm tra này trước khi được gửi. <strong style=\"color:var(--red)\">REJECT</strong> = không gửi, <strong style=\"color:var(--gold)\">WARN</strong> = gửi kèm cảnh báo, <strong style=\"color:var(--green)\">APPROVE</strong> = gửi bình thường.",
+    "loading_risk": "Đang tải trạng thái Risk hiện tại...",
+    "stat_approve": "Approve",
+    "stat_warn": "Warn",
+    "stat_reject": "Reject",
+    "stat_reject_rate": "Reject Rate",
+    "stat_reject_sub": "Đã chặn không gửi",
+    "stat_reject_rate_sub": "Tỷ lệ AI từ chối",
+    "stat_pct_of_total": "% tổng số",
+    "filter_all": "Tất cả",
+    "btn_refresh": "↺ Refresh",
+    "nav_back": "← Dashboard",
+    "empty_logs": "⚖️ Chưa có quyết định nào được ghi nhận.<br>Decision Engine sẽ hoạt động ngay khi có tín hiệu mới.",
+    "no_reason": "Không có lý do chi tiết.",
+    "action_label": "Hành động:",
+    "error_api": "⚠️ Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.",
+    "error_risk": "⚠️ Không tải được trạng thái Risk hiện tại.",
+    "risk_session_label": "Phiên hiện tại:",
+    "risk_news_label": "Risk tin tức:",
+    "risk_open_positions": "lệnh đang mở"
   }
 }

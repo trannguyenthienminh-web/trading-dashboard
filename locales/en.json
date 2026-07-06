@@ -48,7 +48,8 @@
     "th_sl": "SL",
     "th_tp1": "TP1",
     "th_status": "Status",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "history_winrate_desc": "Win rate based on actual R received (<span id=\"wrClosed\">0</span> closed trades) — a trade that hits TP1/TP2 before being pulled back to SL still counts as a WIN, since real profit (+R) was already locked in before it closed."
   },
   "landing": {
     "nav_features": "Features",
@@ -143,7 +144,6 @@
     "footer_copyright": "© 2026 Trading AI · Thien Minh",
     "footer_disclaimer": "⚠️ Risk Warning: Forex and cryptocurrency trading carries high risk. Signals are for reference only, not investment advice. You may lose your entire investment."
   },
-
   "login": {
     "title": "Login",
     "subtitle": "Enter your assigned account details to continue.",
@@ -154,7 +154,6 @@
     "footer_line1": "Members-only system · © 2026 Trading AI",
     "footer_back": "← Back to homepage"
   },
-
   "register": {
     "nav_home": "← Home",
     "hero_h1_1": "Register",
@@ -206,9 +205,18 @@
     "important_step_text": "To receive your License Key automatically, you must <strong>message the bot</strong> first:<br><br>1. Click the button below<br>2. Tap <strong>\"Start\"</strong> or type <code>/start</code><br>3. Wait a few minutes after payment is confirmed ✅",
     "btn_start_bot": "✈ Message /start to Bot now",
     "join_group_text": "After starting, you can join the group to follow signals!",
-    "btn_join_group": "📢 Join Telegram Group"
+    "btn_join_group": "📢 Join Telegram Group",
+    "pm_bank": "🏦 Bank Transfer",
+    "pm_binance": "₿ Binance USDT",
+    "binance_instructions": "📱 Open Binance app → Send → Scan the code or paste the wallet address below",
+    "binance_network_label": "Network",
+    "binance_address_label": "Wallet Address",
+    "binance_warning": "⚠️ <strong>Important:</strong> Only send USDT via the <strong>TRC20 (Tron)</strong> network. Sending via a different network (BEP20, ERC20...) may result in permanent loss of funds.<br>After sending, enter the Transaction Hash/ID below and click <strong>\"Confirm Payment\"</strong>.",
+    "pm_paypal": "💰 PayPal",
+    "paypal_instructions": "Click the button below to open PayPal and send payment directly. After sending, come back here and enter the PayPal transaction ID.",
+    "btn_pay_paypal": "Pay via PayPal",
+    "paypal_warning": "⚠️ <strong>Note:</strong> PayPal may charge additional currency conversion fees depending on your bank/card.<br>After paying, enter the Transaction ID below and click <strong>\"Confirm Payment\"</strong>."
   },
-
   "member_portal": {
     "nav_title": "Member Portal",
     "nav_home": "← Home",
@@ -247,7 +255,6 @@
     "avgrr": "Avg R:R",
     "logout": "🚪 Logout"
   },
-
   "journal": {
     "page_title": "📖 Trade Journal",
     "page_sub": "Every signal is a lesson — see why AI entered each trade and the post-trade review after it closed.",
@@ -264,7 +271,6 @@
     "modal_postmortem_title": "📖 AI Post-Mortem Review",
     "modal_postmortem_waiting": "Waiting for AI analysis after the trade closes..."
   },
-
   "analytics": {
     "page_title": "Performance Analytics",
     "win_rate": "Win Rate",
@@ -296,7 +302,6 @@
     "col_score": "AI Score",
     "col_result": "Result"
   },
-
   "news": {
     "hdr_dashboard": "📈 Dashboard",
     "hdr_ai_chat": "🤖 AI Chat",
@@ -334,5 +339,30 @@
     "htf_bias": "HTF Bias",
     "structure": "Structure",
     "liquidity": "Liquidity"
+  },
+  "ai_decisions": {
+    "nav_title": "AI Decision Engine",
+    "page_title": "⚖️ AI Decision Engine",
+    "page_sub": "A log of every decision the AI makes before a signal is sent.",
+    "intro_html": "<strong>AI doesn't just score — AI decides.</strong> Every signal from the indicator goes through this check before being sent. <strong style=\"color:var(--red)\">REJECT</strong> = not sent, <strong style=\"color:var(--gold)\">WARN</strong> = sent with a warning, <strong style=\"color:var(--green)\">APPROVE</strong> = sent normally.",
+    "loading_risk": "Loading current Risk status...",
+    "stat_approve": "Approve",
+    "stat_warn": "Warn",
+    "stat_reject": "Reject",
+    "stat_reject_rate": "Reject Rate",
+    "stat_reject_sub": "Blocked from sending",
+    "stat_reject_rate_sub": "AI rejection rate",
+    "stat_pct_of_total": "% of total",
+    "filter_all": "All",
+    "btn_refresh": "↺ Refresh",
+    "nav_back": "← Dashboard",
+    "empty_logs": "⚖️ No decisions recorded yet.<br>Decision Engine will activate as soon as a new signal arrives.",
+    "no_reason": "No detailed reason.",
+    "action_label": "Action:",
+    "error_api": "⚠️ Could not connect to API.<br>Make sure START_BOT.bat is running.",
+    "error_risk": "⚠️ Could not load current Risk status.",
+    "risk_session_label": "Current session:",
+    "risk_news_label": "News risk:",
+    "risk_open_positions": "open positions"
   }
 }

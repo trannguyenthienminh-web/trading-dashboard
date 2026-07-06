@@ -32,123 +32,57 @@
     min-height: 100vh;
   }
   a { color: inherit; text-decoration: none; }
-
-  /* ── NAV ── */
   nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 56px;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
     position: sticky; top: 0; z-index: 100;
   }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    font-weight: 600; font-size: 15px;
-  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
   .nav-logo-mark {
-    width: 32px; height: 32px;
-    background: var(--gold);
-    border-radius: 8px;
+    width: 32px; height: 32px; background: var(--gold); border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; font-weight: 500; color: #0a0b0e;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: #0a0b0e;
   }
-  .nav-tabs {
-    display: flex; gap: 4px;
-  }
+  .nav-tabs { display: flex; gap: 4px; }
   .nav-tab {
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    border: none; background: none;
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; color: var(--muted);
+    cursor: pointer; transition: all 0.15s; border: none; background: none;
   }
   .nav-tab:hover  { color: var(--text); background: var(--border); }
   .nav-tab.active { color: var(--gold); background: rgba(245,200,66,0.08); }
-  .nav-right {
-    display: flex; align-items: center; gap: 12px;
-  }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
   .btn-ea {
-    padding: 6px 14px;
-    border: 1px solid rgba(245,200,66,0.4);
-    border-radius: 6px;
-    font-size: 12px; color: var(--gold);
-    cursor: pointer; background: rgba(245,200,66,0.06);
-    transition: all 0.15s;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 14px; border: 1px solid rgba(245,200,66,0.4); border-radius: 6px;
+    font-size: 12px; color: var(--gold); cursor: pointer; background: rgba(245,200,66,0.06);
+    transition: all 0.15s; font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
   }
   .btn-ea:hover { background: rgba(245,200,66,0.14); border-color: var(--gold); }
-  .nav-user {
-    font-size: 13px; color: var(--muted);
-  }
+  .nav-user { font-size: 13px; color: var(--muted); }
   .btn-logout {
-    padding: 6px 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 12px; color: var(--muted);
-    cursor: pointer; background: none;
-    transition: all 0.15s;
+    padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 12px; color: var(--muted); cursor: pointer; background: none; transition: all 0.15s;
   }
   .btn-logout:hover { color: var(--red); border-color: var(--red); }
-
-  /* ── SYMBOL BAR ── */
-  .sym-bar {
-    display: flex; gap: 8px;
-    padding: 12px 24px;
-    overflow-x: auto;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
+  .sym-bar { display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto; border-bottom: 1px solid var(--border); background: var(--surface); }
   .sym-btn {
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: none; color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
+    padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+    background: none; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
   }
   .sym-btn:hover  { color: var(--text); border-color: #333; }
   .sym-btn.active { color: var(--gold); border-color: var(--gold); background: rgba(245,200,66,0.06); }
-
-  /* ── MAIN LAYOUT ── */
-  .main {
-    display: flex; flex: 1;
-    overflow: hidden;
-  }
-
-  /* ── TABS CONTENT ── */
+  .main { display: flex; flex: 1; overflow: hidden; }
   .tab-content { display: none; width: 100%; }
   .tab-content.active { display: flex; flex-direction: column; }
-
-  /* ── CHART TAB ── */
-  #tab-chart {
-    flex-direction: row;
-  }
-  .chart-area {
-    flex: 1;
-    display: flex; flex-direction: column;
-    overflow: hidden;
-  }
-  .chart-wrap {
-    flex: 1;
-    min-height: 0;
-    display: flex; flex-direction: column;
-  }
+  #tab-chart { flex-direction: row; }
+  .chart-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .chart-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .chart-toolbar {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
+    padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface);
   }
   .chart-toolbar .ind-btn {
     padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 600;
@@ -163,8 +97,7 @@
   .chart-toolbar .ind-btn[data-ind="rsi"].active   { background: var(--green); }
   .chart-toolbar .tf-btn {
     padding: 6px 10px; border-radius: 7px; font-size: 11px; font-weight: 600;
-    border: 1px solid var(--border); background: transparent; color: var(--muted);
-    cursor: pointer; font-family: inherit;
+    border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: inherit;
   }
   .chart-toolbar .tf-btn.active { background: var(--gold); color: var(--bg); border-color: transparent; }
   .chart-toolbar .tb-sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 4px; }
@@ -172,431 +105,129 @@
   #priceChart { flex: 1; min-height: 0; }
   #rsiChart   { height: 120px; border-top: 1px solid var(--border); flex-shrink: 0; }
   #rsiChart.hidden { display: none; }
-
-  /* ── SIDEBAR ── */
-  .sidebar {
-    width: 300px;
-    border-left: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    overflow-y: auto;
-    background: var(--surface);
-  }
-  .sidebar-section {
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidebar-section h3 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  /* Signal card in sidebar */
-  .sig-card {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 14px;
-    margin-bottom: 8px;
-  }
+  .sidebar { width: 300px; border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; background: var(--surface); }
+  .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+  .sig-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 8px; }
   .sig-card:last-child { margin-bottom: 0; }
-  .sig-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .sig-dir {
-    font-size: 13px; font-weight: 600;
-    display: flex; align-items: center; gap: 6px;
-  }
+  .sig-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .sig-dir { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .sig-dir.buy  { color: var(--green); }
   .sig-dir.sell { color: var(--red); }
-  .sig-type {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-weight: 500;
-  }
+  .sig-type { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
   .sig-type.trend    { background: rgba(52,152,219,0.15); color: var(--blue); }
   .sig-type.reversal { background: rgba(245,200,66,0.12); color: var(--gold); }
-  .sig-levels {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-  }
+  .sig-levels { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
   .sig-level { display: flex; flex-direction: column; gap: 2px; }
   .sig-level .lbl { color: var(--muted); font-size: 10px; }
   .sig-level .val { color: var(--text); }
   .sig-level .val.entry { color: var(--blue); }
   .sig-level .val.sl    { color: var(--red); }
   .sig-level .val.tp    { color: var(--green); }
-  .sig-status {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; gap: 6px;
-    font-size: 11px; color: var(--muted);
-  }
-  .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
+  .sig-status { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
   .dot.closed { background: var(--muted); animation: none; }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* Stats row */
-  .stats-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .stat-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
-  }
-  .stat-box .s-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-  .stat-box .s-val {
-    font-size: 20px;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+  .stat-box .s-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 6px; }
+  .stat-box .s-val { font-size: 20px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
   .stat-box .s-val.green { color: var(--green); }
   .stat-box .s-val.gold  { color: var(--gold); }
   .stat-box .s-val.red   { color: var(--red); }
-
-  /* ── SIGNALS TAB ── */
-  #tab-signals {
-    padding: 20px 24px;
-    overflow-y: auto;
-  }
-  .page-title {
-    font-size: 18px; font-weight: 600;
-    margin-bottom: 16px;
-  }
-  .signals-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 12px;
-  }
-  .signal-full-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 16px;
-  }
-  .sfc-header {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .sfc-sym {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; font-weight: 500;
-  }
-  .sfc-dir {
-    font-size: 12px; font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 5px;
-  }
+  #tab-signals { padding: 20px 24px; overflow-y: auto; }
+  .page-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .signals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .signal-full-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; }
+  .sfc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .sfc-sym { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+  .sfc-dir { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 5px; }
   .sfc-dir.buy  { background: rgba(46,204,113,0.12); color: var(--green); }
   .sfc-dir.sell { background: rgba(231,76,60,0.12);  color: var(--red); }
-  .sfc-levels {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 8px; margin-bottom: 12px;
-  }
+  .sfc-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
   .sfc-lv { background: var(--bg); border-radius: 6px; padding: 8px; }
   .sfc-lv .l { font-size: 10px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; }
-  .sfc-lv .v {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; font-weight: 500;
-  }
-  .sfc-analysis {
-    font-size: 12px; color: var(--muted);
-    line-height: 1.6;
-    border-top: 1px solid var(--border);
-    padding-top: 10px;
-    max-height: 80px;
-    overflow: hidden;
-    position: relative;
-  }
+  .sfc-lv .v { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; }
+  .sfc-analysis { font-size: 12px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; max-height: 80px; overflow: hidden; position: relative; }
   .sfc-analysis.expanded { max-height: none; }
-  .sfc-footer {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
+  .sfc-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
   .sfc-time { font-size: 11px; color: var(--muted); }
-  .sfc-status-badge {
-    font-size: 10px; padding: 2px 8px;
-    border-radius: 4px; font-weight: 500;
-  }
+  .sfc-status-badge { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
   .badge-open   { background: rgba(46,204,113,0.12); color: var(--green); }
   .badge-tp     { background: rgba(52,152,219,0.12);  color: var(--blue); }
   .badge-sl     { background: rgba(231,76,60,0.12);   color: var(--red); }
-  .btn-expand {
-    background: none; border: none; color: var(--muted);
-    font-size: 11px; cursor: pointer; padding: 0;
-  }
+  .btn-expand { background: none; border: none; color: var(--muted); font-size: 11px; cursor: pointer; padding: 0; }
   .btn-expand:hover { color: var(--gold); }
-
-  /* ── CONFLUENCE TAB ── */
-  #tab-confluence {
-    padding: 24px;
-    overflow-y: auto;
-  }
-  .cf-header {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
+  #tab-confluence { padding: 24px; overflow-y: auto; }
+  .cf-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
   .cf-intro {
     background: linear-gradient(135deg, rgba(245,200,66,0.06) 0%, rgba(245,200,66,0.02) 100%);
-    border: 1px solid rgba(245,200,66,0.2);
-    border-radius: var(--r);
-    padding: 16px 20px;
-    margin-bottom: 20px;
+    border: 1px solid rgba(245,200,66,0.2); border-radius: var(--r); padding: 16px 20px; margin-bottom: 20px;
     display: flex; align-items: center; gap: 14px;
   }
   .cf-intro-icon { font-size: 28px; }
   .cf-intro-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
   .cf-intro-text strong { color: var(--gold); }
-  .cf-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 16px;
-  }
-  .cf-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
+  .cf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+  .cf-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; transition: border-color 0.2s; }
   .cf-card:hover { border-color: rgba(245,200,66,0.35); }
-  .cf-card-top {
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center;
-    justify-content: space-between;
-  }
-  .cf-card-sym {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px; font-weight: 600;
-  }
-  .cf-badge-dir {
-    font-size: 11px; font-weight: 700;
-    padding: 3px 10px; border-radius: 5px;
-  }
+  .cf-card-top { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .cf-card-sym { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; }
+  .cf-badge-dir { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 5px; }
   .cf-badge-dir.buy  { background: rgba(46,204,113,0.12); color: var(--green); }
   .cf-badge-dir.sell { background: rgba(231,76,60,0.12);  color: var(--red); }
-
-  /* Score ring area */
-  .cf-score-row {
-    padding: 16px;
-    display: flex; align-items: center; gap: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .cf-ring {
-    position: relative;
-    width: 72px; height: 72px; flex-shrink: 0;
-  }
+  .cf-score-row { padding: 16px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--border); }
+  .cf-ring { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
   .cf-ring svg { transform: rotate(-90deg); }
-  .cf-ring-num {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 18px; font-weight: 700;
-    line-height: 1;
-  }
+  .cf-ring-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; line-height: 1; }
   .cf-ring-num span { font-size: 9px; color: var(--muted); margin-top: 1px; }
   .cf-score-info { flex: 1; }
-  .cf-label-badge {
-    display: inline-block;
-    font-size: 10px; font-weight: 800;
-    letter-spacing: .08em; padding: 3px 10px;
-    border-radius: 4px; margin-bottom: 6px;
-  }
+  .cf-label-badge { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .08em; padding: 3px 10px; border-radius: 4px; margin-bottom: 6px; }
   .label-excellent { background: rgba(245,200,66,0.15); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
   .label-good      { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
   .label-fair      { background: rgba(52,152,219,0.12); color: var(--blue); border: 1px solid rgba(52,152,219,0.25); }
   .label-weak      { background: rgba(107,112,128,0.1); color: var(--muted); border: 1px solid var(--border); }
-  .cf-summary {
-    font-size: 12px; color: var(--muted); line-height: 1.55;
-  }
-
-  /* Factor bars */
-  .cf-factors {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  .cf-factor-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .cf-factor-label {
-    font-size: 10px; color: var(--muted);
-    width: 100px; flex-shrink: 0;
-  }
-  .cf-factor-track {
-    flex: 1; height: 4px;
-    background: var(--border); border-radius: 2px;
-    overflow: hidden;
-  }
-  .cf-factor-fill {
-    height: 100%; border-radius: 2px;
-    transition: width 0.8s ease;
-  }
-  .cf-factor-val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: var(--muted);
-    width: 28px; text-align: right; flex-shrink: 0;
-  }
-
-  /* Strengths & warnings */
-  .cf-tags {
-    padding: 12px 16px;
-    display: flex; flex-wrap: wrap; gap: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-  .cf-tag {
-    font-size: 11px; padding: 3px 9px;
-    border-radius: 100px;
-  }
+  .cf-summary { font-size: 12px; color: var(--muted); line-height: 1.55; }
+  .cf-factors { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+  .cf-factor-row { display: flex; align-items: center; gap: 8px; }
+  .cf-factor-label { font-size: 10px; color: var(--muted); width: 100px; flex-shrink: 0; }
+  .cf-factor-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .cf-factor-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+  .cf-factor-val { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); width: 28px; text-align: right; flex-shrink: 0; }
+  .cf-tags { padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); }
+  .cf-tag { font-size: 11px; padding: 3px 9px; border-radius: 100px; }
   .cf-tag.strength { background: rgba(46,204,113,0.08); color: var(--green); border: 1px solid rgba(46,204,113,0.2); }
   .cf-tag.warning  { background: rgba(245,200,66,0.08); color: var(--gold);  border: 1px solid rgba(245,200,66,0.2); }
-
-  /* Levels & time */
-  .cf-footer {
-    padding: 12px 16px;
-    display: flex; align-items: center;
-    justify-content: space-between;
-  }
-  .cf-levels-mini {
-    display: flex; gap: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-  }
+  .cf-footer { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .cf-levels-mini { display: flex; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
   .cf-lv-item { display: flex; flex-direction: column; gap: 2px; }
   .cf-lv-item .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; }
   .cf-time { font-size: 11px; color: var(--muted); }
-  .cf-status-badge {
-    font-size: 10px; padding: 2px 8px;
-    border-radius: 4px; font-weight: 600;
-  }
-
-  .cf-empty {
-    grid-column: 1 / -1;
-    text-align: center; padding: 60px 20px;
-    color: var(--muted); font-size: 14px; line-height: 1.8;
-  }
+  .cf-status-badge { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .cf-empty { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; line-height: 1.8; }
   .cf-empty .ce-icon { font-size: 40px; margin-bottom: 12px; }
-
-  /* ── HISTORY TAB ── */
-  #tab-history {
-    padding: 20px 24px;
-    overflow-y: auto;
-  }
-  .history-header {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .winrate-bar-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .winrate-row {
-    display: flex; align-items: center; gap: 16px;
-  }
-  .winrate-num {
-    font-size: 48px; font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--gold);
-    line-height: 1;
-  }
+  #tab-history { padding: 20px 24px; overflow-y: auto; }
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .winrate-bar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; margin-bottom: 16px; }
+  .winrate-row { display: flex; align-items: center; gap: 16px; }
+  .winrate-num { font-size: 48px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--gold); line-height: 1; }
   .winrate-meta { flex: 1; }
   .winrate-meta p { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-  .bar-track {
-    height: 6px; background: var(--border);
-    border-radius: 3px; overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--green), var(--gold));
-    transition: width 1s ease;
-  }
-  .history-stats {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  thead th {
-    text-align: left;
-    padding: 10px 12px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-  }
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.1s;
-  }
+  .bar-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width 1s ease; }
+  .history-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; padding: 10px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
   tbody tr:hover { background: var(--surface2); }
   tbody td { padding: 10px 12px; }
   .td-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
   .td-buy  { color: var(--green); font-weight: 600; }
   .td-sell { color: var(--red);   font-weight: 600; }
-
-  /* ── LOADING ── */
-  .loading {
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px; color: var(--muted); font-size: 13px; gap: 8px;
-  }
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid var(--border);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--muted); font-size: 13px; gap: 8px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .empty {
-    text-align: center; padding: 40px;
-    color: var(--muted); font-size: 13px;
-  }
-
-  /* ── RESPONSIVE ── */
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
   @media (max-width: 768px) {
     #tab-chart { flex-direction: column; }
     .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); max-height: 300px; }
@@ -627,8 +258,6 @@
     <button class="nav-tab" onclick="switchTab('news')" data-i18n="dashboard.nav_news">📰 Market Intel</button>
   <div class="nav-right">
     <a href="register.html" target="_blank" class="btn-ea" data-i18n="dashboard.nav_register_ea">🤖 Đăng ký EA</a>
-
-    <!-- LANGUAGE SWITCHER -->
     <div class="lang-switcher">
       <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
         <span class="lang-switcher__code" id="currentCode">VI</span>
@@ -639,13 +268,11 @@
         <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
       </div>
     </div>
-
     <span class="nav-user" id="navUser"></span>
     <button class="btn-logout" onclick="logout()" data-i18n="dashboard.nav_logout">Đăng xuất</button>
   </div>
 </nav>
 
-<!-- SYMBOL BAR -->
 <div class="sym-bar">
   <button class="sym-btn active" onclick="changeSymbol(this,'XAUUSD','XAUUSDc')">XAUUSD</button>
   <button class="sym-btn" onclick="changeSymbol(this,'EURUSD','EURUSDc')">EURUSD</button>
@@ -654,10 +281,7 @@
   <button class="sym-btn" onclick="changeSymbol(this,'USDJPY','USDJPYc')">USDJPY</button>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- TAB: CHART -->
   <div class="tab-content active" id="tab-chart">
     <div class="chart-area">
       <div class="chart-wrap">
@@ -677,10 +301,7 @@
         <div id="rsiChart" class="hidden"></div>
       </div>
     </div>
-
-    <!-- SIDEBAR -->
     <div class="sidebar">
-      <!-- Stats -->
       <div class="sidebar-section">
         <h3 data-i18n="dashboard.overview">Tổng quan</h3>
         <div class="stats-row">
@@ -706,8 +327,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Latest signals -->
       <div class="sidebar-section" style="flex:1">
         <h3 data-i18n="dashboard.latest_signals">Tín hiệu mới nhất</h3>
         <div id="latestSignals">
@@ -717,7 +336,6 @@
     </div>
   </div>
 
-  <!-- TAB: SIGNALS -->
   <div class="tab-content" id="tab-signals">
     <p class="page-title" data-i18n="dashboard.page_title_signals">Tín hiệu đang mở</p>
     <div class="signals-grid" id="openSignalsGrid">
@@ -725,7 +343,6 @@
     </div>
   </div>
 
-  <!-- TAB: CONFLUENCE -->
   <div class="tab-content" id="tab-confluence">
     <div class="cf-header">
       <p class="page-title" data-i18n="dashboard.page_title_confluence">⭐ Tín hiệu AI Confluence</p>
@@ -743,7 +360,6 @@
     </div>
   </div>
 
-  <!-- TAB: MARKET STRUCTURE -->
   <div class="tab-content" id="tab-market">
     <p class="page-title" data-i18n="dashboard.page_title_market">🏛 Cấu trúc thị trường</p>
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
@@ -778,7 +394,6 @@
     </div>
   </div>
 
-  <!-- TAB: HISTORY -->
   <div class="tab-content" id="tab-history">
     <div class="history-header">
       <p class="page-title" data-i18n="dashboard.page_title_history">Lịch sử tín hiệu</p>
@@ -789,18 +404,15 @@
         <option value="BTCUSDc">BTCUSD</option>
       </select>
     </div>
-
-    <!-- Win rate -->
     <div class="winrate-bar-wrap">
       <div class="winrate-row">
         <div class="winrate-num" id="wrNum">—%</div>
         <div class="winrate-meta">
-          <p>Win rate theo R thực nhận (<span id="wrClosed">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng.</p>
+          <p data-i18n-html="dashboard.history_winrate_desc">Win rate theo R thực nhận (<span id="wrClosed">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng.</p>
           <div class="bar-track"><div class="bar-fill" id="wrBar" style="width:0%"></div></div>
         </div>
       </div>
     </div>
-
     <div class="history-stats" id="historyStats">
       <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_total">Tổng lệnh</div><div class="s-val" id="hTotal">—</div></div>
       <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_win">Thắng (R dương)</div><div class="s-val green" id="hWin">—</div></div>
@@ -808,7 +420,6 @@
       <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_open">Đang mở</div><div class="s-val gold" id="hOpen">—</div></div>
       <div class="stat-box"><div class="s-label" data-i18n="dashboard.h_avgr">R trung bình/lệnh</div><div class="s-val gold" id="hAvgR">—</div></div>
     </div>
-
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
       <table>
         <thead>
@@ -829,47 +440,30 @@
     </div>
   </div>
 
-  <!-- TAB: MARKET INTEL (News) -->
   <div class="tab-content" id="tab-news" style="padding:20px;max-width:1200px;">
     <iframe src="news.html" style="width:100%;height:calc(100vh - 120px);border:none;border-radius:10px;background:var(--bg);" title="Market Intelligence"></iframe>
   </div>
-
-</div><!-- /main -->
+</div>
 
 <style>
   .lang-switcher { position: relative; display: inline-block; }
   .lang-switcher__toggle {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 12px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    cursor: pointer; font-size: 12px;
-    font-family: 'Space Grotesk', sans-serif;
+    display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); cursor: pointer; font-size: 12px; font-family: 'Space Grotesk', sans-serif;
     transition: background 0.15s ease;
   }
   .lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
-  .lang-switcher__flag { font-size: 14px; line-height: 1; }
   .lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
   .lang-switcher__menu {
-    position: absolute; top: calc(100% + 6px); right: 0;
-    min-width: 150px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px; padding: 6px;
+    position: absolute; top: calc(100% + 6px); right: 0; min-width: 150px;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     opacity: 0; visibility: hidden; transform: translateY(-4px);
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
-    z-index: 200;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s; z-index: 200;
   }
   .lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
-  .lang-switcher__option {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 9px; border-radius: 5px;
-    color: var(--text); font-size: 12px;
-    transition: background 0.12s ease;
-  }
+  .lang-switcher__option { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 5px; color: var(--text); font-size: 12px; transition: background 0.12s ease; }
   .lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
   .lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
 </style>
@@ -877,33 +471,27 @@
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <script src="/js/i18n.js" defer></script>
 <script>
-  // Toggle dropdown ngôn ngữ + đồng bộ hiển thị cờ/mã ngôn ngữ trên nút chính
   (function () {
     document.addEventListener('DOMContentLoaded', () => {
       const toggle = document.getElementById('langToggle');
       const menu = document.getElementById('langMenu');
       const codeEl = document.getElementById('currentCode');
       const CODES = { vi: 'VI', en: 'EN' };
-
       function syncToggleDisplay() {
         const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
         codeEl.textContent = CODES[lang];
       }
-
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        menu.classList.toggle('open');
-      });
+      toggle.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('open'); });
       document.addEventListener('click', () => menu.classList.remove('open'));
       document.querySelectorAll('[data-lang-option]').forEach((opt) => {
         opt.addEventListener('click', () => {
           menu.classList.remove('open');
           setTimeout(() => {
             syncToggleDisplay();
-            // Vẽ lại tab đang mở để áp dụng bản dịch cho nội dung động (nếu có)
             const activeTab = document.querySelector('.tab-content.active');
             if (activeTab && activeTab.id === 'tab-signals') loadOpenSignals();
             if (activeTab && activeTab.id === 'tab-chart') loadSidebar();
+            if (activeTab && activeTab.id === 'tab-history') loadHistory();
           }, 50);
         });
       });
@@ -912,34 +500,21 @@
   })();
 </script>
 <script>
-// ── CONFIG ──────────────────────────────────────────────
-// Thay URL này sau khi chạy ngrok
 const API_BASE = 'https://trading-proxy.trannguyenthienminh.workers.dev';
-
-// ── AUTH ────────────────────────────────────────────────
 const user = sessionStorage.getItem('user');
 if (!user) window.location.href = 'index.html';
 document.getElementById('navUser').textContent = user;
-
-function logout() {
-  sessionStorage.clear();
-  window.location.href = 'index.html';
-}
-
-// ── TAB SWITCHING ───────────────────────────────────────
+function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   event.target.classList.add('active');
-
   if (name === 'signals')    loadOpenSignals();
   if (name === 'confluence') loadConfluence();
   if (name === 'history')    loadHistory();
   if (name === 'market')     loadMarket(currentMktSymbol, currentMktLabel, null);
 }
-
-// ── CONFLUENCE ───────────────────────────────────────────
 async function loadConfluence() {
   const grid = document.getElementById('confluenceGrid');
   grid.innerHTML = '<div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Đang tải...</div>';
@@ -959,19 +534,16 @@ async function loadConfluence() {
   }
   grid.innerHTML = data.signals.map(s => confluenceCard(s)).join('');
 }
-
 function scoreColor(score) {
   if (score >= 85) return '#f5c842';
   if (score >= 75) return '#2ecc71';
   if (score >= 60) return '#3498db';
   return '#6b7080';
 }
-
 function labelClass(label) {
   const map = { EXCELLENT: 'excellent', GOOD: 'good', FAIR: 'fair', WEAK: 'weak' };
   return 'label-' + (map[label?.toUpperCase()] || 'fair');
 }
-
 function confluenceCard(s) {
   const isBuy   = s.direction === 'BUY';
   const score   = s.score ?? 0;
@@ -980,8 +552,6 @@ function confluenceCard(s) {
   const factors = typeof s.factors === 'object' ? s.factors : {};
   const strengths = Array.isArray(s.strengths) ? s.strengths : [];
   const warnings  = Array.isArray(s.warnings)  ? s.warnings  : [];
-
-  // SVG donut
   const r = 28, circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
   const ring = `<svg width="72" height="72" viewBox="0 0 72 72">
@@ -990,8 +560,6 @@ function confluenceCard(s) {
       stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
       stroke-linecap="round"/>
   </svg>`;
-
-  // Factor bars
   const factorDefs = [
     { key: 'rr_score',       label: 'R:R Ratio',  max: 25 },
     { key: 'signal_quality', label: 'Signal',      max: 20 },
@@ -1011,17 +579,12 @@ function confluenceCard(s) {
       <span class="cf-factor-val">${val}/${f.max}</span>
     </div>`;
   }).join('');
-
-  // Tags
   const tags = [
     ...strengths.map(t => `<span class="cf-tag strength">✓ ${t}</span>`),
     ...warnings.map(t  => `<span class="cf-tag warning">⚠ ${t}</span>`),
   ].join('');
-
-  // Status badge
   const stMap = { OPEN:'badge-open', TP1_HIT:'badge-tp', TP2_HIT:'badge-tp', TP3_HIT:'badge-tp', SL_HIT:'badge-sl' };
   const stLabel = { OPEN:'● OPEN', TP1_HIT:'TP1 ✓', TP2_HIT:'TP2 ✓', TP3_HIT:'TP3 ✓', SL_HIT:'SL ✗', SL_AFTER_TP1:'SL/TP1', SL_AFTER_TP2:'SL/TP2' };
-
   return `<div class="cf-card">
     <div class="cf-card-top">
       <div>
@@ -1030,7 +593,6 @@ function confluenceCard(s) {
       </div>
       <span class="cf-badge-dir ${isBuy?'buy':'sell'}">${s.direction}</span>
     </div>
-
     <div class="cf-score-row">
       <div class="cf-ring">
         ${ring}
@@ -1041,11 +603,8 @@ function confluenceCard(s) {
         <div class="cf-summary">${s.summary || 'Không có nhận xét.'}</div>
       </div>
     </div>
-
     <div class="cf-factors">${factorBars}</div>
-
     ${tags ? `<div class="cf-tags">${tags}</div>` : ''}
-
     <div class="cf-footer">
       <div class="cf-levels-mini">
         <div class="cf-lv-item"><span class="lbl">Entry</span><span style="color:var(--blue)">${s.entry}</span></div>
@@ -1060,8 +619,6 @@ function confluenceCard(s) {
     </div>
   </div>`;
 }
-
-// ── SYMBOL CHANGE ───────────────────────────────────────
 let currentSymbol = 'XAUUSDc';
 function changeSymbol(btn, tvSym, apiSym) {
   document.querySelectorAll('.sym-btn').forEach(b => b.classList.remove('active'));
@@ -1069,21 +626,13 @@ function changeSymbol(btn, tvSym, apiSym) {
   currentSymbol = apiSym;
   loadChart();
 }
-
-// ── PRICE CHART (Phase 3 — TradingView Lightweight Charts) ──
 let currentTimeframe = 'M5';
 let priceChart, rsiChartInstance, candleSeries;
 let indicatorSeries = { sma20: null, ema50: null, bbUpper: null, bbMid: null, bbLower: null, rsi: null };
 let activeIndicators = { sma20: false, ema50: false, bb: false, rsi: false };
 let lastCandles = [];
 let chartRefreshTimer = null;
-
-const CHART_COLORS = {
-  sma20: '#3498db', ema50: '#f5c842',
-  bbLine: '#b892ff', bbBand: 'rgba(184,146,255,0.08)',
-  rsi: '#2ecc71',
-};
-
+const CHART_COLORS = { sma20: '#3498db', ema50: '#f5c842', bbLine: '#b892ff', bbBand: 'rgba(184,146,255,0.08)', rsi: '#2ecc71' };
 function initCharts() {
   const wrap = document.getElementById('priceChart');
   priceChart = LightweightCharts.createChart(wrap, {
@@ -1099,7 +648,6 @@ function initCharts() {
     borderUpColor: '#2ecc71', borderDownColor: '#e74c3c',
     wickUpColor: '#2ecc71', wickDownColor: '#e74c3c',
   });
-
   const rsiWrap = document.getElementById('rsiChart');
   rsiChartInstance = LightweightCharts.createChart(rsiWrap, {
     layout: { background: { color: '#111318' }, textColor: '#6b7080' },
@@ -1108,33 +656,21 @@ function initCharts() {
     timeScale: { borderColor: '#1e2028', timeVisible: true, secondsVisible: false },
     autoSize: true,
   });
-
-  // Đồng bộ 2 biểu đồ (kéo/zoom biểu đồ giá thì RSI cũng chạy theo)
-  priceChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
-    if (range) rsiChartInstance.timeScale().setVisibleLogicalRange(range);
-  });
-  rsiChartInstance.timeScale().subscribeVisibleLogicalRangeChange(range => {
-    if (range) priceChart.timeScale().setVisibleLogicalRange(range);
-  });
+  priceChart.timeScale().subscribeVisibleLogicalRangeChange(range => { if (range) rsiChartInstance.timeScale().setVisibleLogicalRange(range); });
+  rsiChartInstance.timeScale().subscribeVisibleLogicalRangeChange(range => { if (range) priceChart.timeScale().setVisibleLogicalRange(range); });
 }
-
 function changeTimeframe(tf, btn) {
   document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentTimeframe = tf;
   loadChart();
 }
-
 function toggleIndicator(name, btn) {
   activeIndicators[name] = !activeIndicators[name];
   btn.classList.toggle('active', activeIndicators[name]);
-  if (name === 'rsi') {
-    document.getElementById('rsiChart').classList.toggle('hidden', !activeIndicators.rsi);
-  }
+  if (name === 'rsi') { document.getElementById('rsiChart').classList.toggle('hidden', !activeIndicators.rsi); }
   renderIndicators();
 }
-
-// ── Tính toán chỉ báo — thuần JS, không cần thư viện ngoài ──
 function calcSMA(closes, period) {
   const out = [];
   for (let i = 0; i < closes.length; i++) {
@@ -1155,9 +691,7 @@ function calcEMA(closes, period) {
       let sum = 0;
       for (let j = i - period + 1; j <= i; j++) sum += closes[j];
       prevEma = sum / period;
-    } else {
-      prevEma = closes[i] * k + prevEma * (1 - k);
-    }
+    } else { prevEma = closes[i] * k + prevEma * (1 - k); }
     out.push(prevEma);
   }
   return out;
@@ -1195,16 +729,12 @@ function calcRSI(closes, period = 14) {
   }
   return out;
 }
-
 function renderIndicators() {
-  // Xóa hết series chỉ báo cũ trước khi vẽ lại (đơn giản, tránh trùng)
   Object.values(indicatorSeries).forEach(s => { if (s) { try { priceChart.removeSeries(s); } catch(e){} try { rsiChartInstance.removeSeries(s); } catch(e){} } });
   indicatorSeries = { sma20: null, ema50: null, bbUpper: null, bbMid: null, bbLower: null, rsi: null };
-
   if (!lastCandles.length) return;
   const closes = lastCandles.map(c => c.close);
   const times  = lastCandles.map(c => c.time);
-
   if (activeIndicators.sma20) {
     const sma = calcSMA(closes, 20);
     indicatorSeries.sma20 = priceChart.addLineSeries({ color: CHART_COLORS.sma20, lineWidth: 2, title: 'SMA 20' });
@@ -1230,54 +760,37 @@ function renderIndicators() {
     indicatorSeries.rsi.setData(zipLine(times, rsi));
   }
 }
-
 function zipLine(times, values) {
   const out = [];
   for (let i = 0; i < times.length; i++) {
-    if (values[i] !== null && values[i] !== undefined && !isNaN(values[i])) {
-      out.push({ time: times[i], value: values[i] });
-    }
+    if (values[i] !== null && values[i] !== undefined && !isNaN(values[i])) { out.push({ time: times[i], value: values[i] }); }
   }
   return out;
 }
-
 async function loadChart() {
   const statusEl = document.getElementById('chartStatus');
   statusEl.textContent = 'Đang tải...';
   const data = await fetchAPI(`/api/candles?symbol=${currentSymbol}&timeframe=${currentTimeframe}&limit=300`);
-  if (!data || !data.candles || !data.candles.length) {
-    statusEl.textContent = '⚠️ Không lấy được dữ liệu nến';
-    return;
-  }
+  if (!data || !data.candles || !data.candles.length) { statusEl.textContent = '⚠️ Không lấy được dữ liệu nến'; return; }
   lastCandles = data.candles;
   candleSeries.setData(lastCandles);
   renderIndicators();
   priceChart.timeScale().fitContent();
   statusEl.textContent = `Cập nhật: ${new Date().toLocaleTimeString('vi-VN')}`;
 }
-
-// ── API CALLS ───────────────────────────────────────────
 async function fetchAPI(endpoint) {
   try {
     const r = await fetch(API_BASE + endpoint);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return await r.json();
-  } catch(e) {
-    console.warn('API error:', e.message);
-    return null;
-  }
+  } catch(e) { console.warn('API error:', e.message); return null; }
 }
-
-// ── LOAD SIDEBAR ────────────────────────────────────────
 async function loadSidebar() {
   const data = await fetchAPI('/api/summary');
   if (!data) {
-    document.getElementById('latestSignals').innerHTML =
-      '<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo api_server.py đang chạy.</div>';
+    document.getElementById('latestSignals').innerHTML = '<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo api_server.py đang chạy.</div>';
     return;
   }
-
-  // Stats
   document.getElementById('statToday').textContent = data.today ?? '0';
   document.getElementById('statWin').textContent   = (data.winrate ?? 0) + '%';
   document.getElementById('statOpen').textContent  = data.open ?? '0';
@@ -1286,16 +799,10 @@ async function loadSidebar() {
   const avgREl = document.getElementById('statAvgR');
   avgREl.textContent = (avgR > 0 ? '+' : '') + avgR + 'R';
   avgREl.className = 's-val ' + (avgR > 0 ? 'green' : avgR < 0 ? 'red' : 'gold');
-
-  // Latest signals
   const wrap = document.getElementById('latestSignals');
-  if (!data.latest || data.latest.length === 0) {
-    wrap.innerHTML = '<div class="empty">😴 Chưa có tín hiệu nào.</div>';
-    return;
-  }
+  if (!data.latest || data.latest.length === 0) { wrap.innerHTML = '<div class="empty">😴 Chưa có tín hiệu nào.</div>'; return; }
   wrap.innerHTML = data.latest.map(s => sigCardHTML(s)).join('');
 }
-
 function sigCardHTML(s) {
   const isBuy  = s.direction === 'BUY';
   const isOpen = s.status === 'OPEN';
@@ -1322,24 +829,16 @@ function sigCardHTML(s) {
     </div>
   </div>`;
 }
-
-// ── LOAD OPEN SIGNALS ────────────────────────────────────
 async function loadOpenSignals() {
   const grid = document.getElementById('openSignalsGrid');
   grid.innerHTML = '<div class="loading"><div class="spinner"></div> Đang tải...</div>';
   const data = await fetchAPI('/api/signals?status=OPEN');
-  if (!data || data.length === 0) {
-    grid.innerHTML = '<div class="empty">😴 Hiện không có lệnh nào đang mở.</div>';
-    return;
-  }
+  if (!data || data.length === 0) { grid.innerHTML = '<div class="empty">😴 Hiện không có lệnh nào đang mở.</div>'; return; }
   grid.innerHTML = data.map(s => fullSigCard(s)).join('');
 }
-
 function fullSigCard(s) {
   const isBuy = s.direction === 'BUY';
   const badgeCls = s.status === 'OPEN' ? 'badge-open' : s.status.includes('TP') ? 'badge-tp' : 'badge-sl';
-  // v5.3 — Dùng bản dịch EN nếu đang ở tiếng Anh VÀ đã có bản dịch (dịch chạy nền,
-  // có thể chưa kịp xong ngay lúc tín hiệu mới ra) — nếu chưa có, fallback về bản Việt.
   const curLang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
   const analysisText = (curLang === 'en' && s.analysis_text_en) ? s.analysis_text_en : (s.analysis_text ?? '');
   return `
@@ -1363,46 +862,26 @@ function fullSigCard(s) {
     </div>
   </div>`;
 }
-
-// ── LOAD HISTORY ─────────────────────────────────────────
 async function loadHistory() {
   const sym = document.getElementById('filterSym').value;
   const url = '/api/signals' + (sym ? '?symbol=' + sym : '');
   const body = document.getElementById('historyBody');
   body.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div> Đang tải...</div></td></tr>';
-
   const data = await fetchAPI(url);
-  if (!data) {
-    body.innerHTML = '<tr><td colspan="7"><div class="empty">⚠️ Không kết nối được API.</div></td></tr>';
-    return;
-  }
-
-  // ── v5.1: Win/Loss tính theo R THỰC NHẬN (pnl_pips), KHÔNG theo tên
-  // trạng thái đóng lệnh. Chỉ báo THIENMINHGOLD là Trend Following với cấu
-  // trúc SL=1R / TP1=1R / TP2=2R / TP3=3R — một lệnh đã chạm TP1 rồi mới bị
-  // kéo về SL (status='SL_AFTER_TP1') vẫn là lệnh THẮNG thực tế (+1R), không
-  // phải thua. Dùng pnl_pips > 0 để xác định đúng bản chất, không phụ thuộc
-  // cách đặt tên trạng thái.
+  if (!data) { body.innerHTML = '<tr><td colspan="7"><div class="empty">⚠️ Không kết nối được API.</div></td></tr>'; return; }
   const closed = data.filter(s => s.status !== 'OPEN');
   const wins   = closed.filter(s => (parseFloat(s.pnl_pips) || 0) > 0);
   const losses = closed.filter(s => (parseFloat(s.pnl_pips) || 0) <= 0);
   const opens  = data.filter(s => s.status === 'OPEN');
   const wr     = closed.length > 0 ? Math.round(wins.length / closed.length * 100) : 0;
-
-  // R trung bình/lệnh (Expectancy) — mỗi lệnh có 1R riêng theo khoảng cách
-  // entry→SL thực tế của chính lệnh đó (ATR-based, khác nhau mỗi lệnh)
   let rSum = 0, rCount = 0;
   closed.forEach(s => {
     const pnl    = parseFloat(s.pnl_pips);
     const entry  = parseFloat(s.entry);
     const sl     = parseFloat(s.stop_loss);
-    if (!isNaN(pnl) && !isNaN(entry) && !isNaN(sl) && Math.abs(entry - sl) > 0) {
-      rSum += pnl / Math.abs(entry - sl);
-      rCount++;
-    }
+    if (!isNaN(pnl) && !isNaN(entry) && !isNaN(sl) && Math.abs(entry - sl) > 0) { rSum += pnl / Math.abs(entry - sl); rCount++; }
   });
   const avgR = rCount > 0 ? (rSum / rCount).toFixed(2) : '0.00';
-
   document.getElementById('wrNum').textContent   = wr + '%';
   document.getElementById('wrClosed').textContent = closed.length;
   document.getElementById('wrBar').style.width   = wr + '%';
@@ -1413,12 +892,7 @@ async function loadHistory() {
   const hAvgREl = document.getElementById('hAvgR');
   hAvgREl.textContent = (parseFloat(avgR) > 0 ? '+' : '') + avgR + 'R';
   hAvgREl.className = 's-val ' + (parseFloat(avgR) > 0 ? 'green' : parseFloat(avgR) < 0 ? 'red' : 'gold');
-
-  if (data.length === 0) {
-    body.innerHTML = '<tr><td colspan="7"><div class="empty">Chưa có dữ liệu.</div></td></tr>';
-    return;
-  }
-
+  if (data.length === 0) { body.innerHTML = '<tr><td colspan="7"><div class="empty">Chưa có dữ liệu.</div></td></tr>'; return; }
   const badgeMap = {
     'OPEN':    '<span class="sfc-status-badge badge-open">OPEN</span>',
     'TP1_HIT': '<span class="sfc-status-badge badge-tp">TP1 ✓</span>',
@@ -1428,7 +902,6 @@ async function loadHistory() {
     'SL_AFTER_TP1': '<span class="sfc-status-badge badge-tp">TP1→SL ✓</span>',
     'SL_AFTER_TP2': '<span class="sfc-status-badge badge-tp">TP2→SL ✓</span>',
   };
-
   body.innerHTML = data.slice().reverse().map(s => `
     <tr>
       <td class="td-mono" style="font-size:11px">${s.created_at?.slice(0,16) ?? ''}</td>
@@ -1440,29 +913,18 @@ async function loadHistory() {
       <td>${badgeMap[s.status] ?? s.status}</td>
     </tr>`).join('');
 }
-
-// ── MARKET STRUCTURE ─────────────────────────────────────
 let currentMktSymbol = 'XAUUSDc';
 let currentMktLabel  = 'XAU/USD';
-
 async function loadMarket(symbol, label, btn) {
-  // Update active button
-  if (btn) {
-    document.querySelectorAll('#tab-market .sym-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+  if (btn) { document.querySelectorAll('#tab-market .sym-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
   currentMktSymbol = symbol;
   currentMktLabel  = label;
-
-  // Reset
   document.getElementById('mkt-price').textContent  = '—';
   document.getElementById('mkt-trend').textContent  = '—';
   document.getElementById('mkt-spread').textContent = '—';
   document.getElementById('mkt-vol').textContent    = '—';
   document.getElementById('mkt-levels').innerHTML   = '<div class="loading"><div class="spinner"></div>Đang tải...</div>';
   document.getElementById('mkt-ai').innerHTML       = '<div class="loading"><div class="spinner"></div>Đang phân tích AI...</div>';
-
-  // Lấy giá từ /prices
   try {
     const res    = await fetch(API_BASE + '/prices');
     const prices = await res.json();
@@ -1471,14 +933,11 @@ async function loadMarket(symbol, label, btn) {
     if (prices[key]) {
       const price = Number(prices[key]);
       document.getElementById('mkt-price').textContent = price.toFixed(symbol === 'BTCUSDc' ? 0 : 2);
-
-      // Tính key levels đơn giản
       const step = symbol === 'XAUUSDc' ? 20 : symbol === 'BTCUSDc' ? 1000 : 0.005;
       const r1 = (Math.ceil(price / step) * step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
       const r2 = (Math.ceil(price / step) * step + step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
       const s1 = (Math.floor(price / step) * step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
       const s2 = (Math.floor(price / step) * step - step).toFixed(symbol === 'BTCUSDc' ? 0 : 2);
-
       document.getElementById('mkt-levels').innerHTML = `
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;justify-content:space-between;padding:8px 12px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:6px;">
@@ -1502,23 +961,15 @@ async function loadMarket(symbol, label, btn) {
             <span style="font-family:monospace;color:var(--green);font-weight:600;">${s2}</span>
           </div>
         </div>`;
-
-      if (prices.spread_xau) {
-        document.getElementById('mkt-spread').textContent = prices.spread_xau;
-      }
+      if (prices.spread_xau) { document.getElementById('mkt-spread').textContent = prices.spread_xau; }
     }
   } catch(e) {}
-
-  // Phiên giao dịch
   renderSession();
-
-  // Gọi AI phân tích
   await refreshMarketAI();
 }
-
 function renderSession() {
   const now  = new Date();
-  const hour = now.getUTCHours(); // UTC
+  const hour = now.getUTCHours();
   const sessions = [
     { name: 'Sydney',   open: 21, close: 6,  tz: 'UTC+10' },
     { name: 'Tokyo',    open: 23, close: 8,  tz: 'UTC+9'  },
@@ -1526,9 +977,7 @@ function renderSession() {
     { name: 'New York', open: 12, close: 21, tz: 'UTC-4'  },
   ];
   const html = sessions.map(s => {
-    const isOpen = s.open < s.close
-      ? (hour >= s.open && hour < s.close)
-      : (hour >= s.open || hour < s.close);
+    const isOpen = s.open < s.close ? (hour >= s.open && hour < s.close) : (hour >= s.open || hour < s.close);
     return `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
         <div>
@@ -1544,17 +993,14 @@ function renderSession() {
   }).join('');
   document.getElementById('mkt-session').innerHTML = html;
 }
-
 async function refreshMarketAI() {
   const el = document.getElementById('mkt-ai');
   el.innerHTML = '<div class="loading"><div class="spinner"></div>Đang phân tích AI...</div>';
-
   try {
     const pricesRes = await fetch(API_BASE + '/prices');
     const prices    = await pricesRes.json();
     const keyMap    = { 'XAUUSDc':'xauusd', 'EURUSDc':'eurusd', 'BTCUSDc':'btcusd' };
     const price     = prices[keyMap[currentMktSymbol]] ?? 'N/A';
-
     const res  = await fetch(API_BASE + '/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1569,7 +1015,6 @@ Trả lời ngắn gọn dưới 200 từ, tiếng Việt, dùng emoji.`
       }),
       signal: AbortSignal.timeout(30000)
     });
-
     const data  = await res.json();
     const reply = data.reply ?? 'Không nhận được phản hồi từ AI.';
     el.innerHTML = reply
@@ -1580,32 +1025,22 @@ Trả lời ngắn gọn dưới 200 từ, tiếng Việt, dùng emoji.`
     el.innerHTML = '<span style="color:var(--red)">⚠️ Không kết nối được AI. Đảm bảo START_BOT.bat đang chạy.</span>';
   }
 }
-
-// ── INIT ─────────────────────────────────────────────────
 loadSidebar();
-setInterval(loadSidebar, 30000); // Refresh mỗi 30 giây
-
+setInterval(loadSidebar, 30000);
 try {
   initCharts();
   loadChart();
-  chartRefreshTimer = setInterval(loadChart, 10000); // Làm mới nến mỗi 10 giây
+  chartRefreshTimer = setInterval(loadChart, 10000);
 } catch (e) {
   console.error('Lỗi khởi tạo biểu đồ:', e);
   const el = document.getElementById('chartStatus');
   if (el) el.textContent = '⚠️ Lỗi tải thư viện biểu đồ — thử tải lại trang';
 }
-
-// Prompt nhập API URL nếu chưa có
 function setApiUrl() {
   const url = prompt('Nhập URL API server (ngrok URL):', API_BASE);
-  if (url) {
-    localStorage.setItem('apiBase', url.replace(/\/$/, ''));
-    location.reload();
-  }
+  if (url) { localStorage.setItem('apiBase', url.replace(/\/$/, '')); location.reload(); }
 }
 </script>
-
-<!-- Nút cài API URL (chỉ admin thấy) -->
 <script>
 if (sessionStorage.getItem('role') === 'admin') {
   const btn = document.createElement('button');

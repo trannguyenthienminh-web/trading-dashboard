@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
 <title>AI Decision Engine — Trading AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -105,6 +107,42 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;}
 
+/* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
+.lang-switcher { position: relative; display: inline-block; }
+.lang-switcher__toggle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer; font-size: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background 0.15s ease;
+}
+.lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+.lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+.lang-switcher__menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  min-width: 150px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 200;
+}
+.lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-switcher__option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 5px;
+  color: var(--text); font-size: 12px;
+  transition: background 0.12s ease;
+}
+.lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+.lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
+
 @media(max-width:640px){
   .stats-grid{grid-template-columns:1fr 1fr;}
   .content{padding:14px;}
@@ -114,22 +152,32 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 <body>
 
 <nav>
-  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">AI Decision Engine</span></div>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;" data-i18n="ai_decisions.nav_title">AI Decision Engine</span></div>
   <div class="nav-right">
-    <button class="btn-refresh" onclick="loadDecisions()">↺ Refresh</button>
-    <a href="dashboard.html" class="nav-back">← Dashboard</a>
+    <button class="btn-refresh" onclick="loadDecisions()" data-i18n="ai_decisions.btn_refresh">↺ Refresh</button>
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+      </div>
+    </div>
+    <a href="dashboard.html" class="nav-back" data-i18n="ai_decisions.nav_back">← Dashboard</a>
   </div>
 </nav>
 
 <div class="content">
   <div class="page-header">
-    <div class="page-title">⚖️ AI Decision Engine</div>
-    <div class="page-sub">Nhật ký mọi quyết định AI đưa ra trước khi tín hiệu được gửi đi.</div>
+    <div class="page-title" data-i18n="ai_decisions.page_title">⚖️ AI Decision Engine</div>
+    <div class="page-sub" data-i18n="ai_decisions.page_sub">Nhật ký mọi quyết định AI đưa ra trước khi tín hiệu được gửi đi.</div>
   </div>
 
   <div class="intro-box">
     <div class="intro-icon">🧠</div>
-    <div class="intro-text">
+    <div class="intro-text" data-i18n-html="ai_decisions.intro_html">
       <strong>AI không chỉ chấm điểm — AI quyết định.</strong> Mỗi tín hiệu từ indicator đều đi qua bước
       kiểm tra này trước khi được gửi. <strong style="color:var(--red)">REJECT</strong> = không gửi,
       <strong style="color:var(--gold)">WARN</strong> = gửi kèm cảnh báo, <strong style="color:var(--green)">APPROVE</strong> = gửi bình thường.
@@ -138,18 +186,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
 
   <div class="intro-box" id="live-risk-box" style="border-color:rgba(59,158,255,.25);background:linear-gradient(135deg,rgba(59,158,255,.06),rgba(59,158,255,.02));">
     <div class="intro-icon">🛡️</div>
-    <div class="intro-text" id="live-risk-text">Đang tải trạng thái Risk hiện tại...</div>
+    <div class="intro-text" id="live-risk-text" data-i18n="ai_decisions.loading_risk">Đang tải trạng thái Risk hiện tại...</div>
   </div>
 
   <div class="stats-grid" id="stats-grid">
-    <div class="stat-card c-green"><div class="stat-label">Approve</div><div class="stat-val c-green">—</div></div>
-    <div class="stat-card c-gold"><div class="stat-label">Warn</div><div class="stat-val c-gold">—</div></div>
-    <div class="stat-card c-red"><div class="stat-label">Reject</div><div class="stat-val c-red">—</div></div>
-    <div class="stat-card c-blue"><div class="stat-label">Reject Rate</div><div class="stat-val c-blue">—</div></div>
+    <div class="stat-card c-green"><div class="stat-label" data-i18n="ai_decisions.stat_approve">Approve</div><div class="stat-val c-green">—</div></div>
+    <div class="stat-card c-gold"><div class="stat-label" data-i18n="ai_decisions.stat_warn">Warn</div><div class="stat-val c-gold">—</div></div>
+    <div class="stat-card c-red"><div class="stat-label" data-i18n="ai_decisions.stat_reject">Reject</div><div class="stat-val c-red">—</div></div>
+    <div class="stat-card c-blue"><div class="stat-label" data-i18n="ai_decisions.stat_reject_rate">Reject Rate</div><div class="stat-val c-blue">—</div></div>
   </div>
 
   <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterBy(null, this)">Tất cả</button>
+    <button class="filter-btn active" onclick="filterBy(null, this)" data-i18n="ai_decisions.filter_all">Tất cả</button>
     <button class="filter-btn" onclick="filterBy('APPROVE', this)">✅ Approve</button>
     <button class="filter-btn" onclick="filterBy('WARN', this)">⚠️ Warn</button>
     <button class="filter-btn" onclick="filterBy('REJECT', this)">🚫 Reject</button>
@@ -160,6 +208,46 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px
   </div>
 </div>
 
+<script src="/js/i18n.js" defer></script>
+<script>
+  // Toggle dropdown ngôn ngữ (đồng bộ với dashboard.html)
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+      });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(() => {
+            syncToggleDisplay();
+            // Vẽ lại nội dung động (stats + log list + risk box) theo ngôn ngữ mới
+            loadDecisions();
+            loadRiskStatus();
+          }, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+
+  function curLang() {
+    return (window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : null)
+      || localStorage.getItem('thienminhgold_lang') || 'vi';
+  }
+</script>
 <script>
 const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
 let currentFilter = null;
@@ -178,41 +266,47 @@ async function loadDecisions() {
     renderStats(data.stats, data.reject_rate);
     renderList(data.logs);
   } catch(e) {
-    list.innerHTML = `<div class="empty">⚠️ Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.</div>`;
+    const isEn = curLang() === 'en';
+    list.innerHTML = `<div class="empty">${isEn ? '⚠️ Could not connect to API.<br>Make sure START_BOT.bat is running.' : '⚠️ Không kết nối được API.<br>Đảm bảo START_BOT.bat đang chạy.'}</div>`;
   }
 }
 
 function renderStats(stats, rejectRate) {
+  const isEn = curLang() === 'en';
   const grid = document.getElementById('stats-grid');
   const total = (stats.APPROVE||0) + (stats.WARN||0) + (stats.REJECT||0);
+  const pctSuffix = isEn ? '% of total' : '% tổng số';
   grid.innerHTML = `
     <div class="stat-card c-green">
-      <div class="stat-label">Approve</div>
+      <div class="stat-label">${isEn?'Approve':'Approve'}</div>
       <div class="stat-val c-green">${stats.APPROVE||0}</div>
-      <div class="stat-sub">${total? Math.round((stats.APPROVE||0)/total*100):0}% tổng số</div>
+      <div class="stat-sub">${total? Math.round((stats.APPROVE||0)/total*100):0}${pctSuffix}</div>
     </div>
     <div class="stat-card c-gold">
       <div class="stat-label">Warn</div>
       <div class="stat-val c-gold">${stats.WARN||0}</div>
-      <div class="stat-sub">${total? Math.round((stats.WARN||0)/total*100):0}% tổng số</div>
+      <div class="stat-sub">${total? Math.round((stats.WARN||0)/total*100):0}${pctSuffix}</div>
     </div>
     <div class="stat-card c-red">
       <div class="stat-label">Reject</div>
       <div class="stat-val c-red">${stats.REJECT||0}</div>
-      <div class="stat-sub">Đã chặn không gửi</div>
+      <div class="stat-sub">${isEn ? 'Blocked from sending' : 'Đã chặn không gửi'}</div>
     </div>
     <div class="stat-card c-blue">
       <div class="stat-label">Reject Rate</div>
       <div class="stat-val c-blue">${rejectRate}%</div>
-      <div class="stat-sub">Tỷ lệ AI từ chối</div>
+      <div class="stat-sub">${isEn ? 'AI rejection rate' : 'Tỷ lệ AI từ chối'}</div>
     </div>
   `;
 }
 
 function renderList(logs) {
+  const isEn = curLang() === 'en';
   const list = document.getElementById('log-list');
   if (!logs.length) {
-    list.innerHTML = `<div class="empty">⚖️ Chưa có quyết định nào được ghi nhận.<br>Decision Engine sẽ hoạt động ngay khi có tín hiệu mới.</div>`;
+    list.innerHTML = `<div class="empty">${isEn
+      ? '⚖️ No decisions recorded yet.<br>Decision Engine will activate as soon as a new signal arrives.'
+      : '⚖️ Chưa có quyết định nào được ghi nhận.<br>Decision Engine sẽ hoạt động ngay khi có tín hiệu mới.'}</div>`;
     return;
   }
 
@@ -221,6 +315,8 @@ function renderList(logs) {
     WARN:    {cls:'warn',    icon:'⚠️', text:'WARN'},
     REJECT:  {cls:'reject',  icon:'🚫', text:'REJECT'},
   };
+  const actionLabel = isEn ? 'Action:' : 'Hành động:';
+  const noReason = isEn ? 'No detailed reason.' : 'Không có lý do chi tiết.';
 
   list.innerHTML = logs.map(l => {
     const b = badgeMap[l.decision] || badgeMap.APPROVE;
@@ -236,8 +332,8 @@ function renderList(logs) {
           <span class="decision-badge ${b.cls}">${b.icon} ${b.text}</span>
         </div>
       </div>
-      <div class="log-reason">${l.reason || 'Không có lý do chi tiết.'}</div>
-      <div class="log-action">💡 <strong>Hành động:</strong> ${l.action || '—'}</div>
+      <div class="log-reason">${l.reason || noReason}</div>
+      <div class="log-action">💡 <strong>${actionLabel}</strong> ${l.action || '—'}</div>
       ${l.risk_note ? `<div class="log-risk">🛡️ ${l.risk_note.replace(/\\n/g,' · ')}</div>` : ''}
       ${l.learning_note ? `<div class="log-learning">🧠 ${l.learning_note.replace(/\\n/g,' · ')}</div>` : ''}
       <div class="log-meta-row">
@@ -258,19 +354,23 @@ function filterBy(decision, btn) {
 }
 
 async function loadRiskStatus() {
+  const isEn = curLang() === 'en';
   const box = document.getElementById('live-risk-text');
   try {
     const res  = await fetch(`${API}/api/risk-status`, {signal: AbortSignal.timeout(10000)});
     const d    = await res.json();
     const qualityColor = {highest:'var(--green)', high:'var(--green)', low:'var(--red)'}[d.session.quality] || 'var(--muted)';
     const newsColor = d.news.risk_score >= 40 ? 'var(--red)' : d.news.risk_score >= 20 ? 'var(--gold)' : 'var(--green)';
+    const sessionLabel = isEn ? 'Current session:' : 'Phiên hiện tại:';
+    const newsLabel = isEn ? 'News risk:' : 'Risk tin tức:';
+    const posLabel = isEn ? 'open positions' : 'lệnh đang mở';
     box.innerHTML = `
-      <strong style="color:${qualityColor}">🕐 Phiên hiện tại: ${d.session.session}</strong> (${d.session.note})<br>
-      <strong style="color:${newsColor}">📰 Risk tin tức: ${d.news.risk_score}/100</strong> — ${d.news_message}<br>
-      <span style="color:var(--muted)">📊 ${d.open_positions_count} lệnh đang mở</span>
+      <strong style="color:${qualityColor}">🕐 ${sessionLabel} ${d.session.session}</strong> (${d.session.note})<br>
+      <strong style="color:${newsColor}">📰 ${newsLabel} ${d.news.risk_score}/100</strong> — ${d.news_message}<br>
+      <span style="color:var(--muted)">📊 ${d.open_positions_count} ${posLabel}</span>
     `;
   } catch(e) {
-    box.textContent = '⚠️ Không tải được trạng thái Risk hiện tại.';
+    box.textContent = isEn ? '⚠️ Could not load current Risk status.' : '⚠️ Không tải được trạng thái Risk hiện tại.';
   }
 }
 

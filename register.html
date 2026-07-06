@@ -221,6 +221,17 @@
   }
   .err-msg.show { display: block; }
 
+  /* MỚI — Payment method tabs */
+  .pm-method-btn {
+    flex: 1; padding: 10px 14px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.8125rem; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .pm-method-btn:hover { border-color: rgba(201,168,76,0.4); }
+  .pm-method-btn.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+
   /* ── LANGUAGE SWITCHER (đồng bộ với dashboard.html) ── */
   .lang-switcher { position: relative; display: inline-block; }
   .lang-switcher__toggle {
@@ -380,6 +391,16 @@
 
         <div class="payment-body">
 
+          <!-- MỚI — Chọn phương thức thanh toán -->
+          <div class="pm-method-tabs" style="display:flex;gap:8px;margin-bottom:20px;">
+            <button class="pm-method-btn active" id="pm-btn-bank" onclick="selectPaymentMethod('bank')" data-i18n="register.pm_bank">🏦 Chuyển khoản</button>
+            <button class="pm-method-btn" id="pm-btn-binance" onclick="selectPaymentMethod('binance')" data-i18n="register.pm_binance">₿ Binance USDT</button>
+            <button class="pm-method-btn" id="pm-btn-paypal" onclick="selectPaymentMethod('paypal')" data-i18n="register.pm_paypal">💰 PayPal</button>
+          </div>
+
+          <!-- PANEL: NGÂN HÀNG (VietQR) -->
+          <div id="pm-panel-bank">
+
           <!-- QR Code -->
           <div class="qr-wrap">
             <div class="qr-img-box">
@@ -431,6 +452,65 @@
             ⚠️ <strong>Quan trọng:</strong> Vui lòng ghi đúng nội dung chuyển khoản để admin xác nhận nhanh nhất.<br>
             Sau khi chuyển, nhập mã giao dịch bên dưới và bấm <strong>"Xác nhận đã chuyển khoản"</strong>.
           </div>
+
+          </div><!-- /pm-panel-bank -->
+
+          <!-- PANEL: BINANCE USDT -->
+          <div id="pm-panel-binance" style="display:none;">
+
+            <div class="qr-wrap">
+              <div class="qr-img-box">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TD8UwrjJvjtjutfSt7ZkuHG1KZ1Pb3XMdy" alt="QR Binance USDT" style="width:176px;height:176px;" />
+              </div>
+              <p style="font-size:0.75rem;color:var(--muted);text-align:center;" data-i18n="register.binance_instructions">
+                📱 Mở app Binance → Gửi → Quét mã hoặc dán địa chỉ ví bên dưới
+              </p>
+            </div>
+
+            <div class="bank-info" style="margin-bottom:16px;">
+              <div class="bank-row">
+                <span class="bank-row-label" data-i18n="register.binance_network_label">Mạng lưới</span>
+                <span class="bank-row-value gold">USDT (TRC20 - Tron)</span>
+              </div>
+              <div class="bank-row">
+                <span class="bank-row-label" data-i18n="register.binance_address_label">Địa chỉ ví</span>
+                <div style="display:flex;align-items:center;">
+                  <span class="bank-row-value gold" style="font-size:0.8rem;word-break:break-all;">TD8UwrjJvjtjutfSt7ZkuHG1KZ1Pb3XMdy</span>
+                  <button class="copy-btn" onclick="copyText('TD8UwrjJvjtjutfSt7ZkuHG1KZ1Pb3XMdy', this)">Copy</button>
+                </div>
+              </div>
+              <div class="bank-row">
+                <span class="bank-row-label" data-i18n="register.amount_label">Số tiền</span>
+                <span class="bank-row-value green" id="display-amount-usdt">30 USDT</span>
+              </div>
+            </div>
+
+            <div class="transfer-note-box" style="color:#fbbf24;background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.2);" data-i18n-html="register.binance_warning">
+              ⚠️ <strong>Quan trọng:</strong> Chỉ gửi USDT qua mạng <strong>TRC20 (Tron)</strong>. Gửi nhầm mạng khác (BEP20, ERC20...) có thể làm mất tiền vĩnh viễn.<br>
+              Sau khi chuyển, nhập mã giao dịch (Transaction Hash/ID) bên dưới và bấm <strong>"Xác nhận đã chuyển khoản"</strong>.
+            </div>
+
+          </div><!-- /pm-panel-binance -->
+
+          <!-- PANEL: PAYPAL -->
+          <div id="pm-panel-paypal" style="display:none;">
+            <div style="text-align:center;padding:20px 0 24px;">
+              <p style="font-size:0.875rem;color:var(--muted);margin-bottom:18px;" data-i18n="register.paypal_instructions">
+                Bấm nút bên dưới để mở PayPal và gửi thanh toán trực tiếp. Sau khi gửi xong, quay lại đây nhập mã giao dịch PayPal.
+              </p>
+              <a href="https://www.paypal.me/trannguyenthienminh/30USD" target="_blank" rel="noopener"
+                 id="paypal-pay-btn"
+                 style="display:inline-flex;align-items:center;gap:8px;padding:13px 32px;background:#0070BA;color:#fff;border-radius:10px;font-weight:700;font-size:0.9375rem;">
+                💰 <span data-i18n="register.btn_pay_paypal">Thanh toán qua PayPal</span>
+              </a>
+            </div>
+
+            <div class="transfer-note-box" style="color:#93C5FD;" data-i18n-html="register.paypal_warning">
+              ⚠️ <strong>Lưu ý:</strong> PayPal có thể tính thêm phí chuyển đổi ngoại tệ tùy ngân hàng/thẻ của bạn.<br>
+              Sau khi thanh toán, nhập mã giao dịch (Transaction ID) bên dưới và bấm <strong>"Xác nhận đã chuyển khoản"</strong>.
+            </div>
+          </div><!-- /pm-panel-paypal -->
+
 
           <!-- Transaction ID input -->
           <div class="payment-field">
@@ -519,7 +599,36 @@
   const AMOUNT_VND = 750000;         // ~$30/tháng
 
   let selectedPlan  = 'ib';
+  let selectedPaymentMethod = 'bank'; // MỚI — 'bank' hoặc 'binance'
   let registeredData = null;         // Lưu payload sau submit để dùng cho confirmPayment
+
+  /* ── MỚI: CHỌN PHƯƠNG THỨC THANH TOÁN ── */
+  function selectPaymentMethod(method) {
+    selectedPaymentMethod = method;
+    document.getElementById('pm-btn-bank').classList.toggle('active', method === 'bank');
+    document.getElementById('pm-btn-binance').classList.toggle('active', method === 'binance');
+    document.getElementById('pm-btn-paypal').classList.toggle('active', method === 'paypal');
+    document.getElementById('pm-panel-bank').style.display    = method === 'bank'    ? 'block' : 'none';
+    document.getElementById('pm-panel-binance').style.display = method === 'binance' ? 'block' : 'none';
+    document.getElementById('pm-panel-paypal').style.display  = method === 'paypal'  ? 'block' : 'none';
+
+    const txnLabel = document.querySelector('label[data-i18n="register.txn_label"]');
+    const txnHint  = document.querySelector('.field-hint[data-i18n="register.txn_hint"]');
+    const txnInput = document.getElementById('f-txn');
+    if (method === 'binance') {
+      if (txnLabel) txnLabel.textContent = 'Transaction Hash (TxID)';
+      if (txnHint)  txnHint.textContent  = 'Copy mã Transaction Hash từ app Binance sau khi gửi USDT thành công';
+      if (txnInput) txnInput.placeholder = 'VD: 8f3a2b1c9d...';
+    } else if (method === 'paypal') {
+      if (txnLabel) txnLabel.textContent = 'PayPal Transaction ID';
+      if (txnHint)  txnHint.textContent  = 'Copy mã Transaction ID từ email xác nhận PayPal sau khi thanh toán';
+      if (txnInput) txnInput.placeholder = 'VD: 9XY123456A789012B';
+    } else {
+      if (txnLabel) txnLabel.textContent = 'Mã giao dịch / Biên lai';
+      if (txnHint)  txnHint.textContent  = 'Copy mã giao dịch từ app ngân hàng sau khi chuyển thành công';
+      if (txnInput) txnInput.placeholder = 'VD: FT2506281234ABCD';
+    }
+  }
 
   /* ── PLAN SELECTION ── */
   function selectPlan(plan, el) {
@@ -528,17 +637,37 @@
     el.classList.add('selected');
     document.getElementById('ib-fields').style.display     = plan === 'ib'     ? 'block' : 'none';
     document.getElementById('rental-fields').style.display = plan === 'rental' ? 'block' : 'none';
+
+    // MỚI — hiện đúng ngôn ngữ hiện tại (trước đây luôn cứng tiếng Việt dù
+    // dropdown đang để EN, vì đây là nội dung JS tạo động, không được
+    // data-i18n xử lý tự động)
+    const isEn = (window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : null)
+      || localStorage.getItem('thienminhgold_lang') || 'vi';
+    const en = isEn === 'en';
+
     document.getElementById('plan-info').innerHTML = plan === 'ib'
-      ? '✅ Bạn đang đăng ký gói <strong>IB Free</strong> — miễn phí khi mở tài khoản qua link IB'
-      : `💳 Bạn đang đăng ký gói <strong>Thuê EA $30/tháng</strong><br><br>
-         <div style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:12px 14px;margin-top:8px;">
-           ⚠️ <strong style="color:#C9A84C;">Làm NGAY trước khi điền form:</strong><br>
-           <span style="font-size:0.85rem;">Nhắn <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">/start</code> cho bot để nhận key tự động sau khi thanh toán</span><br>
-           <a href="https://t.me/mygroup_signal_bot" target="_blank"
-              style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;background:#C9A84C;color:#000;border-radius:6px;font-weight:700;font-size:0.825rem;text-decoration:none;">
-             ✈ Nhắn /start cho Bot ngay
-           </a>
-         </div>`;
+      ? (en
+          ? '✅ You are registering for the <strong>IB Free</strong> plan — free when you open an account via IB link'
+          : '✅ Bạn đang đăng ký gói <strong>IB Free</strong> — miễn phí khi mở tài khoản qua link IB')
+      : (en
+          ? `💳 You are registering for the <strong>Rent EA $30/month</strong> plan<br><br>
+             <div style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:12px 14px;margin-top:8px;">
+               ⚠️ <strong style="color:#C9A84C;">Do this NOW before filling the form:</strong><br>
+               <span style="font-size:0.85rem;">Message <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">/start</code> to the bot to receive your key automatically after payment</span><br>
+               <a href="https://t.me/mygroup_signal_bot" target="_blank"
+                  style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;background:#C9A84C;color:#000;border-radius:6px;font-weight:700;font-size:0.825rem;text-decoration:none;">
+                 ✈ Message /start to Bot now
+               </a>
+             </div>`
+          : `💳 Bạn đang đăng ký gói <strong>Thuê EA $30/tháng</strong><br><br>
+             <div style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:12px 14px;margin-top:8px;">
+               ⚠️ <strong style="color:#C9A84C;">Làm NGAY trước khi điền form:</strong><br>
+               <span style="font-size:0.85rem;">Nhắn <code style="background:rgba(255,255,255,0.1);padding:1px 6px;border-radius:4px;">/start</code> cho bot để nhận key tự động sau khi thanh toán</span><br>
+               <a href="https://t.me/mygroup_signal_bot" target="_blank"
+                  style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 16px;background:#C9A84C;color:#000;border-radius:6px;font-weight:700;font-size:0.825rem;text-decoration:none;">
+                 ✈ Nhắn /start cho Bot ngay
+               </a>
+             </div>`);
     // Hide payment section nếu đổi gói
     hidePayment();
   }
@@ -652,7 +781,10 @@
       return;
     }
 
-    const payload = { ...registeredData, payment_note: txn };
+    const methodPrefix = selectedPaymentMethod === 'binance' ? '[Binance USDT] '
+      : selectedPaymentMethod === 'paypal' ? '[PayPal] '
+      : '[Bank Transfer] ';
+    const payload = { ...registeredData, payment_note: methodPrefix + txn };
     const btn = document.getElementById('btn-paid');
     btn.disabled = true;
     btn.textContent = 'Đang gửi xác nhận...';

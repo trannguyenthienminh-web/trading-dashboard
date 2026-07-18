@@ -430,11 +430,12 @@
             <th data-i18n="dashboard.th_entry">Entry</th>
             <th data-i18n="dashboard.th_sl">SL</th>
             <th data-i18n="dashboard.th_tp1">TP1</th>
+            <th data-i18n="dashboard.th_r">R</th>
             <th data-i18n="dashboard.th_status">Trạng thái</th>
           </tr>
         </thead>
         <tbody id="historyBody">
-          <tr><td colspan="7"><div class="loading"><div class="spinner"></div> <span data-i18n="dashboard.loading">Đang tải...</span></div></td></tr>
+          <tr><td colspan="8"><div class="loading"><div class="spinner"></div> <span data-i18n="dashboard.loading">Đang tải...</span></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -866,9 +867,9 @@ async function loadHistory() {
   const sym = document.getElementById('filterSym').value;
   const url = '/api/signals' + (sym ? '?symbol=' + sym : '');
   const body = document.getElementById('historyBody');
-  body.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div> Đang tải...</div></td></tr>';
+  body.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div> Đang tải...</div></td></tr>';
   const data = await fetchAPI(url);
-  if (!data) { body.innerHTML = '<tr><td colspan="7"><div class="empty">⚠️ Không kết nối được API.</div></td></tr>'; return; }
+  if (!data) { body.innerHTML = '<tr><td colspan="8"><div class="empty">⚠️ Không kết nối được API.</div></td></tr>'; return; }
   const closed = data.filter(s => s.status !== 'OPEN');
   const wins   = closed.filter(s => (parseFloat(s.pnl_pips) || 0) > 0);
   const losses = closed.filter(s => (parseFloat(s.pnl_pips) || 0) <= 0);
@@ -892,7 +893,7 @@ async function loadHistory() {
   const hAvgREl = document.getElementById('hAvgR');
   hAvgREl.textContent = (parseFloat(avgR) > 0 ? '+' : '') + avgR + 'R';
   hAvgREl.className = 's-val ' + (parseFloat(avgR) > 0 ? 'green' : parseFloat(avgR) < 0 ? 'red' : 'gold');
-  if (data.length === 0) { body.innerHTML = '<tr><td colspan="7"><div class="empty">Chưa có dữ liệu.</div></td></tr>'; return; }
+  if (data.length === 0) { body.innerHTML = '<tr><td colspan="8"><div class="empty">Chưa có dữ liệu.</div></td></tr>'; return; }
   const badgeMap = {
     'OPEN':    '<span class="sfc-status-badge badge-open">OPEN</span>',
     'TP1_HIT': '<span class="sfc-status-badge badge-tp">TP1 ✓</span>',
@@ -902,6 +903,22 @@ async function loadHistory() {
     'SL_AFTER_TP1': '<span class="sfc-status-badge badge-tp">TP1→SL ✓</span>',
     'SL_AFTER_TP2': '<span class="sfc-status-badge badge-tp">TP2→SL ✓</span>',
   };
+  // v5.6 — Cột R: ưu tiên dùng r_multiple đã tính sẵn từ API (_attach_r_fields
+  // trong api_server.py); nếu API cũ chưa có trường này (fallback an toàn),
+  // tự tính lại y hệt công thức backend ngay tại client.
+  function rCellHtml(s) {
+    if (s.status === 'OPEN') return '<span style="color:var(--muted)">—</span>';
+    let r = s.r_multiple;
+    if (r === undefined || r === null) {
+      const pnl = parseFloat(s.pnl_pips), entry = parseFloat(s.entry), sl = parseFloat(s.stop_loss);
+      if (!isNaN(pnl) && !isNaN(entry) && !isNaN(sl) && Math.abs(entry - sl) > 0) {
+        r = Math.round((pnl / Math.abs(entry - sl)) * 100) / 100;
+      }
+    }
+    if (r === undefined || r === null || isNaN(r)) return '<span style="color:var(--muted)">—</span>';
+    const color = r > 0 ? 'var(--green)' : r < 0 ? 'var(--red)' : 'var(--muted)';
+    return `<span style="color:${color};font-weight:600">${r > 0 ? '+' : ''}${r}R</span>`;
+  }
   body.innerHTML = data.slice().reverse().map(s => `
     <tr>
       <td class="td-mono" style="font-size:11px">${s.created_at?.slice(0,16) ?? ''}</td>
@@ -910,6 +927,7 @@ async function loadHistory() {
       <td class="td-mono">${s.entry}</td>
       <td class="td-mono" style="color:var(--red)">${s.stop_loss}</td>
       <td class="td-mono" style="color:var(--green)">${s.tp1}</td>
+      <td class="td-mono">${rCellHtml(s)}</td>
       <td>${badgeMap[s.status] ?? s.status}</td>
     </tr>`).join('');
 }

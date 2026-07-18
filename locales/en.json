@@ -49,7 +49,8 @@
     "th_tp1": "TP1",
     "th_status": "Status",
     "loading": "Loading...",
-    "history_winrate_desc": "Win rate based on actual R received (<span id=\"wrClosed\">0</span> closed trades) — a trade that hits TP1/TP2 before being pulled back to SL still counts as a WIN, since real profit (+R) was already locked in before it closed."
+    "history_winrate_desc": "Win rate based on actual R received (<span id=\"wrClosed\">0</span> closed trades) — a trade that hits TP1/TP2 before being pulled back to SL still counts as a WIN, since real profit (+R) was already locked in before it closed.",
+    "th_r": "R"
   },
   "landing": {
     "nav_features": "Features",

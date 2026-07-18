@@ -49,7 +49,8 @@
     "th_tp1": "TP1",
     "th_status": "Trạng thái",
     "loading": "Đang tải...",
-    "history_winrate_desc": "Win rate theo R thực nhận (<span id=\"wrClosed\">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng."
+    "history_winrate_desc": "Win rate theo R thực nhận (<span id=\"wrClosed\">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng.",
+    "th_r": "R"
   },
   "landing": {
     "nav_features": "Tính năng",

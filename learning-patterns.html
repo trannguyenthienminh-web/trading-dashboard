@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
+<title>AI Learning Patterns — Trading AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0b0e;
+  --surface: #111318;
+  --card:    #161820;
+  --border:  #1e2028;
+  --gold:    #f5c842;
+  --gold-dim:rgba(245,200,66,.08);
+  --gold-br: rgba(245,200,66,.2);
+  --text:    #e8eaf0;
+  --muted:   #6b7080;
+  --green:   #2ecc71;
+  --green-d: rgba(46,204,113,.1);
+  --green-b: rgba(46,204,113,.25);
+  --red:     #e74c3c;
+  --red-d:   rgba(231,76,60,.1);
+  --red-b:   rgba(231,76,60,.25);
+  --blue:    #3b9eff;
+  --r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:54px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.nav-logo{font-weight:700;font-size:15px;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:13px;color:var(--muted);}
+.nav-back:hover{color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-refresh{padding:6px 14px;background:var(--gold-dim);border:1px solid var(--gold-br);border-radius:6px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;}
+
+.content{padding:24px;max-width:1100px;margin:0 auto;}
+.page-header{margin-bottom:20px;}
+.page-title{font-size:1.3rem;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);}
+
+.intro-box{
+  background:linear-gradient(135deg,rgba(245,200,66,.06),rgba(245,200,66,.02));
+  border:1px solid rgba(245,200,66,.2);border-radius:var(--r);
+  padding:16px 20px;margin-bottom:20px;
+  display:flex;gap:14px;align-items:center;
+}
+.intro-icon{font-size:28px;flex-shrink:0;}
+.intro-text{font-size:13px;color:var(--muted);line-height:1.6;}
+.intro-text strong{color:var(--gold);}
+
+.controls{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.min-sample-box{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.min-sample-box select{
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  padding:6px 10px;border-radius:6px;font-size:12px;outline:none;font-family:'Space Grotesk',sans-serif;
+}
+.confidence-badge{font-size:11px;padding:3px 10px;border-radius:100px;font-weight:700;}
+.confidence-badge.low{background:var(--red-d);color:var(--red);border:1px solid var(--red-b);}
+.confidence-badge.mid{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-br);}
+.confidence-badge.high{background:var(--green-d);color:var(--green);border:1px solid var(--green-b);}
+
+.summary-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.summary-card .label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.summary-card .value{font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.summary-card .value.green{color:var(--green);}
+.summary-card .value.red{color:var(--red);}
+.summary-card .sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+thead th{
+  text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);border-bottom:1px solid var(--border);background:var(--card);
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+tbody td{padding:12px 14px;font-size:13px;}
+.td-mono{font-family:'JetBrains Mono',monospace;font-size:12px;}
+.td-symbol{font-weight:600;}
+.winrate-cell{display:flex;align-items:center;gap:8px;}
+.winrate-bar-track{width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.winrate-bar-fill{height:100%;border-radius:3px;}
+.winrate-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;min-width:44px;}
+.winrate-num.green{color:var(--green);}
+.winrate-num.gold{color:var(--gold);}
+.winrate-num.red{color:var(--red);}
+
+.loading{padding:60px;text-align:center;color:var(--muted);font-size:13px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8;}
+
+.lang-switcher { position: relative; display: inline-block; }
+.lang-switcher__toggle {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); cursor: pointer; font-size: 12px; font-family: 'Space Grotesk', sans-serif;
+  transition: background 0.15s ease;
+}
+.lang-switcher__toggle:hover { background: rgba(255,255,255,0.08); }
+.lang-switcher__code { font-weight: 600; letter-spacing: 0.5px; }
+.lang-switcher__menu {
+  position: absolute; top: calc(100% + 6px); right: 0; min-width: 150px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s; z-index: 200;
+}
+.lang-switcher__menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-switcher__option { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 5px; color: var(--text); font-size: 12px; transition: background 0.12s ease; }
+.lang-switcher__option:hover { background: rgba(255,255,255,0.06); }
+.lang-switcher__option.active { background: rgba(245,200,66,0.1); color: var(--gold); font-weight: 600; }
+
+@media(max-width:640px){
+  .summary-row{grid-template-columns:1fr;}
+  .content{padding:14px;}
+  table{display:block;overflow-x:auto;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Trading<span>AI</span> <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;" data-i18n="learning.nav_title">AI Learning Patterns</span></div>
+  <div class="nav-right">
+    <button class="btn-refresh" onclick="loadPatterns()" data-i18n="learning.btn_refresh">↺ Refresh</button>
+    <div class="lang-switcher">
+      <button class="lang-switcher__toggle" id="langToggle" aria-label="Chọn ngôn ngữ / Select language">
+        <span class="lang-switcher__code" id="currentCode">VI</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-switcher__menu" id="langMenu">
+        <a href="#" class="lang-switcher__option" data-lang-option="vi">Tiếng Việt</a>
+        <a href="#" class="lang-switcher__option" data-lang-option="en">English</a>
+      </div>
+    </div>
+    <a href="dashboard.html" class="nav-back" data-i18n="learning.nav_back">← Dashboard</a>
+  </div>
+</nav>
+
+<div class="content">
+  <div class="page-header">
+    <div class="page-title" data-i18n="learning.page_title">🧠 AI Learning Patterns</div>
+    <div class="page-sub" data-i18n="learning.page_sub">Những gì AI đã "học" được từ dữ liệu giao dịch thật — không phải lý thuyết, mà là bằng chứng thống kê thực tế.</div>
+  </div>
+
+  <div class="intro-box">
+    <div class="intro-icon">📊</div>
+    <div class="intro-text" data-i18n-html="learning.intro_html">
+      Mỗi dòng dưới đây là 1 tổ hợp <strong>Symbol + Phiên giao dịch + Loại tín hiệu</strong> đã có đủ dữ liệu lịch sử.
+      AI Decision Engine dùng chính những con số này (không phải suy đoán) để quyết định APPROVE/WARN/REJECT mỗi tín hiệu mới.
+      <strong style="color:var(--gold)">Lưu ý:</strong> dưới 20-30 lệnh vẫn có thể do may rủi ngẫu nhiên, chưa nên tin tưởng tuyệt đối.
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="min-sample-box">
+      <span data-i18n="learning.min_sample_label">Hiện tổ hợp có tối thiểu:</span>
+      <select id="minSampleSelect" onchange="loadPatterns()">
+        <option value="5">5 lệnh (mặc định hệ thống)</option>
+        <option value="20" selected>20 lệnh (đáng tham khảo)</option>
+        <option value="30">30 lệnh (đáng tin cậy)</option>
+        <option value="50">50 lệnh (rất đáng tin)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="summary-row" id="summaryRow" style="display:none;">
+    <div class="summary-card">
+      <div class="label" data-i18n="learning.total_patterns">Tổng số Pattern</div>
+      <div class="value" id="sumTotalPatterns">—</div>
+    </div>
+    <div class="summary-card">
+      <div class="label" data-i18n="learning.best_pattern">Pattern tốt nhất</div>
+      <div class="value green" id="sumBest">—</div>
+      <div class="sub" id="sumBestSub"></div>
+    </div>
+    <div class="summary-card">
+      <div class="label" data-i18n="learning.worst_pattern">Pattern cần thận trọng</div>
+      <div class="value red" id="sumWorst">—</div>
+      <div class="sub" id="sumWorstSub"></div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th data-i18n="learning.th_symbol">Symbol</th>
+        <th data-i18n="learning.th_session">Phiên</th>
+        <th data-i18n="learning.th_type">Loại</th>
+        <th data-i18n="learning.th_tf">Khung giờ</th>
+        <th data-i18n="learning.th_total">Số lệnh</th>
+        <th data-i18n="learning.th_wins">Thắng</th>
+        <th data-i18n="learning.th_winrate">Win Rate</th>
+        <th data-i18n="learning.th_confidence">Độ tin cậy</th>
+      </tr>
+    </thead>
+    <tbody id="patternsBody">
+      <tr><td colspan="8"><div class="loading"><span class="spinner"></span>Đang tải...</div></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="/js/i18n.js" defer></script>
+<script>
+  (function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('langToggle');
+      const menu = document.getElementById('langMenu');
+      const codeEl = document.getElementById('currentCode');
+      const CODES = { vi: 'VI', en: 'EN' };
+      function syncToggleDisplay() {
+        const lang = window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : 'vi';
+        codeEl.textContent = CODES[lang];
+      }
+      toggle.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('open'); });
+      document.addEventListener('click', () => menu.classList.remove('open'));
+      document.querySelectorAll('[data-lang-option]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          menu.classList.remove('open');
+          setTimeout(() => { syncToggleDisplay(); loadPatterns(); }, 50);
+        });
+      });
+      setTimeout(syncToggleDisplay, 150);
+    });
+  })();
+
+  function curLang() {
+    return (window.ThienMinhGoldI18n ? window.ThienMinhGoldI18n.getCurrentLang() : null)
+      || localStorage.getItem('thienminhgold_lang') || 'vi';
+  }
+</script>
+<script>
+const API = 'https://trading-proxy.trannguyenthienminh.workers.dev';
+
+function winrateColor(wr) {
+  if (wr >= 60) return 'var(--green)';
+  if (wr >= 40) return 'var(--gold)';
+  return 'var(--red)';
+}
+function winrateClass(wr) {
+  if (wr >= 60) return 'green';
+  if (wr >= 40) return 'gold';
+  return 'red';
+}
+function confidenceBadge(total, isEn) {
+  if (total >= 30) return `<span class="confidence-badge high">${isEn ? 'High' : 'Cao'}</span>`;
+  if (total >= 20) return `<span class="confidence-badge mid">${isEn ? 'Medium' : 'Vừa'}</span>`;
+  return `<span class="confidence-badge low">${isEn ? 'Low (small sample)' : 'Thấp (mẫu nhỏ)'}</span>`;
+}
+
+async function loadPatterns() {
+  const isEn = curLang() === 'en';
+  const minSample = document.getElementById('minSampleSelect').value;
+  const body = document.getElementById('patternsBody');
+  const summaryRow = document.getElementById('summaryRow');
+  body.innerHTML = `<tr><td colspan="8"><div class="loading"><span class="spinner"></span>${isEn ? 'Loading...' : 'Đang tải...'}</div></td></tr>`;
+  summaryRow.style.display = 'none';
+
+  try {
+    const res = await fetch(`${API}/api/learning?min_sample=${minSample}`, { signal: AbortSignal.timeout(15000) });
+    const data = await res.json();
+    const patterns = data.patterns || [];
+
+    if (patterns.length === 0) {
+      body.innerHTML = `<tr><td colspan="8"><div class="empty">
+        ${isEn
+          ? `😴 No pattern has reached ${minSample} historical trades yet.<br>Try lowering the minimum, or wait for more signals to close.`
+          : `😴 Chưa có tổ hợp nào đạt đủ ${minSample} lệnh lịch sử.<br>Thử hạ mức tối thiểu, hoặc chờ thêm tín hiệu đóng lệnh.`}
+      </div></td></tr>`;
+      return;
+    }
+
+    // Tóm tắt
+    const best = patterns[0];
+    const worst = patterns[patterns.length - 1];
+    document.getElementById('sumTotalPatterns').textContent = patterns.length;
+    document.getElementById('sumBest').textContent = best.winrate + '%';
+    document.getElementById('sumBestSub').textContent = `${best.symbol} · ${best.session} · ${best.signal_type} (${best.wins}/${best.total})`;
+    document.getElementById('sumWorst').textContent = worst.winrate + '%';
+    document.getElementById('sumWorstSub').textContent = `${worst.symbol} · ${worst.session} · ${worst.signal_type} (${worst.wins}/${worst.total})`;
+    summaryRow.style.display = 'grid';
+
+    body.innerHTML = patterns.map(p => `
+      <tr>
+        <td class="td-mono td-symbol">${p.symbol}</td>
+        <td>${p.session}</td>
+        <td>${p.signal_type}</td>
+        <td><span class="td-mono" style="padding:2px 8px;border-radius:4px;background:${p.timeframe==='M15'?'rgba(59,158,255,.12)':'rgba(245,200,66,.12)'};color:${p.timeframe==='M15'?'var(--blue)':'var(--gold)'};font-weight:700;">${p.timeframe}</span></td>
+        <td class="td-mono">${p.total}</td>
+        <td class="td-mono">${p.wins}</td>
+        <td>
+          <div class="winrate-cell">
+            <div class="winrate-bar-track"><div class="winrate-bar-fill" style="width:${p.winrate}%;background:${winrateColor(p.winrate)}"></div></div>
+            <span class="winrate-num ${winrateClass(p.winrate)}">${p.winrate}%</span>
+          </div>
+        </td>
+        <td>${confidenceBadge(p.total, isEn)}</td>
+      </tr>
+    `).join('');
+
+  } catch (e) {
+    body.innerHTML = `<tr><td colspan="8"><div class="empty">⚠️ ${isEn ? 'Could not connect to API.' : 'Không kết nối được API.'}</div></td></tr>`;
+  }
+}
+
+loadPatterns();
+</script>
+</body>
+</html>

@@ -50,7 +50,8 @@
     "th_status": "Trạng thái",
     "loading": "Đang tải...",
     "history_winrate_desc": "Win rate theo R thực nhận (<span id=\"wrClosed\">0</span> lệnh đã đóng) — một lệnh chạm TP1/TP2 rồi mới bị SL kéo về vẫn tính là THẮNG, vì đã chốt lời thực (+R) trước khi đóng.",
-    "th_r": "R"
+    "th_r": "R",
+    "nav_learning": "🧠 Learning"
   },
   "landing": {
     "nav_features": "Tính năng",
@@ -451,5 +452,25 @@
     "success_step2_pay": "Xác nhận đã nhận đủ $40",
     "success_step3_pay": "Thêm bạn vào nhóm VIP qua Telegram — trọn đời",
     "btn_contact_admin": "✈ Nhắn tin cho admin nếu cần hỗ trợ"
+  },
+  "learning": {
+    "nav_title": "AI Learning Patterns",
+    "nav_back": "← Dashboard",
+    "btn_refresh": "↺ Refresh",
+    "page_title": "🧠 AI Learning Patterns",
+    "page_sub": "Những gì AI đã \"học\" được từ dữ liệu giao dịch thật — không phải lý thuyết, mà là bằng chứng thống kê thực tế.",
+    "intro_html": "Mỗi dòng dưới đây là 1 tổ hợp <strong>Symbol + Phiên giao dịch + Loại tín hiệu</strong> đã có đủ dữ liệu lịch sử. AI Decision Engine dùng chính những con số này (không phải suy đoán) để quyết định APPROVE/WARN/REJECT mỗi tín hiệu mới. <strong style=\"color:var(--gold)\">Lưu ý:</strong> dưới 20-30 lệnh vẫn có thể do may rủi ngẫu nhiên, chưa nên tin tưởng tuyệt đối.",
+    "min_sample_label": "Hiện tổ hợp có tối thiểu:",
+    "total_patterns": "Tổng số Pattern",
+    "best_pattern": "Pattern tốt nhất",
+    "worst_pattern": "Pattern cần thận trọng",
+    "th_symbol": "Symbol",
+    "th_session": "Phiên",
+    "th_type": "Loại",
+    "th_total": "Số lệnh",
+    "th_wins": "Thắng",
+    "th_winrate": "Win Rate",
+    "th_confidence": "Độ tin cậy",
+    "th_tf": "Khung giờ"
   }
 }

@@ -50,7 +50,8 @@
     "th_status": "Status",
     "loading": "Loading...",
     "history_winrate_desc": "Win rate based on actual R received (<span id=\"wrClosed\">0</span> closed trades) — a trade that hits TP1/TP2 before being pulled back to SL still counts as a WIN, since real profit (+R) was already locked in before it closed.",
-    "th_r": "R"
+    "th_r": "R",
+    "nav_learning": "🧠 Learning"
   },
   "landing": {
     "nav_features": "Features",
@@ -451,5 +452,25 @@
     "success_step2_pay": "Confirms the full $40 was received",
     "success_step3_pay": "Adds you to the VIP group via Telegram — lifetime",
     "btn_contact_admin": "✈ Message admin if you need support"
+  },
+  "learning": {
+    "nav_title": "AI Learning Patterns",
+    "nav_back": "← Dashboard",
+    "btn_refresh": "↺ Refresh",
+    "page_title": "🧠 AI Learning Patterns",
+    "page_sub": "What the AI has \"learned\" from real trading data — not theory, actual statistical evidence.",
+    "intro_html": "Each row below is 1 combination of <strong>Symbol + Session + Signal Type</strong> with enough historical data. The AI Decision Engine uses these exact numbers (not guesswork) to decide APPROVE/WARN/REJECT for each new signal. <strong style=\"color:var(--gold)\">Note:</strong> under 20-30 trades may still be due to random chance — not yet fully trustworthy.",
+    "min_sample_label": "Show combinations with at least:",
+    "total_patterns": "Total Patterns",
+    "best_pattern": "Best Pattern",
+    "worst_pattern": "Needs Caution",
+    "th_symbol": "Symbol",
+    "th_session": "Session",
+    "th_type": "Type",
+    "th_total": "Trades",
+    "th_wins": "Wins",
+    "th_winrate": "Win Rate",
+    "th_confidence": "Confidence",
+    "th_tf": "Timeframe"
   }
 }
